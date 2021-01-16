@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/home/ark/.config/opentyrian
+Unit=arkloned@-home-ark-.config-opentyrian\x40opentyrian\x40opentyrian.service
+
+[Install]
+WantedBy=multi-user.target

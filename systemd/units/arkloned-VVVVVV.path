@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/VVVVVV/saves
+Unit=arkloned@-roms-ports-VVVVVV-saves\x40VVVVVV-saves\x40VVVVVV.service
+
+[Install]
+WantedBy=multi-user.target

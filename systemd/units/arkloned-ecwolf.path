@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/ecwolf
+Unit=arkloned@-roms-ports-ecwolf\x40ecwolf\x40ecwolf.service
+
+[Install]
+WantedBy=multi-user.target

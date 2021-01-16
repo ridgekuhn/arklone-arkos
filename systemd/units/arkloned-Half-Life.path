@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/Half-Life/valve/save
+Unit=arkloned@-roms-ports-Half\x2dLife-valve-save\x40Half\x2dLife-valve-save\x40.service
+
+[Install]
+WantedBy=multi-user.target

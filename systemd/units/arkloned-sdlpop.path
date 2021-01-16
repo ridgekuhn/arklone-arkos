@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/home/ark/QUICKSAVE.SAV
+Unit=arkloned@-home-ark\x40sdlpop\x40sdlpop.service
+
+[Install]
+WantedBy=multi-user.target

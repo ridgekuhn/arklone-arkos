@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/quake2/baseq2/save
+Unit=arkloned@-roms-ports-quake2-baseq2-save\x40quake2-baseq2-save\x40.service
+
+[Install]
+WantedBy=multi-user.target

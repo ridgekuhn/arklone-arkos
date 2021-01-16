@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/devilution
+Unit=arkloned@-roms-ports-devilution\x40devilution\x40devilution.service
+
+[Install]
+WantedBy=multi-user.target

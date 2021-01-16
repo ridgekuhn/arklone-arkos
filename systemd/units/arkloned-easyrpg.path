@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/easyrpg
+Unit=arkloned@-roms-ports-easyrpg\x40easyrpg\x40.service
+
+[Install]
+WantedBy=multi-user.target

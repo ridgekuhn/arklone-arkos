@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/roms/ports/cgenius
+Unit=arkloned@-roms-ports-cgenius-save\x40cgenius\x40.service
+
+[Install]
+WantedBy=multi-user.target
