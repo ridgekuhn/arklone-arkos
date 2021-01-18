@@ -209,7 +209,7 @@ function manualSyncSavesScreen() {
 	local script="arklone-saves.sh"
 	local log_file=$(awk '/^LOG_FILE/ { split($1, a, "="); gsub("\"", "", a[2]); print a[2]}' "${ARKLONE_DIR}/rclone/scripts/${script}")
 	local instances=($(getRootInstanceNames))
-	local localdirs=$(for instance in ${instances[@]}; do filter="$(echo ${instance##*@} | awk -F '-' '/retroarch/ {str="("$2")"; print str}')"; printf "${instance%@*@*}${filter} "; done)
+	local localdirs=$(for instance in ${instances[@]}; do filter="$(echo ${instance##*@} | awk -F '-' '/retroarch/ {$2!=""?str=$2:str=$1; print str}')"; printf "${instance%@*@*}${filter} "; done)
 
 	alreadyRunning "${script}" "${log_file}"
 

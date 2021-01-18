@@ -67,8 +67,9 @@ fi
 #########################
 # SYNC SAVEFILES TO CLOUD
 #########################
+FILTERSTRING="--filter-from ${ARKLONE_DIR}/rclone/filters/global.filter"
 if [ ! -z $FILTER ]; then
-	FILTERSTRING="--filter-from ${ARKLONE_DIR}/rclone/filters/${FILTER}.filter"
+	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE_DIR}/rclone/filters/${FILTER}.filter"
 fi
 
 echo "Sending ${LOCALDIR}/ to ${REMOTE_CURRENT}:${REMOTEDIR}/"

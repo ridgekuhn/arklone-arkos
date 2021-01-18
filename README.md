@@ -18,12 +18,14 @@ Executed by:
 * Manually
 
 To execute manually, pass two directories as a string to the first argument,
-in the format `localDir@remoteDir`.
+in the format `localDir@remoteDir@filter`.
+
+`filter` refers to a .filter file in `arklone/rclone/filters`
 
 _Do not use trailing slashes. The remote directory also must not have an opening slash._
 
 ```shell
-$ /opt/arklone/arklone.sh "/roms@retroarch/roms"
+$ /opt/arklone/arklone.sh "/roms@retroarch/roms@retroarch-savefiles"
 
 ```
 
@@ -49,12 +51,20 @@ PathChanged=/path/to/watch
 Unit=arkloned@-path-to-watch\x40path-to-sync-to
 ```
 
-The `Unit` name should be prefixed with `arkloned@`, followed by an escaped string containing the directories to sync, in the format `localDir@remoteDir`. Do not use trailing slashes. The remote directory must also not have an opening slash. You can generate an escaped directory string using the `systemd-escape` tool:
+The `Unit` name should be prefixed with `arkloned@`, followed by
+an escaped string containing the directories to sync,
+in the format `localDir@remoteDir@filter`,
+where `filter` is an optional rclone `.filter` file contained in
+`arklone/rclone/filters`. The filter is optional, but the 
+string must containing the preceding `@`. Do not use trailing slashes for paths.
+The remote directory must also not have an opening slash.
+
+You can generate an escaped directory string using the `systemd-escape` tool:
 
 ```shell
-$ systemd-escape "/path/to/watch@path/to/sync/to"
+$ systemd-escape "/path/to/watch@path/to/sync/to@myFilter"
 # outputs:
-# -path-to-watch\x40path-to-sync-to
+# -path-to-watch\x40path-to-sync-to\x40myFilter
 ```
 
 [settings.sh]() will automatically handle enabling and starting the path unit when the user enables automatic syncing.

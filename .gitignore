@@ -1,3 +1,6 @@
+# Arklone
+*.auto.path
+
 # Vim
 *.swp
 
