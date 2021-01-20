@@ -161,6 +161,31 @@ for retroarch_dir in ${RETROARCHS[@]}; do
 	sort_savefiles_enable=$(awk '/sort_savefiles_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
 	sort_savestates_enable=$(awk '/sort_savestates_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
 
+	# @TODO `sort_${savetype}s_by_content_enable = "true"`
+	#		works in ArkOS, but appears to have no effect on the default
+	#		Windows, MacOS, and Debian binaries,
+	#		so we are not supporting it at this time.
+	#
+	#		If this changes, we will have to rewrite all code which follows.
+	#
+	#		The expected behavior is:
+	#
+	#		`sort_${savetype}s_by_content_enable = "true"`
+	#		`sort_${savetype}s_enable = "false"`
+	#		Save directory: ${savetype_directory}/${system}
+	#
+	#		`sort_${savetype}s_by_content_enable = "true"`
+	#		`sort_${savetype}s_enable = "true"`
+	#		Save directory: ${savetype_directory}/${system}/${libRetroCore}
+	sort_savefiles_by_content_enable=$(awk '/sort_savefiles_by_content_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
+	sort_savestates_by_content_enable=$(awk '/sort_savestates_by_content_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
+
+	if [ "$sort_savefiles_by_content_enable" = "true" ] \
+		|| [ "$sort_savestates_by_content_enable" = "true" ]; then
+		echo "sort_savefiles_by_content_enable and sort_save_states_by_content_enable are not supported by arklone. Please change these settings to "false" in ${retroarch_dir}/retroarch.cfg and try again."
+		exit
+	fi
+
 	#####################################################################
 	# Scenario 1:
 	# savefiles and savestates are both stored in the content directories
@@ -173,16 +198,6 @@ for retroarch_dir in ${RETROARCHS[@]}; do
 		makePathUnit "${unit}" "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch"
 
 		# Make RetroArch content subdirectory units
-		# @TODO `sort_${savetype}s_by_content_enable = "true"`
-		#		appears to have no effect. (Expected behavior is to
-		#		store the saves in a subdirectory for each core
-		#		eg, ${RETROARCH_CONTENT_ROOT}/nes/Nestopia)
-		#
-		#		If this turns out to be incorrect, then we will need to
-		#		compare sort_savefiles_by_content_enable
-		#		and sort_savestates_by_content_enable
-		#		like in Scenario 2 below, and recurse an additional level
-		#		of subdirectories to target the libretro core folders
 		makeSubdirPathUnits "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch" "${IGNORE_DIRS}"
 
 		# Go to next ${retroarch_dir}
@@ -249,8 +264,6 @@ for retroarch_dir in ${RETROARCHS[@]}; do
 			makePathUnit "${unit}" "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch-${savetype}"
 
 			# Make RetroArch content subdirectory units
-			# @TODO See note in scenario 1 about
-			#		sort_${savetype}s_by_content_enable
 			makeSubdirPathUnits "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch-${savetype}" "${IGNORE_DIRS}"
 
 		# Make ${savetype_directory} units
