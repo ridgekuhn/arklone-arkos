@@ -26,10 +26,10 @@ fi
 
 # Create rclone user config dir
 if [ ! -d "${USER_CONFIG_DIR}/rclone" ]; then
-	sudo mkdir "${USER_CONFIG_DIR}/rclone" \
-		&& sudo chown ark:ark "${USER_CONFIG_DIR}/rclone" \
-		&& sudo chmod 755 "${USER_CONFIG_DIR}/rclone"
+	sudo mkdir "${USER_CONFIG_DIR}/rclone"
 fi
+sudo chown -R ark:ark "${USER_CONFIG_DIR}/rclone"
+sudo chmod -R 777 "${USER_CONFIG_DIR}/rclone"
 
 # Link user-accessible rclone.conf so rclone can find it
 sudo ln -v -s "/roms/backup/rclone/rclone.conf" "${USER_CONFIG_DIR}/rclone/rclone.conf"
@@ -49,7 +49,7 @@ sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
 # Create arklone user config dir
 if [ ! -d "${USER_CONFIG_DIR}/arklone" ]; then
-	sudo mkdir "${USER_CONFIG_DIR}/arklone" \
-		&& sudo chown ark:ark "${USER_CONFIG_DIR}/arklone" \
-		&& sudo chmod a+r+w "${USER_CONFIG_DIR}/arklone"
+	sudo mkdir "${USER_CONFIG_DIR}/arklone"
 fi
+sudo chown -R ark:ark "${USER_CONFIG_DIR}/arklone"
+sudo chmod -R a+r+w "${USER_CONFIG_DIR}/arklone"
