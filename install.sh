@@ -47,6 +47,11 @@ sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 # Generate retroarch path units
 "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
+# Create user-accessible rclone dir on EASYROMS
+if [ ! -d "/roms/backup/arklone" ]; then
+	sudo mkdir "/roms/backup/arklone"
+fi
+
 # Create arklone user config dir
 if [ ! -d "${USER_CONFIG_DIR}/arklone" ]; then
 	sudo mkdir "${USER_CONFIG_DIR}/arklone"

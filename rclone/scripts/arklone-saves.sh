@@ -15,7 +15,7 @@ source "/opt/arklone/config.sh"
 # PREFLIGHT
 ###########
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
-LOG_FILE="/home/ark/.config/arklone/arklone-saves.log"
+LOG_FILE="/roms/backup/arklone/arklone-saves.log"
 
 # Delete log if last modification is older than system uptime
 if [ -f "${LOG_FILE}" ] \
