@@ -44,9 +44,6 @@ sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/arklone-saves.sh"
 sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/arklone-arkos.sh"
 sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
-# Generate retroarch path units
-"${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
-
 # Create user-accessible rclone dir on EASYROMS
 if [ ! -d "/roms/backup/arklone" ]; then
 	sudo mkdir "/roms/backup/arklone"

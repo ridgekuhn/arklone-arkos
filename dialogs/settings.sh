@@ -97,6 +97,32 @@ function setCloud() {
 
 # Enable/Disable auto savefile/savestate path units
 function autoSyncSaves() {
+	# @TODO ArkOS exFAT bug
+	#		A bug in ArkOS prevents systemd path units from being able to watch
+	#		a subdirectory of an exFAT partition.
+	#
+	#		If EASYROMS is exFAT and user has either
+	#		savefiles_in_content_dir or savestates_in_content_dir
+	#		enabled in either retroarch or retroarch32's retroarch.cfg,
+	#		then we will return with error 73.
+
+	#		@see https://github.com/christianhaitian/arkos/issues/289
+	local exfat=$(lsblk -f | awk -F " " '/EASYROMS/ {print $2}')
+
+	if [ "${exfat}" = "exfat" ]; then
+		for retroarch_dir in ${RETROARCHS[@]}; do
+			local savetypes=("savefile" "savestate")
+
+			for savetype in ${savetypes[@]}; do
+				local savetypes_in_content_dir=$(awk -v savetypes_in_content_dir="${savetype}s_in_content_dir" '$0 ~ savetypes_in_content_dir {gsub("\"","",$3); print$3}' "${retroarch_dir}/retroarch.cfg")
+
+				if [ "${savetypes_in_content_dir}" = "true" ]; then
+					return 73
+				fi
+			done
+		done
+	fi
+
 	# Enable if no units are linked to systemd
 	if [ -z "${AUTOSYNC}" ]; then
 		local units=($(find "${ARKLONE_DIR}/systemd/units/"*".path"))
@@ -147,6 +173,83 @@ function manualBackupArkOS() {
 	fi
 }
 
+# Disable RetroArch sort_savefiles_by_content_enable and sort_savefiles_by_content_enable
+function disableRASortSavesByContent() {
+	for retroarch_dir in ${RETROARCHS[@]}; do
+		# Backup retroarch.cfg
+		sudo cp ${retroarch_dir}/retroarch.cfg ${retroarch_dir}/retroarch.cfg.arklone.bak
+
+		local savetypes=("savefile" "savestate")
+
+		for savetype in ${savetypes[@]}; do
+			echo "Disabling sort_${savetype}s_by_content_enable in ${retroarch_dir}/retroarch.cfg..."
+
+			local oldSetting=$(grep "sort_${savetype}s_by_content_enable" "${retroarch_dir}/retroarch.cfg")
+			local newSetting="sort_${savetype}s_by_content_enable = \"false\""
+
+			sudo sed -i "s|${oldSetting}|${newSetting}|" "${retroarch_dir}/retroarch.cfg"
+		done
+	done
+}
+
+#	Set retroarch and retroarch32 retroarch.cfg files to the following settings:
+#
+# savefile_directory = "~/.config/retroarch/saves"
+# savefiles_in_content_dir = "false"
+# sort_savefiles_enable = "false"
+# sort_savefiles_by_content_enable = "false"
+#
+# savestate_directory = "~/.config/retroarch/states"
+# savestates_in_content_dir = "false"
+# sort_savestates_enable = "false"
+# sort_savestates_by_content_enable = "false"
+function setRecommendedRASettings() {
+	for retroarch_dir in ${RETROARCHS[@]}; do
+		# Backup retroarch.cfg
+		sudo cp ${retroarch_dir}/retroarch.cfg ${retroarch_dir}/retroarch.cfg.arklone.bak
+
+		# Set savetype directories
+		echo "Setting savefile_directory to ${retroarch_dir}/saves"
+
+		if [ ! -d "${retroarch_dir}/saves" ]; then
+			sudo mkdir "${retroarch_dir}/saves"
+			sudo chmod a+rw "${retroarch_dir}/saves"
+		fi
+
+		local oldSavefileDir=$(grep "savefile_directory" "${retroarch_dir}/retroarch.cfg")
+		local newSavefileDir="savefile_directory = \"${retroarch_dir}/saves\""
+
+		sudo sed -i "s|${oldSavefileDir}|${newSavefileDir}|" "${retroarch_dir}/retroarch.cfg"
+
+		echo "Setting savestate_directory to ${retroarch_dir}/states"
+
+		if [ ! -d "${retroarch_dir}/states" ]; then
+			sudo mkdir "${retroarch_dir}/states"
+			sudo chmod a+rw "${retroarch_dir}/states"
+		fi
+
+		local oldSavestateDir=$(grep "savestate_directory" "${retroarch_dir}/retroarch.cfg")
+		local newSavestateDir="savestate_directory = \"${retroarch_dir}/states\""
+
+		sudo sed -i "s|${oldSavestateDir}|${newSavestateDir}|" "${retroarch_dir}/retroarch.cfg"
+
+		# Set rest of settings
+		local savetypes=("savefile" "savestate")
+
+		for savetype in ${savetypes[@]}; do
+			local settings=("${savetype}s_in_content_dir" "sort_${savetype}s_enable" "sort_${savetype}s_by_content_enable")
+
+			for setting in ${settings[@]}; do
+				echo "Setting ${setting} to \"false\""
+				local oldSetting=$(grep "${setting}" "${retroarch_dir}/retroarch.cfg")
+				local newSetting="${setting} = \"false\""
+
+				sudo sed -i "s|${oldSetting}|${newSetting}|" "${retroarch_dir}/retroarch.cfg"
+			done
+		done
+	done
+}
+
 ###########
 # PREFLIGHT
 ###########
@@ -184,6 +287,43 @@ function homeScreen() {
 		4) manualBackupArkOSScreen ;;
 		5) regenRAunitsScreen ;;
 	esac
+}
+
+# First run dialog
+function firstRunScreen() {
+	# Check if rclone is configured
+	if [ -z $(rclone listremotes 2>/dev/null) ]; then
+		whiptail \
+			--title "${TITLE}" \
+			--msgbox "It looks like you haven't configured any rclone remotes yet! Please see the documentation at:\nhttps://github.com/ridgekuhn/arklone\nand\nhttps://rclone.org/docs/" \
+			16 56 8
+
+		exit
+	fi
+
+	# Set recommended RetroArch settings
+	whiptail \
+		--title "${TITLE}" \
+		--yesno "Welcome to arklone!\nWould you like to automatically configure RetroArch to the recommended settings?" \
+			16 56 8
+
+	if [ $? = 0 ]; then
+		whiptail \
+			--title "${TITLE}" \
+			--infobox \
+				"Please wait while we configure your settings..." \
+				16 56 8
+
+		setRecommendedRASettings
+	fi
+
+	# Generate RetroArch systemd path units
+	whiptail \
+		--title "${TITLE}" \
+		--msgbox "We will now install several components for syncing RetroArch savefiles/savestates. This process may take several minutes, depending on your configuration." \
+			16 56 8
+
+	regenRAunitsScreen
 }
 
 # Cloud service selection dialog
@@ -261,6 +401,29 @@ function autoSyncSavesScreen() {
 
 	autoSyncSaves
 
+	# Fix incompatible settings
+	if [ $? = 73 ]; then
+		whiptail \
+			--title "${TITLE}" \
+			--yesno \
+				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
+				savefiles_in_content_dir\n
+				savestates_in_content_dir" \
+			16 56 8
+
+		if [ $? = 1 ]; then
+			whiptail \
+				--title "${TITLE}" \
+				--msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \
+			16 56 8
+		else
+			setRecommendedRASettings
+
+			autoSyncSavesScreen
+
+			return
+		fi
+	fi
 	homeScreen
 }
 
@@ -318,10 +481,40 @@ function regenRAunitsScreen() {
 
 	"${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
+	# Fix incompatible settings
+	if [ $? = 73 ]; then
+		whiptail \
+			--title "${TITLE}" \
+			--yesno \
+				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
+				sort_savefiles_by_content_enable\n
+				sort_savestates_by_content_enable" \
+			16 56 8
+
+		if [ $? = 1 ]; then
+			whiptail \
+				--title "${TITLE}" \
+				--msgbox "No action has been taken. You will not be able to sync RetroArch savefiles/savestates until the incompatible settings in your retroarch.cfg files are disabled." \
+			16 56 8
+		else
+			disableRASortSavesByContent
+
+			regenRAunitsScreen
+
+			return
+		fi
+	fi
+
 	homeScreen
 }
 
 #####
 # RUN
 #####
+# If ~/.config/arklone/remote.conf doesn't exist,
+# assume this is the user's first run
+if [ ! -f "${REMOTE_CONF}" ]; then
+	firstRunScreen
+fi
+
 homeScreen

@@ -182,8 +182,8 @@ for retroarch_dir in ${RETROARCHS[@]}; do
 
 	if [ "$sort_savefiles_by_content_enable" = "true" ] \
 		|| [ "$sort_savestates_by_content_enable" = "true" ]; then
-		echo "sort_savefiles_by_content_enable and sort_save_states_by_content_enable are not supported by arklone. Please change these settings to "false" in ${retroarch_dir}/retroarch.cfg and try again."
-		exit
+		echo "sort_savefiles_by_content_enable and sort_savestates_by_content_enable are not supported by arklone. Please change these settings to "false" in ${retroarch_dir}/retroarch.cfg and try again."
+		exit 73
 	fi
 
 	#####################################################################
