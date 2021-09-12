@@ -32,7 +32,7 @@ sudo chown -R ark:ark "${USER_CONFIG_DIR}/rclone"
 sudo chmod -R 777 "${USER_CONFIG_DIR}/rclone"
 
 # Link user-accessible rclone.conf so rclone can find it
-sudo ln -v -s "/roms/backup/rclone/rclone.conf" "${USER_CONFIG_DIR}/rclone/rclone.conf"
+ln -v -s "/roms/backup/rclone/rclone.conf" "${USER_CONFIG_DIR}/rclone/rclone.conf"
 
 #########
 # arklone
