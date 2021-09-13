@@ -1,0 +1,21 @@
+[Unit]
+Description=Arklone - Boot sync
+Requires=network-online.target
+Before=emulationstation.service
+After=network-online.target
+
+[Service]
+# @todo will these be necessary?
+#Restart=on-failure
+#RestartSec=60
+
+Type=oneshot
+User=ark
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+ExecStart=/bin/bash -c '/opt/joy2key/listen.sh "/opt/arklone/rclone/scripts/boot-sync.sh"'
+
+[Install]
+WantedBy=multi-user.target

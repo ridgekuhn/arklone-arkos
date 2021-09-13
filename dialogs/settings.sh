@@ -9,30 +9,19 @@ source "/opt/arklone/config.sh"
 #########
 # HELPERS
 #########
+source "/opt/arklone/systemd/scripts/helpers/getRootInstanceNames.sh"
+
 # Print items formatted for whiptail menu
 #
 # @param $1 {string} space-delimited array of menu options
 #
 # @returns {string} space-delimited array of menu indexes and options
+
 function printMenu() {
 	local items=($1)
 
 	for (( i = 0; i < ${#items[@]}; i++ )); do
 		printf "$i ${items[i]} "
-	done
-}
-
-# Get instance names of all systemd path modules not ending in .sub.auto.path
-#
-# @returns {string} space-delimted array of unescaped instance names
-function getRootInstanceNames() {
-	local units=($(find "/opt/arklone/systemd/units/"*".path" -print0 | xargs -0 -I {} bash -c 'unit={}; if [ ! -z "${unit##*sub.auto.path}" ]; then echo "${unit}"; fi'))
-
-	for (( i = 0; i < ${#units[@]}; i++ )); do
-		local escapedName=$(awk -F '@' '/Unit/ {split($2, arr, ".service"); print arr[1]}' "${units[i]}")
-		local instanceName=$(systemd-escape -u -- "${escapedName}")
-
-		printf "${instanceName} "
 	done
 }
 
@@ -59,7 +48,7 @@ function alreadyRunning() {
 
 	if [ ! -z "${running}" ]; then
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
 				"${script} is already running. Would you like to see the 10 most recent lines of the log file?" \
 				16 60
@@ -123,14 +112,17 @@ function autoSyncSaves() {
 		done
 	fi
 
-	# Enable if no units are linked to systemd
+	# Enable if no units are enabled in systemd
 	if [ -z "${AUTOSYNC}" ]; then
 		local units=($(find "${ARKLONE_DIR}/systemd/units/"*".path"))
 
+		# Link path unit service template
 		sudo systemctl link "${ARKLONE_DIR}/systemd/units/arkloned@.service"
 
 		for unit in ${units[@]}; do
-			# Skip *.auto.path units
+			# @todo Detect and skip root path units if using subdirectories
+
+			# Uncomment to skip *.auto.path units
 			# if [ ! -z `expr match "${unit}" '.*\(.auto.path\)'` ]; then
 			# 	continue
 			# fi
@@ -139,16 +131,25 @@ function autoSyncSaves() {
 				&& sudo systemctl start "${unit##*/}"
 		done
 
-		# Generate RetroArch units
+		# Enable boot sync service
+		sudo systemctl enable "${ARKLONE_DIR}/systemd/units/arkloned-boot-sync.service"
+
+		# Uncomment to regenerate RetroArch units
+		# eg, for subdirectories created after previous run
 		# "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
 	# Disable enabled units
 	else
-		sudo systemctl disable "arkloned@.service"
-
+		# Disable path units
 		for unit in ${AUTOSYNC[@]}; do
 			sudo systemctl disable "${unit}"
 		done
+
+		# Disable path unit service template
+		sudo systemctl disable "arkloned@.service"
+
+		# Disable boot sync service
+		sudo systemctl disable arkloned-boot-sync.service
 	fi
 
 	# Reset able string
@@ -250,11 +251,6 @@ function setRecommendedRASettings() {
 	done
 }
 
-###########
-# PREFLIGHT
-###########
-TITLE="arklone cloud sync utility"
-
 #######
 # VIEWS
 #######
@@ -268,7 +264,7 @@ function homeScreen() {
 	fi
 
 	local selection=$(whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--menu "Choose an option:" \
 			16 60 8 \
 			"1" "Set cloud service (now: ${REMOTE_CURRENT})" \
@@ -294,7 +290,7 @@ function firstRunScreen() {
 	# Check if rclone is configured
 	if [ -z "$(rclone listremotes 2>/dev/null)" ]; then
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--msgbox "It looks like you haven't configured any rclone remotes yet! Please see the documentation at:\nhttps://github.com/ridgekuhn/arklone\nand\nhttps://rclone.org/docs/" \
 			16 56 8
 
@@ -303,13 +299,13 @@ function firstRunScreen() {
 
 	# Set recommended RetroArch settings
 	whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--yesno "Welcome to arklone!\nWould you like to automatically configure RetroArch to the recommended settings?" \
 			16 56 8
 
 	if [ $? = 0 ]; then
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--infobox \
 				"Please wait while we configure your settings..." \
 				16 56 8
@@ -319,7 +315,7 @@ function firstRunScreen() {
 
 	# Generate RetroArch systemd path units
 	whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--msgbox "We will now install several components for syncing RetroArch savefiles/savestates. This process may take several minutes, depending on your configuration." \
 			16 56 8
 
@@ -329,7 +325,7 @@ function firstRunScreen() {
 # Cloud service selection dialog
 function setCloudScreen() {
 	local selection=$(whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--menu \
 			"Choose a cloud service:" \
 			16 60 8 \
@@ -357,7 +353,7 @@ function manualSyncSavesScreen() {
 		homeScreen
 	else
 		local selection=$(whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--menu \
 				"Choose a directory to sync with (${REMOTE_CURRENT}):" \
 				16 60 8 \
@@ -374,13 +370,13 @@ function manualSyncSavesScreen() {
 
 			if [ $? = 0 ]; then
 				whiptail \
-					--title "${TITLE}" \
+					--title "${WHIPTAIL_TITLE}" \
 					--msgbox \
 						"${localdir} synced to ${REMOTE_CURRENT}:${remotedir}. Log saved to ${log_file}." \
 						16 56 8
 			else
 				whiptail \
-					--title "${TITLE}" \
+					--title "${WHIPTAIL_TITLE}" \
 					--msgbox \
 						"Update failed. Please check the log file at ${log_file}." \
 						16 56 8
@@ -394,7 +390,7 @@ function manualSyncSavesScreen() {
 # Enable/Disable auto savefile/savestate syncing
 function autoSyncSavesScreen() {
 	whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--infobox \
 			"Please wait while we configure your settings..." \
 			16 56 8
@@ -404,7 +400,7 @@ function autoSyncSavesScreen() {
 	# Fix incompatible settings
 	if [ $? = 73 ]; then
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
 				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
 				savefiles_in_content_dir\n
@@ -413,7 +409,7 @@ function autoSyncSavesScreen() {
 
 		if [ $? = 1 ]; then
 			whiptail \
-				--title "${TITLE}" \
+				--title "${WHIPTAIL_TITLE}" \
 				--msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \
 			16 56 8
 		else
@@ -438,7 +434,7 @@ function manualBackupArkOSScreen() {
 		homeScreen
 	else
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
 				"This will create a backup of your settings at /roms/backup/arkosbackup.tar.gz. Do you want to keep this file after it is uploaded to ${REMOTE_CURRENT}?" \
 				16 56
@@ -446,7 +442,7 @@ function manualBackupArkOSScreen() {
 		local keep=$?
 
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--infobox \
 				"Please wait while we back up your settings..." \
 				16 56 8
@@ -455,13 +451,13 @@ function manualBackupArkOSScreen() {
 
 		if [ $? = 0 ]; then
 			whiptail \
-				--title "${TITLE}" \
+				--title "${WHIPTAIL_TITLE}" \
 				--msgbox \
 					"ArkOS backup synced to ${REMOTE_CURRENT}:ArkOS. Log saved to ${log_file}." \
 					16 56 8
 		else
 			whiptail \
-				--title "${TITLE}" \
+				--title "${WHIPTAIL_TITLE}" \
 				--msgbox \
 					"Update failed. Please check the log file at ${log_file}." \
 					16 56 8
@@ -474,7 +470,7 @@ function manualBackupArkOSScreen() {
 # Regenerate RetroArch savestates/savefiles units screen
 function regenRAunitsScreen() {
 	whiptail \
-		--title "${TITLE}" \
+		--title "${WHIPTAIL_TITLE}" \
 		--infobox \
 			"Please wait while we configure your settings..." \
 			16 56 8
@@ -484,7 +480,7 @@ function regenRAunitsScreen() {
 	# Fix incompatible settings
 	if [ $? = 73 ]; then
 		whiptail \
-			--title "${TITLE}" \
+			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
 				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
 				sort_savefiles_by_content_enable\n
@@ -493,7 +489,7 @@ function regenRAunitsScreen() {
 
 		if [ $? = 1 ]; then
 			whiptail \
-				--title "${TITLE}" \
+				--title "${WHIPTAIL_TITLE}" \
 				--msgbox "No action has been taken. You will not be able to sync RetroArch savefiles/savestates until the incompatible settings in your retroarch.cfg files are disabled." \
 			16 56 8
 		else

@@ -11,26 +11,18 @@
 ########
 source "/opt/arklone/config.sh"
 
+#########
+# HELPERS
+#########
+source "/opt/arklone/rclone/scripts/helpers/logger.sh"
+
 ###########
 # PREFLIGHT
 ###########
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
 LOG_FILE="/roms/backup/arklone/arklone-saves.log"
 
-# Delete log if last modification is older than system uptime
-if [ -f "${LOG_FILE}" ] \
-	&& [ $(($(date +%s) - $(date +%s -r "${LOG_FILE}"))) -gt $(awk -F . '{print $1}' "/proc/uptime") ]
-then
-	rm -f "${LOG_FILE}"
-fi
-
-# Begin logging
-if touch "${LOG_FILE}"; then
-	exec &> >(tee -a "${LOG_FILE}")
-else
-	echo "Could not open log file. Exiting..."
-	exit 1
-fi
+logger "${LOG_FILE}"
 
 printf "\n======================================================\n"
 echo "Started new cloud sync at $(date)"
@@ -68,23 +60,16 @@ fi
 # SYNC SAVEFILES TO CLOUD
 #########################
 FILTERSTRING="--filter-from ${ARKLONE_DIR}/rclone/filters/global.filter"
+# Append unit-specific filters if specified
 if [ ! -z $FILTER ]; then
 	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE_DIR}/rclone/filters/${FILTER}.filter"
 fi
 
 echo "Sending ${LOCALDIR}/ to ${REMOTE_CURRENT}:${REMOTEDIR}/"
-rclone copy "${LOCALDIR}/" "${REMOTE_CURRENT}:${REMOTEDIR}/" ${FILTERSTRING} -u -v
-
-if [ $? != 0 ]; then
-	exit 1
-fi
+rclone copy "${LOCALDIR}/" "${REMOTE_CURRENT}:${REMOTEDIR}/" ${FILTERSTRING} -u -v || exit $?
 
 echo "Receiving ${REMOTE_CURRENT}:${REMOTEDIR}/ to ${LOCALDIR}/"
-rclone copy "${REMOTE_CURRENT}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v
-
-if [ $? != 0 ]; then
-	exit 1
-fi
+rclone copy "${REMOTE_CURRENT}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v || exit $?
 
 ##########
 # TEARDOWN
