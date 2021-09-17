@@ -123,6 +123,9 @@ function autoSyncSaves() {
 
 	# Enable if no units are enabled in systemd
 	if [ -z "${AUTOSYNC}" ]; then
+		# Generate new RetroArch path units
+		"${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
+
 		local units=($(find "${ARKLONE_DIR}/systemd/units/"*".path"))
 
 		# Link path unit service template
@@ -142,10 +145,6 @@ function autoSyncSaves() {
 
 		# Enable boot sync service
 		sudo systemctl enable "${ARKLONE_DIR}/systemd/units/arkloned-saves-sync-boot.service"
-
-		# Uncomment to regenerate RetroArch units
-		# eg, for subdirectories created after previous run
-		# "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
 	# Disable enabled units
 	else
