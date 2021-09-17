@@ -28,9 +28,9 @@ printf "\n======================================================\n"
 echo "Started new cloud sync at $(date)"
 echo "------------------------------------------------------"
 
-# Exit if no internet
-if ! : >/dev/tcp/8.8.8.8/53; then
-	echo "No internet connection. Exiting..."
+# Exit if no network routes configured
+if [ -z "$(ip route)" ]; then
+	echo "ERROR: No internet connection. Exiting..."
 	exit 1
 fi
 
