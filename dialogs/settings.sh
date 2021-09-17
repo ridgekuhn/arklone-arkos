@@ -276,7 +276,7 @@ function homeScreen() {
 		--title "${WHIPTAIL_TITLE}" \
 		--menu "Choose an option:" \
 			16 60 8 \
-			"1" "Set cloud service (now: ${REMOTE_CURRENT})" \
+			"1" "Set cloud service (now: $([ ! -z "${REMOTE_CURRENT}" ] && echo ${REMOTE_CURRENT} || echo "NONE"))" \
 			"2" "Manual sync savefiles/savestates" \
 			"3" "${able} automatic saves sync" \
 			"4" "Manual backup/sync ArkOS Settings" \
