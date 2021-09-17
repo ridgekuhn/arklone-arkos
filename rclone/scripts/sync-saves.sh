@@ -34,28 +34,6 @@ if [ -z "$(ip route)" ]; then
 	exit 1
 fi
 
-# Exit if nothing to do
-if [ "${LOCALDIR}" = "${RETROARCH_CONTENT_ROOT}" ]; then
-	continueSync=false
-
-	for retroarch in ${RETROARCHS[@]}; do
-		savefiles_in_content_dir=$(awk '/^savefiles_in_content_dir/{ gsub("\"","",$3); print $3}' "${retroarch}/retroarch.cfg")
-		savestates_in_content_dir=$(awk '/^savestates_in_content_dir/{ gsub("\"","",$3); print $3}' "${retroarch}/retroarch.cfg")
-
-		if [ "${savefiles_in_content_dir}" = "true" ] \
-			|| [ "${savestates_in_content_dir}" = "true" ]
-		then
-			continueSync=true
-			break;
-		fi
-	done
-
-	if [ "${continueSync}" != "true" ]; then
-		echo "Nothing to do. Exiting..."
-		exit
-	fi
-fi
-
 #########################
 # SYNC SAVEFILES TO CLOUD
 #########################

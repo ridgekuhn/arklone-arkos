@@ -121,23 +121,33 @@ function autoSyncSaves() {
 		done
 	fi
 
-	# Enable if no units are enabled in systemd
+	# Generate and enable path units
 	if [ -z "${AUTOSYNC}" ]; then
 		# Generate new RetroArch path units
 		"${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
+		# Get all path units
 		local units=($(find "${ARKLONE_DIR}/systemd/units/"*".path"))
+
+		# If path units ending in *.sub.auto.path are found,
+		# we should not enable the ${RETROARCH_CONTENT_ROOT} unit,
+		# or the units for paths specified for
+		# "savefile_directory" and "savestate_directory" in retroarch.cfg
+		local noRootUnits=$(find "${ARKLONE_DIR}/systemd/units/"*".sub.auto.path")
 
 		# Link path unit service template
 		sudo systemctl link "${ARKLONE_DIR}/systemd/units/arkloned@.service"
 
+		# Enable/start path units
 		for unit in ${units[@]}; do
-			# @todo Detect and skip root path units if using subdirectories
-
-			# Uncomment to skip *.auto.path units
-			# if [ ! -z `expr match "${unit}" '.*\(.auto.path\)'` ]; then
-			# 	continue
-			# fi
+			# Skip root path units
+			if
+				[ $noRootUnits ] \
+				&& [ "${unit:(-10)}" = ".auto.path" ] \
+				&& [ "${unit:(-14)}" != ".sub.auto.path" ];
+			then
+				continue
+			fi
 
 			sudo systemctl enable "${unit}" \
 				&& sudo systemctl start "${unit##*/}"
@@ -146,7 +156,7 @@ function autoSyncSaves() {
 		# Enable boot sync service
 		sudo systemctl enable "${ARKLONE_DIR}/systemd/units/arkloned-saves-sync-boot.service"
 
-	# Disable enabled units
+	# Disable units
 	else
 		# Disable path units
 		for unit in ${AUTOSYNC[@]}; do
