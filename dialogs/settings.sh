@@ -59,15 +59,15 @@ function alreadyRunning() {
 		whiptail \
 			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
-				"${script##*/} is already running. Would you like to see the 10 most recent lines of the log file?" \
+				"${script##*/} is already running. Would you like to see the log file?" \
 				16 60
 
 		if [ $? = 0 ]; then
 			whiptail \
 				--title "${log_file}" \
 				--scrolltext \
-				--msgbox \
-					"$(tail -10 ${log_file})" \
+				--textbox \
+					"${log_file}" \
 					16 60
 		fi
 
