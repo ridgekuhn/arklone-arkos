@@ -15,7 +15,7 @@ UNITS=($(systemctl list-unit-files | awk '/arkloned/ {print $1}'))
 # arklone
 #########
 # Remove units from systemd
-if [ ! -z $UNITS ]; then
+if [ ! -z "${UNITS}" ]; then
 	for unit in ${UNITS[@]}; do
 		sudo systemctl disable "${unit}"
 	done

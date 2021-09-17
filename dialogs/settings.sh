@@ -342,7 +342,7 @@ function setCloudScreen() {
 		3>&1 1>&2 2>&3 \
 	)
 
-	if [ ! -z $selection ]; then
+	if [ ! -z "${selection}" ]; then
 		setCloud "${selection}"
 	fi
 
@@ -370,7 +370,7 @@ function manualSyncSavesScreen() {
 			3>&1 1>&2 2>&3 \
 		)
 
-		if [ ! -z $selection ]; then
+		if [ ! -z "${selection}" ]; then
 			local instance=${instances[$selection]}
 			IFS="@" read -r localdir remotedir filter <<< "${instance}"
 

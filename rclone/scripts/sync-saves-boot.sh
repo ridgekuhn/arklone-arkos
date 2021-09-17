@@ -41,7 +41,7 @@ function receiveCloudUpdates() {
 		local filterstring="--filter-from ${ARKLONE_DIR}/rclone/filters/global.filter"
 
 		# Append unit-specific filter file (if specified in the instance name)
-		if [ ! -z $filter ]; then
+		if [ ! -z "${filter}" ]; then
 			filterstring="${filterstring} --filter-from ${ARKLONE_DIR}/rclone/filters/${filter}.filter"
 		fi
 

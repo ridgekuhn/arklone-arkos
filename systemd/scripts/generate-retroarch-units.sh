@@ -73,7 +73,7 @@ WantedBy=multi-user.target
 EOF
 
 	# Enable unit if auto-syncing is enabled
-	if [ ! -z ${AUTOSYNC} ]; then
+	if [ ! -z "${AUTOSYNC}" ]; then
 		sudo systemctl enable "${newUnit}" \
 			&& sudo systemctl start "${newUnit##*/}"
 	fi
@@ -105,7 +105,7 @@ function makeSubdirPathUnits() {
 			local skipDir=false
 
 			for ignoreDir in ${ignoreDirs[@]}; do
-				if [ -z ${subdir##*/$ignoreDir} ]; then
+				if [ -z "${subdir##*/$ignoreDir}" ]; then
 					skipDir=true
 				fi
 			done
@@ -130,7 +130,7 @@ OLD_UNITS=($(find "${ARKLONE_DIR}/systemd/units/arkloned-retroarch"*".auto.path"
 IGNORE_DIRS="${ARKLONE_DIR}/systemd/scripts/retroarch-roms.ignore"
 
 # Remove old units
-if [ ! -z ${OLD_UNITS} ]; then
+if [ ! -z "${OLD_UNITS}" ]; then
 	echo "Cleaning up old path units..."
 
 	for OLD_UNIT in ${OLD_UNITS[@]}; do
@@ -138,7 +138,7 @@ if [ ! -z ${OLD_UNITS} ]; then
 
 		printf "\nRemoving old unit: ${OLD_UNIT##*/}...\n"
 
-		if [ ! -z $linked ]; then
+		if [ ! -z "${linked}" ]; then
 			sudo systemctl disable "${OLD_UNIT##*/}"
 		fi
 

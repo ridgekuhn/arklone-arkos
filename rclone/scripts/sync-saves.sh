@@ -61,7 +61,7 @@ fi
 #########################
 FILTERSTRING="--filter-from ${ARKLONE_DIR}/rclone/filters/global.filter"
 # Append unit-specific filters if specified
-if [ ! -z $FILTER ]; then
+if [ ! -z "${FILTER}" ]; then
 	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE_DIR}/rclone/filters/${FILTER}.filter"
 fi
 
