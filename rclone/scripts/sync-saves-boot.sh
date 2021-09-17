@@ -6,7 +6,7 @@
 ########
 source "./config.sh"
 LOG_FILE="${RETROARCH_CONTENT_ROOT}/backup/arklone/arklone-saves.log"
-DIRTY_BOOT="${USER_CONFIG_DIR}/arklone/dirtyboot"
+DIRTY_BOOT="${HOME}/.config/arklone/dirtyboot"
 
 #############
 # CONTROLLERS

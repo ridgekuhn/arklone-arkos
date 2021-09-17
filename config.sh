@@ -4,21 +4,13 @@
 #############
 ARKLONE_DIR="/opt/arklone"
 
-# Change working directory to install directory
-cd "${ARKLONE_DIR}"
-
-########
-# SYSTEM
-########
-USER_CONFIG_DIR="/home/ark/.config"
-
 ###########
 # RETROARCH
 ###########
 # All paths containing a retroarch.cfg
 RETROARCHS=(\
-	"${USER_CONFIG_DIR}/retroarch" \
-	"${USER_CONFIG_DIR}/retroarch32"\
+	"${HOME}/.config/retroarch" \
+	"${HOME}/.config/retroarch32"\
 )
 # Root directory where ROMs are stored
 RETROARCH_CONTENT_ROOT="/roms"
@@ -37,6 +29,9 @@ WHIPTAIL_TITLE="arklone cloud sync utility"
 AUTOSYNC=($(systemctl list-unit-files | awk '/arkloned/ && /enabled/ {print $1}'))
 
 # File containing currently selected remote
-REMOTE_CONF="${USER_CONFIG_DIR}/arklone/remote.conf"
+REMOTE_CONF="${HOME}/.config/arklone/remote.conf"
 # String containing contents of ${REMOTE_CONF}
 REMOTE_CURRENT=$(awk '{print $1}' "${REMOTE_CONF}" 2>/dev/null)
+
+# Change working directory to install directory
+cd "${ARKLONE_DIR}"
