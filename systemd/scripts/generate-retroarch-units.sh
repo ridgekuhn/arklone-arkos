@@ -4,7 +4,7 @@
 ########
 # CONFIG
 ########
-source "/opt/arklone/config.sh"
+source "./config.sh"
 
 #########
 # HELPERS

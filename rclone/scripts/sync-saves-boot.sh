@@ -4,7 +4,7 @@
 ########
 # CONFIG
 ########
-source "/opt/arklone/config.sh"
+source "./config.sh"
 LOG_FILE="/roms/backup/arklone/arklone-saves.log"
 DIRTY_BOOT="${USER_CONFIG_DIR}/arklone/dirtyboot"
 

@@ -4,12 +4,12 @@
 ########
 # CONFIG
 ########
-source "/opt/arklone/config.sh"
+source "./config.sh"
 
 #########
 # HELPERS
 #########
-source "/opt/arklone/systemd/scripts/helpers/getRootInstanceNames.sh"
+source "${ARKLONE_DIR}/systemd/scripts/helpers/getRootInstanceNames.sh"
 
 # Print items formatted for whiptail menu
 #

@@ -1,4 +1,11 @@
 #!/bin/bash
+#############
+# INSTALL DIR
+#############
+ARKLONE_DIR="/opt/arklone"
+
+# Change working directory to install directory
+cd "${ARKLONE_DIR}"
 
 ########
 # SYSTEM
@@ -24,7 +31,6 @@ REMOTES=$(rclone listremotes | awk -F : '{print $1}')
 #########
 # ARKLONE
 #########
-ARKLONE_DIR="/opt/arklone"
 WHIPTAIL_TITLE="arklone cloud sync utility"
 
 # Array of all enabled Arklone systemd path units

@@ -5,16 +5,16 @@
 # @param $1 {string} directory paths in format: "sourceDir@targetDir@filterFile"
 #
 #	@usage
-#		$ /opt/arklone/arklone.sh "/roms@retroarch/roms"
+#		${ARKLONE_DIR}/rclone/scripts/sync-saves.sh "/roms@retroarch/roms"
 ########
 # CONFIG
 ########
-source "/opt/arklone/config.sh"
+source "./config.sh"
 
 #########
 # HELPERS
 #########
-source "/opt/arklone/rclone/scripts/helpers/logger.sh"
+source "${ARKLONE_DIR}/rclone/scripts/helpers/logger.sh"
 
 ###########
 # PREFLIGHT
