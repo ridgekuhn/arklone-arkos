@@ -15,19 +15,19 @@ if ! rclone --version &> /dev/null; then
 fi
 
 # Create backup dir in ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${RETROARCH_CONTENT_ROOT}/backup" ]; then
-	sudo mkdir "${RETROARCH_CONTENT_ROOT}/backup"
-	sudo chown "${USER}":"${USER}" "${RETROARCH_CONTENT_ROOT}/backup"
+if [ ! -d "${BACKUP_DIR}" ]; then
+	sudo mkdir "${BACKUP_DIR}"
+	sudo chown "${USER}":"${USER}" "${BACKUP_DIR}"
 fi
 
 # Create user-accessible rclone dir on ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${RETROARCH_CONTENT_ROOT}/backup/rclone" ]; then
-	sudo mkdir "${RETROARCH_CONTENT_ROOT}/backup/rclone"
+if [ ! -d "${BACKUP_DIR}" ]; then
+	sudo mkdir "${BACKUP_DIR}"
 fi
 
 # Create user-accessible rclone.conf on ${RETROARCH_CONTENT_ROOT}
-if [ ! -f "${RETROARCH_CONTENT_ROOT}/backup/rclone/rclone.conf" ]; then
-	sudo touch "${RETROARCH_CONTENT_ROOT}/backup/rclone/rclone.conf"
+if [ ! -f "${BACKUP_DIR}/rclone/rclone.conf" ]; then
+	sudo touch "${BACKUP_DIR}/rclone/rclone.conf"
 fi
 
 # Create rclone user config dir
@@ -38,7 +38,7 @@ sudo chown -R "${USER}":"${USER}" "${HOME}/.config/rclone"
 sudo chmod -R 777 "${HOME}/.config/rclone"
 
 # Link user-accessible rclone.conf so rclone can find it
-ln -v -s "${RETROARCH_CONTENT_ROOT}/backup/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
+ln -v -s "${BACKUP_DIR}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
 
 #########
 # arklone
@@ -52,8 +52,8 @@ sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-arkos-backup.sh"
 sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
 # Create user-accessible rclone dir on ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${RETROARCH_CONTENT_ROOT}/backup/arklone" ]; then
-	sudo mkdir "${RETROARCH_CONTENT_ROOT}/backup/arklone"
+if [ ! -d "${BACKUP_DIR}/arklone" ]; then
+	sudo mkdir "${BACKUP_DIR}/arklone"
 fi
 
 # Create arklone user config dir

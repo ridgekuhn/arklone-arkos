@@ -23,6 +23,11 @@ REMOTES=$(rclone listremotes | awk -F : '{print $1}')
 #########
 # ARKLONE
 #########
+# Directory for storing system backup files, logs, rclone.conf, etc
+# Should be an easily-accessible directory for non-Linux users,
+# eg, a FAT partition or samba share
+BACKUP_DIR="${RETROARCH_CONTENT_ROOT}/backup"
+
 WHIPTAIL_TITLE="arklone cloud sync utility"
 
 # Array of all enabled Arklone systemd path units

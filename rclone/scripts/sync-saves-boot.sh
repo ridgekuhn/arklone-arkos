@@ -5,7 +5,7 @@
 # CONFIG
 ########
 source "./config.sh"
-LOG_FILE="${RETROARCH_CONTENT_ROOT}/backup/arklone/arklone-saves.log"
+LOG_FILE="${BACKUP_DIR}/arklone/arklone-saves.log"
 DIRTY_BOOT="${HOME}/.config/arklone/dirtyboot"
 
 #############

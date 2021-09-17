@@ -173,7 +173,7 @@ function manualBackupArkOS() {
 	if [ $? = 0 ]; then
 		# Delete ArkOS settings backup file
 		if [ $keep != 0 ]; then
-			sudo rm -v "${RETROARCH_CONTENT_ROOT}/backup/arkosbackup.tar.gz"
+			sudo rm -v "${BACKUP_DIR}/arkosbackup.tar.gz"
 		fi
 
 		return 0
@@ -444,7 +444,7 @@ function manualBackupArkOSScreen() {
 		whiptail \
 			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
-				"This will create a backup of your settings at ${RETROARCH_CONTENT_ROOT}/backup/arkosbackup.tar.gz. Do you want to keep this file after it is uploaded to ${REMOTE_CURRENT}?" \
+				"This will create a backup of your settings at ${BACKUP_DIR}/arkosbackup.tar.gz. Do you want to keep this file after it is uploaded to ${REMOTE_CURRENT}?" \
 				16 56
 
 		local keep=$?
