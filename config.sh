@@ -20,7 +20,7 @@ RETROARCHS=(\
 	"${USER_CONFIG_DIR}/retroarch" \
 	"${USER_CONFIG_DIR}/retroarch32"\
 )
-# @todo Get this from first retroarch.cfg above
+# Root directory where ROMs are stored
 RETROARCH_CONTENT_ROOT="/roms"
 
 ########

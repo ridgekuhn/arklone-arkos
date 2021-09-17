@@ -20,7 +20,7 @@ source "${ARKLONE_DIR}/rclone/scripts/helpers/logger.sh"
 # PREFLIGHT
 ###########
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
-LOG_FILE="/roms/backup/arklone/arklone-saves.log"
+LOG_FILE="${RETROARCH_CONTENT_ROOT}/backup/arklone/arklone-saves.log"
 
 logger "${LOG_FILE}"
 

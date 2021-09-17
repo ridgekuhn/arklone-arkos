@@ -10,7 +10,7 @@ source "./config.sh"
 # PREFLIGHT
 ###########
 # Use same log as "/opt/system/Advanced/Backup Settings.sh"
-LOG_FILE="/roms/backup/arkosbackup.log"
+LOG_FILE="${RETROARCH_CONTENT_ROOT}/backup/arkosbackup.log"
 
 # Delete old log
 if [ -f "${LOG_FILE}" ]; then
@@ -48,6 +48,6 @@ if [ $? != 0 ]; then
 else
 	# Sync backup to cloud
 	echo "Sending ArkOS backup to ${REMOTE_CURRENT}"
-	rclone copy /roms/backup/ ${REMOTE_CURRENT}:ArkOS/ -v --filter "+ arkosbackup*" --filter "- *"
+	rclone copy "${RETROARCH_CONTENT_ROOT}/backup/" "${REMOTE_CURRENT}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *"
 fi
 
