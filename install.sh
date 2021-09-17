@@ -40,8 +40,9 @@ ln -v -s "/roms/backup/rclone/rclone.conf" "${USER_CONFIG_DIR}/rclone/rclone.con
 # Grant permissions to scripts
 sudo chmod -v a+r+x "${ARKLONE_DIR}/uninstall.sh"
 sudo chmod -v a+r+x "${ARKLONE_DIR}/dialogs/settings.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/arklone-saves.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/arklone-arkos.sh"
+sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-saves.sh"
+sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-saves-boot.sh"
+sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-arkos-backup.sh"
 sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
 
 # Create user-accessible rclone dir on EASYROMS

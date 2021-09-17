@@ -25,14 +25,23 @@ function printMenu() {
 	done
 }
 
+# Get log file path
+#
+# Checks script for ${LOG_FILE} variable
+#
+# @param $1 {string} Path of script to look for ${LOG_FILE} declaration in
+#
+# @returns Path of $1's ${LOG_FILE}
+function getLogPath() {
+	local script=$1
+	echo $(awk '/^LOG_FILE/ { split($1, a, "="); gsub("\"", "", a[2]); print a[2]}' "${script}")
+}
+
 # Check if script is already running
 #
-# $log_file is passed in as an argument instead of detected in this function
-# for sanity when referencing the same $log_file in the caller function
+# @param $1 {string} Path to script
 #
-# @param $1 {string} executable command
-#
-# @param [$2] {string} path to log file
+# @param [$2] {string} Optional path to log file
 #
 # @returns 1 if $1 is an active process
 function alreadyRunning() {
@@ -41,16 +50,16 @@ function alreadyRunning() {
 	if [ ! -z "${2}" ]; then
 		local log_file="${2}"
 	else
-		local log_file=$(awk '/^LOG_FILE/ { split($1, a, "="); gsub("\"", "", a[2]); print a[2]}' "${ARKLONE_DIR}/rclone/scripts/${script}")
+		local log_file=$(getLogPath "${script}")
 	fi
 
-	local running=$(pgrep "${script}")
+	local running=$(pgrep "${script##*/}")
 
 	if [ ! -z "${running}" ]; then
 		whiptail \
 			--title "${WHIPTAIL_TITLE}" \
 			--yesno \
-				"${script} is already running. Would you like to see the 10 most recent lines of the log file?" \
+				"${script##*/} is already running. Would you like to see the 10 most recent lines of the log file?" \
 				16 60
 
 		if [ $? = 0 ]; then
@@ -132,7 +141,7 @@ function autoSyncSaves() {
 		done
 
 		# Enable boot sync service
-		sudo systemctl enable "${ARKLONE_DIR}/systemd/units/arkloned-boot-sync.service"
+		sudo systemctl enable "${ARKLONE_DIR}/systemd/units/arkloned-saves-sync-boot.service"
 
 		# Uncomment to regenerate RetroArch units
 		# eg, for subdirectories created after previous run
@@ -160,7 +169,7 @@ function autoSyncSaves() {
 function manualBackupArkOS() {
 	local keep="${1}"
 
-	"${ARKLONE_DIR}/rclone/scripts/${script}"
+	"${ARKLONE_DIR}/rclone/scripts/sync-arkos-backup.sh"
 
 	if [ $? = 0 ]; then
 		# Delete ArkOS settings backup file
@@ -342,12 +351,12 @@ function setCloudScreen() {
 
 # Manual sync savefiles/savestates dialog
 function manualSyncSavesScreen() {
-	local script="arklone-saves.sh"
-	local log_file=$(awk '/^LOG_FILE/ { split($1, a, "="); gsub("\"", "", a[2]); print a[2]}' "${ARKLONE_DIR}/rclone/scripts/${script}")
+	local script="${ARKLONE_DIR}/rclone/scripts/sync-saves.sh"
+	local log_file=$(getLogPath "${script}")
 	local instances=($(getRootInstanceNames))
 	local localdirs=$(for instance in ${instances[@]}; do filter="$(echo ${instance##*@} | awk -F '-' '/retroarch/ {$2!=""?str=$2:str=$1; str="("str")"; print str}')"; printf "${instance%@*@*}${filter} "; done)
 
-	alreadyRunning "${script}" "${log_file}"
+	alreadyRunning "${script}"
 
 	if [ $? != 0 ]; then
 		homeScreen
@@ -425,10 +434,10 @@ function autoSyncSavesScreen() {
 
 # Manual backup ArkOS settings screen
 function manualBackupArkOSScreen() {
-	local script="arklone-arkos.sh"
-	local log_file=$(awk '/^LOG_FILE/ { split($1, a, "="); gsub("\"", "", a[2]); print a[2]}' "${ARKLONE_DIR}/rclone/scripts/${script}")
+	local script="${ARKLONE_DIR}/rclone/scripts/sync-arkos-backup.sh"
+	local log_file=$(getLogPath "${script}")
 
-	alreadyRunning "${script}" "${log_file}"
+	alreadyRunning "${script}"
 
 	if [ $? != 0 ]; then
 		homeScreen

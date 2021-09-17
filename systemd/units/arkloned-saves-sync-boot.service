@@ -15,7 +15,7 @@ StandardInput=tty
 StandardOutput=tty
 StandardError=tty
 TTYPath=/dev/tty1
-ExecStart=/bin/bash -c '/opt/joy2key/listen.sh "/opt/arklone/rclone/scripts/boot-sync.sh"'
+ExecStart=/bin/bash -c '/opt/joy2key/listen.sh "/opt/arklone/rclone/scripts/sync-saves-boot.sh"'
 
 [Install]
 WantedBy=multi-user.target
