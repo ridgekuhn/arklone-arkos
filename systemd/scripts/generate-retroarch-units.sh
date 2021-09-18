@@ -1,280 +1,87 @@
 #!/bin/bash
-# arklone retroarch systemd unit generator
+# arklone retroarch path unit generator
 # by ridgek
-########
-# CONFIG
-########
-source "./config.sh"
 
-#########
-# HELPERS
-#########
-# Check if a unit for this path and ${savetype} (filter) already exists
-#
-# @param $1 {string} The local directory to watch
-# @param $2 {string} The rclone filter in ${ARKLONE_DIR}/rclone/filters,
-# 	named "retroarch-${savetype}" (no extension)
-#
-# @returns 1 if a unit already exists
-function unitExists() {
-	local localDir="${1}"
-	local filter="${2}"
-	local existingUnits=($(find "${ARKLONE_DIR}/systemd/units/"*".path"))
+source "/opt/arklone/config.sh"
+source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
+source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
 
-	for existingUnit in ${existingUnits[@]}; do
-		local pathChanged=$(awk -F '=' '/PathChanged/ {print $2}' "${existingUnit}")
-		local escInstanceName=$(awk -F "=" '/Unit/ {split($2, arr, "arkloned@"); print arr[2]}' "${existingUnit}")
-		local existingFilter=$(systemd-escape -u -- "${escInstanceName}" | awk -F '@' '{split($3, arr, ".service"); print arr[1]}')
+# Get array of all retroarch.cfg instances
+RETROARCHS=(${ARKLONE[retroarchCfg]})
 
-		if [ "${pathChanged}" = "${localDir}" ]; then
-			if [ "${existingFilter}" = "${filter}" ] \
-				|| [ ! -z ${existingFilter} ] \
-				&& [ -z ${filter##$existingFilter*} ]
-			then
-				return 1
-			fi
-		fi
-	done
-}
+# Get list of subdirs to ignore
+IGNORE_DIRS="${ARKLONE[installDir]}/systemd/scripts/includes/arkos-retroarch-content-root.ignore"
 
-# Make a new path unit
-#
-# If ! -z ${AUTOSYNC}, also enables and starts the new unit
-#
-# @param $1 {string} Absolute path to the new unit file. Must end in .auto.path
-# @param $2 {string} The directory to watch for changes
-# @param $3 {string} The remote directory to sync rclone to
-# @param [$4] {string} The rclone filter in ${ARKLONE_DIR}/rclone/filters (no extension)
-function makePathUnit() {
-	local newUnit="${1}"
-	local localDir="${2}"
-	local remoteDir="${3}"
-	local filter="${4}"
+# @todo We should also be able to support screenshots and systemfiles
+#		because they use the same naming scheme in retroarch.cfg
+FILETYPES=("savefile" "savestate")
 
-	local instanceName=$(systemd-escape "${localDir}@${remoteDir}@${filter}")
+Remove old units
+# @todo pass an arg to script to run
+deletePathUnits "$(find "${ARKLONE[installDir]}/systemd/units/arkloned-retroarch"*".auto.path" 2>/dev/null)"
 
-	# Skip if a unit already exists for this path
-	unitExists "${localDir}" "${filter}"
+# Loop through retroarch instances
+for retroarchCfg in ${RETROARCHS[@]}; do
+	# Get the retroarch instance's config directory
+	# @todo see if I even use this
+	retroarchCfgDir="$(dirname "${retroarchCfg}")"
 
-	if [ $? != 0 ]; then
-		echo "A path unit for ${localDir} using ${filter}.filter already exists. Skipping..."
-		return
-	fi
+	# Get the retroarch instance's basename
+	# eg, retroarch or retroarch32
+	retroarchBasename="$(basename "${retroarchCfgDir}")"
 
-	# Generate new unit
-	echo "Generating new path unit: ${newUnit}"
-	sudo cat <<EOF > "${newUnit}"
-[Path]
-PathChanged=${localDir}
-Unit=arkloned@${instanceName}.service
+	# Create an array to hold retroarch.cfg settings plus a few of our own
+	declare -A r
 
-[Install]
-WantedBy=multi-user.target
-EOF
+	# Load relevant settings into r
+	# Last param passed to loadConfig()
+	# is ${FILETYPES[@]} as a pipe | delimited list.
+	# The pipes will become regex OR operators passed to grep
+	# @see functions/loadConfig.sh
+	loadConfig "${retroarchCfg}" r "$(tr ' ' '|' <<<"${FILETYPES[@]}")"
 
-	# Enable unit if auto-syncing is enabled
-	if [ ! -z "${AUTOSYNC}" ]; then
-		sudo systemctl enable "${newUnit}" \
-			&& sudo systemctl start "${newUnit##*/}"
-	fi
-}
+	for filetype in ${FILETYPES[@]}; do
+		# If ${filetype}s_in_content_dir is enabled, it supercedes the other relevant settings
+		# and ${filetype} will always appear next to the corresponding content file
+		#
+		# @todo I hate this syntax, is there anything that can be done about it?
+		# Check if = "true" because it's a string, not an actual boolean
+		if [ "${r[${filetype}s_in_content_dir]}" = "true" ]; then
+			# Save/append the content dir parent filter string
+			# so we can do newPathUnitsFromDir()
+			# in one shot without waiting to check for duplicate units
+			r[content_directory_filter]+="${filetype}|"
 
-# Recurse directory and make path units for subdirectories
-#
-# @param $1 {string} Absolute path to the directory to recurse
-# @param $2 {string} Remote directory root path
-# @param $3 {string} The rclone filter in ${ARKLONE_DIR}/rclone/filters (no extension)
-# @param [$4] {string} Absolute path to list of directory names to ignore
-function makeSubdirPathUnits() {
-	local subdirs=$(find "${1}" -mindepth 1 -maxdepth 1 -type d)
-	local remoteDir="${2}"
-	local filter="${3}"
-	local ignoreList="${4}"
+			# Continue to next filetype, we will generate the content dir units last
+			continue
 
-	local ignoreDirs=($(cat "${ignoreList}" 2>/dev/null))
-
-	# Workaround for subdirectory names with spaces
-	local OIFS="$IFS"
-	IFS=$'\n'
-
-	for subdir in ${subdirs[@]}; do
-		local unit="${ARKLONE_DIR}/systemd/units/arkloned-${remoteDir//\//-}-$(basename "${subdir//\ /_}").sub.auto.path"
-
-		# Skip non-RetroArch subdirs
-		if [ ! -z "${ignoreDirs}" ]; then
-			local skipDir=false
-
-			for ignoreDir in ${ignoreDirs[@]}; do
-				if [ -z "${subdir##*/$ignoreDir}" ]; then
-					skipDir=true
-				fi
-			done
-
-			if [ "${skipDir}" = "true" ]; then
-				echo "${subdir} is in ignore list: ${ignoreList}. Skipping..."
-				continue
-			fi
-		fi
-
-		makePathUnit "${unit}" "${subdir}" "${remoteDir}/${subdir##*/}" "${filter}"
-	done
-
-	# Reset workaround for directory names with spaces
-	IFS="$OIFS"
-}
-
-#####
-# RUN
-#####
-OLD_UNITS=($(find "${ARKLONE_DIR}/systemd/units/arkloned-retroarch"*".auto.path" 2>/dev/null))
-IGNORE_DIRS="${ARKLONE_DIR}/systemd/scripts/retroarch-roms.ignore"
-
-# Remove old units
-if [ ! -z "${OLD_UNITS}" ]; then
-	echo "Cleaning up old path units..."
-
-	for OLD_UNIT in ${OLD_UNITS[@]}; do
-		linked=$(systemctl list-unit-files | awk -v OLD_UNIT="${OLD_UNIT##*/}" '$0~OLD_UNIT {print $1}')
-
-		printf "\nRemoving old unit: ${OLD_UNIT##*/}...\n"
-
-		if [ ! -z "${linked}" ]; then
-			sudo systemctl disable "${OLD_UNIT##*/}"
-		fi
-
-		sudo rm -v "${OLD_UNIT}"
-	done
-fi
-
-# Make RetroArch content path units
-for retroarch_dir in ${RETROARCHS[@]}; do
-	# Get retroarch or retroarch32
-	retroarch=${retroarch_dir##*/}
-	savetypes=("savefile" "savestate")
-
-	savefiles_in_content_dir=$(awk '/savefiles_in_content_dir/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-	savestates_in_content_dir=$(awk '/savestates_in_content_dir/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-
-	savefile_directory=$(awk -v homeDir="/home/${USER}" '/savefile_directory/ {gsub("\"","",$3); gsub("~",homeDir,$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-	savestate_directory=$(awk -v homeDir="/home/${USER}" '/savestate_directory/ {gsub("\"","",$3); gsub("~",homeDir,$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-
-	sort_savefiles_enable=$(awk '/sort_savefiles_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-	sort_savestates_enable=$(awk '/sort_savestates_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-
-	# @TODO `sort_${savetype}s_by_content_enable = "true"`
-	#		works in ArkOS, but appears to have no effect on the default
-	#		Windows, MacOS, and Debian binaries,
-	#		so we are not supporting it at this time.
-	#
-	#		If this changes, we will have to rewrite all code which follows.
-	#
-	#		The expected behavior is:
-	#
-	#		`sort_${savetype}s_by_content_enable = "true"`
-	#		`sort_${savetype}s_enable = "false"`
-	#		Save directory: ${savetype_directory}/${system}
-	#
-	#		`sort_${savetype}s_by_content_enable = "true"`
-	#		`sort_${savetype}s_enable = "true"`
-	#		Save directory: ${savetype_directory}/${system}/${libRetroCore}
-	sort_savefiles_by_content_enable=$(awk '/sort_savefiles_by_content_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-	sort_savestates_by_content_enable=$(awk '/sort_savestates_by_content_enable/ {gsub("\"","",$3); print $3}' "${retroarch_dir}/retroarch.cfg")
-
-	if [ "$sort_savefiles_by_content_enable" = "true" ] \
-		|| [ "$sort_savestates_by_content_enable" = "true" ]; then
-		echo "sort_savefiles_by_content_enable and sort_savestates_by_content_enable are not supported by arklone. Please change these settings to "false" in ${retroarch_dir}/retroarch.cfg and try again."
-		exit 73
-	fi
-
-	#####################################################################
-	# Scenario 1:
-	# savefiles and savestates are both stored in the content directories
-	#####################################################################
-	if [ "$savefiles_in_content_dir" = "true" ] \
-		&& [ "$savestates_in_content_dir" = "true" ]
-	then
-		# Make RetroArch content root unit
-		unit="${ARKLONE_DIR}/systemd/units/arkloned-${retroarch}-${RETROARCH_CONTENT_ROOT##*/}.auto.path"
-		makePathUnit "${unit}" "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch"
-
-		# Make RetroArch content subdirectory units
-		makeSubdirPathUnits "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch" "${IGNORE_DIRS}"
-
-		# Go to next ${retroarch_dir}
-		continue
-	fi
-
-	#########################################################################
-	# Scenario 2:
-	# savefiles and savestates are in the same directory,
-	# but outside the content directory
-	#########################################################################
-	if [ "$savefiles_in_content_dir" != "true" ] \
-		&& [ "$savestates_in_content_dir" != "true" ] \
-		&& [ "${savefile_directory}" = "${savestate_directory}" ]
-	then
-		# Make RetroArch save root unit
-		unit="${ARKLONE_DIR}/systemd/units/arkloned-${retroarch}-${savefile_directory##*/}.auto.path"
-		makePathUnit "${unit}" "${savefile_directory}" "${retroarch}/${savefile_directory##*/}" "retroarch"
-
-		########################################
-		# Scenario 2A:
-		# savefiles and savestates are sorted
-		# and saved into the same subdirectories
-		########################################
-		if [ "${sort_savefiles_enable}" = "true" ] \
-			&& [ "${sort_savestates_enable}" = "true" ]
+		# These settings combined means files are organized
+		# by subdirectories named after the corresponding content dir,
+		# then by another level named after the retroarch core
+		# that generated the file
+		# eg,
+		# "${r[${filetype}_directory]}/nes/FCEUmm"
+		elif
+			[ "${r[sort_${filetype}s_by_content_enable]}" = "true" ] \
+			&& [ "${r[sort_${filetype}s_enable]}" = "true" ]
 		then
-			makeSubdirPathUnits "${savefile_directory}" "${retroarch}/${savefile_directory##*/}" "retroarch"
+			# This will be passed to find's -mindepth -maxdepth options,
+			# where depth 0 recurses the working directory (and lists subdirs),
+			# and depth 1 recurses subdirectories and lists sub-subdirs
+			r[${filetype}_directory_depth]=1
 
-		#################################################
-		# Scenario 2B
-		# only one of savefiles and savestates are sorted
-		#################################################
-		elif [ "${sort_savefiles_enable}" = "true" ] \
-			|| [ "${sort_savestates_enable}" = "true" ]
-		then
-			for savetype in ${savetypes[@]}; do
-				sort_savetypes_enable="sort_${savetype}s_enable"
-
-				if [ "${!sort_savetypes_enable}" = "true" ]; then
-					makeSubdirPathUnits "${savefile_directory}" "${retroarch}/${savefile_directory##*/}" "retroarch-${savetype}"
-				fi
-			done
-		fi
-
-		# Go to next ${retroarch_dir}
-		continue
-	fi
-
-	##########################################################
-	# Scenario 3:
-	# Savefiles and savestates are NOT in the same directories
-	##########################################################
-	for savetype in ${savetypes[@]}; do
-		# Get settings from ${retroarch}/retroarch.cfg
-		savetypes_in_content_dir="${savetype}s_in_content_dir"
-		savetype_directory="${savetype}_directory"
-		sort_savetypes_enable="sort_${savetype}s_enable"
-
-		# Make RetroArch content directory units
-		if [ "${!savetypes_in_content_dir}" = "true" ]; then
-			# Make RetroArch content root unit
-			unit="${ARKLONE_DIR}/systemd/units/arkloned-${retroarch}-${RETROARCH_CONTENT_ROOT##*/}-${savetype}s.auto.path"
-			makePathUnit "${unit}" "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch-${savetype}"
-
-			# Make RetroArch content subdirectory units
-			makeSubdirPathUnits "${RETROARCH_CONTENT_ROOT}" "${retroarch}/${RETROARCH_CONTENT_ROOT##*/}" "retroarch-${savetype}" "${IGNORE_DIRS}"
-
-		# Make ${savetype_directory} units
 		else
-			# Make ${savetype_directory} root path unit
-			unit="${ARKLONE_DIR}/systemd/units/arkloned-${retroarch}-${savetype}s.auto.path"
-			makePathUnit "${unit}" "${!savetype_directory}" "${retroarch}/${savetype}s" "retroarch-${savetype}"
-
-			if [ "${!sort_savetypes_enable}" = "true" ]; then
-				makeSubdirPathUnits "${!savetype_directory}" "${retroarch}/${savetype}s" "retroarch-${savetype}"
-			fi
+			r[${filetype}_directory_depth]=0
 		fi
+
+		# Process the ${filetype} directory
+		newPathUnitsFromDir "${r[${filetype}_directory]}" "${retroarchBasename}/$(basename "${r[${filetype}_directory]}")" "${r[${filetype}_directory_depth]}" true "retroarch-${filetype}"
 	done
+
+	# Process the retroarch content root
+	# @todo ArkOS-specific
+	if [ ${r[content_directory_filter]} ]; then
+		newPathUnitsFromDir "${ARKLONE[retroarchContentRoot]}" "${retroarchBasename}" 0 true "${r[content_directory_filter]}" "arkos-retroarch-content-root.ignore"
+	fi
 done

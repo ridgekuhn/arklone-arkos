@@ -1,29 +1,14 @@
 #!/bin/bash
 # ArkOS Backup Settings to Cloud
 # By ridgek
-########
-# CONFIG
-########
-source "./config.sh"
+source "/opt/arklone/config.sh"
+source "${ARKLONE[installDir]}/functions/logger.sh"
 
 ###########
 # PREFLIGHT
 ###########
 # Use same log as "/opt/system/Advanced/Backup Settings.sh"
-LOG_FILE="${BACKUP_DIR}/arkosbackup.log"
-
-# Delete old log
-if [ -f "${LOG_FILE}" ]; then
-	rm -f "${LOG_FILE}"
-fi
-
-# Begin logging
-if touch "${LOG_FILE}"; then
-	exec &> >(tee -a "${LOG_FILE}")
-else
-	echo "Could not open log file. Exiting..."
-	exit 1
-fi
+logger "${ARKLONE[backupDir]}/arkosbackup.log"
 
 #####
 # RUN
@@ -47,7 +32,7 @@ if [ $? != 0 ]; then
 	exit 1
 else
 	# Sync backup to cloud
-	echo "Sending ArkOS backup to ${REMOTE_CURRENT}"
-	rclone copy "${BACKUP_DIR}/" "${REMOTE_CURRENT}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *"
+	echo "Sending ArkOS backup to ${ARKLONE[remote]}"
+	rclone copy "${ARKLONE[backupDir]}/" "${ARKLONE[remote]}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *"
 fi
 

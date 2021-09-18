@@ -8,7 +8,7 @@ Type=oneshot
 User=ark
 Group=ark
 StandardOutput=journal+console
-ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/sync-saves.sh %I"
+ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/send-and-receive-saves.sh %I"
 
 [Install]
 WantedBy=multi-user.target

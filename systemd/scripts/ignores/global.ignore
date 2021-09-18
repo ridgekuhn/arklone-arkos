@@ -1,0 +1,7 @@
+.DS_Store*
+.fseventsd
+.git*
+.Spotlight*
+.TemporaryItems
+.Trashes
+backup

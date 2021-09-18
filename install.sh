@@ -4,7 +4,7 @@
 ########
 # CONFIG
 ########
-source "./config.sh"
+source "/opt/arklone/config.sh"
 
 ##############
 # DEPENDENCIES
@@ -14,20 +14,23 @@ if ! rclone --version &> /dev/null; then
 	sudo apt update && sudo apt install rclone -y || (echo "Could not install required dependencies" && exit 1)
 fi
 
-# Create backup dir in ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${BACKUP_DIR}" ]; then
-	sudo mkdir "${BACKUP_DIR}"
-	sudo chown "${USER}":"${USER}" "${BACKUP_DIR}"
+# Create backup dir, from user setting in ${ARKLONE[userCfgDir]/arklone.cfg}
+# ArkOS default is /roms/backup
+# Should be somewhere easily-accessible for non-Linux users,
+# like a FAT partition or samba share
+if [ ! -d "${ARKLONE[backupDir]}" ]; then
+	sudo mkdir "${ARKLONE[backupDir]}"
+	sudo chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
 fi
 
-# Create user-accessible rclone dir on ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${BACKUP_DIR}" ]; then
-	sudo mkdir "${BACKUP_DIR}"
+# Create user-accessible rclone dir in ${ARKLONE[backupDir]}
+if [ ! -d "${ARKLONE[backupDir]}/rclone" ]; then
+	sudo mkdir "${ARKLONE[backupDir]}/rclone"
 fi
 
 # Create user-accessible rclone.conf on ${RETROARCH_CONTENT_ROOT}
-if [ ! -f "${BACKUP_DIR}/rclone/rclone.conf" ]; then
-	sudo touch "${BACKUP_DIR}/rclone/rclone.conf"
+if [ ! -f "${ARKLONE[backupDir]}/rclone/rclone.conf" ]; then
+	sudo touch "${ARKLONE[backupDir]}/rclone/rclone.conf"
 fi
 
 # Create rclone user config dir
@@ -38,27 +41,28 @@ sudo chown -R "${USER}":"${USER}" "${HOME}/.config/rclone"
 sudo chmod -R 777 "${HOME}/.config/rclone"
 
 # Link user-accessible rclone.conf so rclone can find it
-ln -v -s "${BACKUP_DIR}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
+ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
 
 #########
 # arklone
 #########
 # Grant permissions to scripts
-sudo chmod -v a+r+x "${ARKLONE_DIR}/uninstall.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/dialogs/settings.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-saves.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-saves-boot.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/rclone/scripts/sync-arkos-backup.sh"
-sudo chmod -v a+r+x "${ARKLONE_DIR}/systemd/scripts/generate-retroarch-units.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/uninstall.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/dialogs/settings.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-saves.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-saves-boot.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-arkos-backup.sh"
+sudo chmod -v a+r+x "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 
 # Create user-accessible rclone dir on ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${BACKUP_DIR}/arklone" ]; then
-	sudo mkdir "${BACKUP_DIR}/arklone"
+if [ ! -d "${ARKLONE[backupDir]}/arklone" ]; then
+	sudo mkdir "${ARKLONE[backupDir]}/arklone"
 fi
 
 # Create arklone user config dir
-if [ ! -d "${HOME}/.config/arklone" ]; then
-	sudo mkdir "${HOME}/.config/arklone"
+if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
+	sudo mkdir "${ARKLONE[userCfgDir]}"
 fi
-sudo chown -R "${USER}":"${USER}" "${HOME}/.config/arklone"
-sudo chmod -R a+r+w "${HOME}/.config/arklone"
+sudo chown -R "${USER}":"${USER}" "${ARKLONE[userCfgDir]}"
+sudo chmod -R a+r+w "${ARKLONE[userCfgDir]}"
+cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfgDir]}/arklone.cfg"

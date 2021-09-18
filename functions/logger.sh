@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Log output to file
 #
 # Deletes old log file if older than system uptime,
@@ -7,7 +6,7 @@
 #
 # @param $1 {string} Path to log file
 function logger() {
-	local log_file=$1
+	local log_file="${1}"
 
 	# Delete log if last modification is older than system uptime
 	if [ -f "${log_file}" ] \

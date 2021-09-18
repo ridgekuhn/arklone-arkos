@@ -4,7 +4,7 @@
 ########
 # CONFIG
 ########
-source "./config.sh"
+source "/opt/arklone/config.sh"
 
 ###########
 # PREFLIGHT
@@ -22,7 +22,7 @@ if [ ! -z "${UNITS}" ]; then
 fi
 
 # Remove arklone user config dir
-sudo rm -r "${HOME}/.config/arklone"
+sudo rm -r "${ARKLONE[userCfgDir]}"
 
 # Print confirmation
 echo "======================================================================"

@@ -1,42 +1,38 @@
 #!/bin/bash
-#############
-# INSTALL DIR
-#############
-ARKLONE_DIR="/opt/arklone"
+source "/opt/arklone/functions/loadConfig.sh"
 
-###########
-# RETROARCH
-###########
-# All paths containing a retroarch.cfg
-RETROARCHS=(\
-	"${HOME}/.config/retroarch" \
-	"${HOME}/.config/retroarch32"\
+# Set default settings
+declare -A ARKLONE
+ARKLONE=(
+	# Install Paths
+	[installDir]="/opt/arklone"
+	[userCfgDir]="${HOME}/.config/arklone"
+	# [backupDir]="/roms/backup"
+
+	# Configs
+	[userCfg]="${ARKLONE[userCfgDir]}/arklone.cfg"
+
+	# Dirty boot lock file
+	# @todo @see
+	[dirtyBoot]="${ARKLONE[userCfgDir]}/dirtyboot"
+
+	# rclone
+	# [rcloneConf]="/home/ark/.config/rclone/rclone.conf"
+	# [remote]=""
+
+	# Log
+	# [log]="/dev/shm/arklone.log"
+
+	# RetroArch
+	# [retroarchContentRoot]="/roms"
+
+	# systemd
+	[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
+
+	# Whiptail settings
+	[whiptailTitle]="arklone cloud sync utility"
 )
-# Root directory where ROMs are stored
-RETROARCH_CONTENT_ROOT="/roms"
 
-########
-# RCLONE
-########
-REMOTES=$(rclone listremotes | awk -F : '{print $1}')
+# Load the user's config file
+loadConfig "${ARKLONE[userCfg]}" ARKLONE
 
-#########
-# ARKLONE
-#########
-# Directory for storing system backup files, logs, rclone.conf, etc
-# Should be an easily-accessible directory for non-Linux users,
-# eg, a FAT partition or samba share
-BACKUP_DIR="${RETROARCH_CONTENT_ROOT}/backup"
-
-WHIPTAIL_TITLE="arklone cloud sync utility"
-
-# Array of all enabled Arklone systemd path units
-AUTOSYNC=($(systemctl list-unit-files | awk '/arkloned/ && /enabled/ {print $1}'))
-
-# File containing currently selected remote
-REMOTE_CONF="${HOME}/.config/arklone/remote.conf"
-# String containing contents of ${REMOTE_CONF}
-REMOTE_CURRENT=$(awk '{print $1}' "${REMOTE_CONF}" 2>/dev/null)
-
-# Change working directory to install directory
-cd "${ARKLONE_DIR}"

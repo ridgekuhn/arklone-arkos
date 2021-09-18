@@ -1,0 +1,6 @@
+backupDir="/roms/backup"
+retroarchContentRoot="/roms"
+retroarchCfg="/home/ark/.config/retroarch/retroarch.cfg /home/ark/.config/retroarch32/retroarch.cfg"
+log="/dev/shm/arklone.log"
+rcloneConf="/home/ark/.config/rclone/rclone.conf"
+remote=""
