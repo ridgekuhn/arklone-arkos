@@ -1,68 +1,73 @@
 #!/bin/bash
 # arklone installation script
 # by ridgek
-########
-# CONFIG
-########
 source "/opt/arklone/config.sh"
 
-##############
-# DEPENDENCIES
-##############
-# Install rclone
-if ! rclone --version &> /dev/null; then
-	sudo apt update && sudo apt install rclone -y || (echo "Could not install required dependencies" && exit 1)
+############
+# FILESYSTEM
+############
+# Create arklone user config dir
+# eg,
+# /home/user/.config/arklone
+if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
+	mkdir "${ARKLONE[userCfgDir]}"
 fi
 
-# Create backup dir, from user setting in ${ARKLONE[userCfgDir]/arklone.cfg}
+# Copy default config to user config path
+cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfgDir]}/arklone.cfg"
+
+# Create backup dir from user setting in ${ARKLONE[userCfg]}
 # ArkOS default is /roms/backup
 # Should be somewhere easily-accessible for non-Linux users,
 # like a FAT partition or samba share
+# @todo ArkOS specific
 if [ ! -d "${ARKLONE[backupDir]}" ]; then
-	sudo mkdir "${ARKLONE[backupDir]}"
-	sudo chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
+	mkdir "${ARKLONE[backupDir]}"
+	chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
+
+	# Create a lock file so we know if we can safely delete on uninstall
+	touch "${ARKLONE[userCfgDir]}/.backupDir.lock"
 fi
 
-# Create user-accessible rclone dir in ${ARKLONE[backupDir]}
+if [ ! -d "${ARKLONE[backupDir]}/arklone" ]; then
+	mkdir "${ARKLONE[backupDir]}/arklone"
+fi
+
 if [ ! -d "${ARKLONE[backupDir]}/rclone" ]; then
-	sudo mkdir "${ARKLONE[backupDir]}/rclone"
+	mkdir "${ARKLONE[backupDir]}/rclone"
 fi
 
-# Create user-accessible rclone.conf on ${RETROARCH_CONTENT_ROOT}
-if [ ! -f "${ARKLONE[backupDir]}/rclone/rclone.conf" ]; then
-	sudo touch "${ARKLONE[backupDir]}/rclone/rclone.conf"
+########
+# RCLONE
+########
+# Install rclone
+if ! rclone --version &> /dev/null; then
+	sudo apt update && sudo apt install rclone -y || (echo "Could not install required dependencies" && exit 1)
+else
+	# Set a lock file so we can know to restore user's settings on uninstall
+	touch "${ARKLONE[userCfgDir]}/.rclone.lock"
+
+	# Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
+	if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
+		cp "${HOME}/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
+		mv "${HOME}/.config/rclone/rclone.conf" "${ARKLONE[backupDir]}/rclone/rclone.conf"
+	fi
 fi
 
-# Create rclone user config dir
-if [ ! -d "${HOME}/.config/rclone" ]; then
-	sudo mkdir "${HOME}/.config/rclone"
-fi
-sudo chown -R "${USER}":"${USER}" "${HOME}/.config/rclone"
-sudo chmod -R 777 "${HOME}/.config/rclone"
-
-# Link user-accessible rclone.conf so rclone can find it
+# Create user-accessible rclone.conf in ${ARKLONE[backupDir]}
+# and symlink it to the default rclone location
+touch "${ARKLONE[backupDir]}/rclone/rclone.conf"
 ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
 
 #########
-# arklone
+# ARKLONE
 #########
-# Grant permissions to scripts
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/uninstall.sh"
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/dialogs/settings.sh"
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-saves.sh"
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-saves-boot.sh"
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/rclone/scripts/sync-arkos-backup.sh"
-sudo chmod -v a+r+x "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+# Make scripts executable
+SCRIPTS=($(find /opt/arklone/ -type f -name "*.sh"))
+for script in ${SCRIPTS[@]}; do
+	sudo chmod a+x "${script}"
+done
 
-# Create user-accessible rclone dir on ${RETROARCH_CONTENT_ROOT}
-if [ ! -d "${ARKLONE[backupDir]}/arklone" ]; then
-	sudo mkdir "${ARKLONE[backupDir]}/arklone"
-fi
+# Make systemd units directory writeable for user
+sudo chown ${USER}:${USER} "${ARKLONE[installDir]/systemd/units}"
 
-# Create arklone user config dir
-if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
-	sudo mkdir "${ARKLONE[userCfgDir]}"
-fi
-sudo chown -R "${USER}":"${USER}" "${ARKLONE[userCfgDir]}"
-sudo chmod -R a+r+w "${ARKLONE[userCfgDir]}"
-cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfgDir]}/arklone.cfg"
