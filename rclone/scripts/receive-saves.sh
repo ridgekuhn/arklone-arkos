@@ -30,18 +30,18 @@ arkloneLogger "${ARKLONE[log]}"
 
 for instance in ${INSTANCES[@]}; do
 	# Read paths from instance name
-	local localdir remote dir filter
+	localdir remote dir filter
 	IFS="@" read -r localdir remotedir filter <<< "${instance}"
 
 	# Set global filter file
-	local filterstring="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
+	filterstring="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
 
 	# Append unit-specific filter file (if specified in the instance name)
 	if [ ! -z "${filter}" ]; then
 		filterstring="${filterstring} --filter-from ${ARKLONE[installDir]}/rclone/filters/${filter}.filter"
 	fi
 
-	local rcloneExitCode=0
+	rcloneExitCode=0
 
 	printf "\n======================================================\n"
 	echo "Started new cloud sync at $(date)"
