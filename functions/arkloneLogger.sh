@@ -5,7 +5,7 @@
 # or appends to log if valid for this session
 #
 # @param $1 {string} Path to log file
-function logger() {
+function arkloneLogger() {
 	local log_file="${1}"
 
 	# Delete log if last modification is older than system uptime

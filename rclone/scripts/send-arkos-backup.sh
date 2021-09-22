@@ -2,13 +2,13 @@
 # ArkOS Backup Settings to Cloud
 # By ridgek
 source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/logger.sh"
+source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
 ###########
 # PREFLIGHT
 ###########
 # Use same log as "/opt/system/Advanced/Backup Settings.sh"
-logger "${ARKLONE[backupDir]}/arkosbackup.log"
+arkloneLogger "${ARKLONE[backupDir]}/arkosbackup.log"
 
 #####
 # RUN

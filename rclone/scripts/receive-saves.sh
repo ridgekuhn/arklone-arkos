@@ -3,7 +3,7 @@
 # by ridgek
 # @todo only source if doesn't exist
 source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/logger.sh"
+source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 #############
@@ -26,7 +26,7 @@ source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh
 INSTANCES=($(getRootInstanceNames))
 EXIT_CODE=0
 
-logger "${ARKLONE[log]}"
+arkloneLogger "${ARKLONE[log]}"
 
 for instance in ${INSTANCES[@]}; do
 	# Read paths from instance name

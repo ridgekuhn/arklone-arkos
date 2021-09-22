@@ -18,14 +18,14 @@ source "/opt/arklone/config.sh"
 #########
 # HELPERS
 #########
-source "${ARKLONE[installDir]}/functions/logger.sh"
+source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
 ###########
 # PREFLIGHT
 ###########
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
 
-logger "${ARKLONE[log]}"
+arkloneLogger "${ARKLONE[log]}"
 
 printf "\n======================================================\n"
 echo "Started new cloud sync at $(date)"
