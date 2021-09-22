@@ -48,7 +48,7 @@ for instance in ${INSTANCES[@]}; do
 	echo "------------------------------------------------------"
 
 	echo "Receiving ${ARKLONE[remote]}:${remotedir}/ to ${localdir}/"
-	rclone copy "${ARKLONE[remote]}:${remotedir}/" "${localdir}/" ${filterstring} -u -v
+	rclone copy "${ARKLONE[remote]}:${remotedir}/" "${localdir}/" ${filterstring} -u -v --config "${ARKLONE[rcloneConf]}"
 
 	rcloneExitCode=$?
 

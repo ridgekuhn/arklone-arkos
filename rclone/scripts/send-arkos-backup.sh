@@ -33,6 +33,6 @@ if [ $? != 0 ]; then
 else
 	# Sync backup to cloud
 	echo "Sending ArkOS backup to ${ARKLONE[remote]}"
-	rclone copy "${ARKLONE[backupDir]}/" "${ARKLONE[remote]}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *"
+	rclone copy "${ARKLONE[backupDir]}/" "${ARKLONE[remote]}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *" --config "${ARKLONE[rcloneConf]}"
 fi
 
