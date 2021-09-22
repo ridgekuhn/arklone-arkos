@@ -1,6 +1,8 @@
 #!/bin/bash
 # arklone retroarch path unit generator
 # by ridgek
+#
+# @param [$1] {boolean} Optionally delete all retroarch path units first
 
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/loadConfig.sh"
@@ -17,9 +19,10 @@ IGNORE_DIRS="${ARKLONE[installDir]}/systemd/scripts/includes/arkos-retroarch-con
 #		because they use the same naming scheme in retroarch.cfg
 FILETYPES=("savefile" "savestate")
 
-Remove old units
-# @todo pass an arg to script to run
-deletePathUnits "$(find "${ARKLONE[installDir]}/systemd/units/arkloned-retroarch"*".auto.path" 2>/dev/null)"
+# Remove old retroarch units
+if [ $1 ]; then
+	deletePathUnits "$(find "${ARKLONE[installDir]}/systemd/units/arkloned-retroarch"*".auto.path" 2>/dev/null)"
+fi
 
 # Loop through retroarch instances
 for retroarchCfg in ${RETROARCHS[@]}; do

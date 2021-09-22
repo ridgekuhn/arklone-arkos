@@ -13,6 +13,5 @@ function editConfig() {
 	local newVal="${2}"
 	local cfg="${3}"
 
-	sed -i 's/^'${option}'.*=.*/'${option}'="'${newVal}'"/' "${3}"
+	sed -i 's|^'${option}'.*=.*|'${option}' = "'${newVal}'"|' "${3}"
 }
-

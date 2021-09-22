@@ -9,7 +9,7 @@ ARKLONE=(
 	[userCfgDir]="${HOME}/.config/arklone"
 	# [backupDir]="/roms/backup"
 
-	# Configs
+	# arklone config file
 	[userCfg]="${ARKLONE[userCfgDir]}/arklone.cfg"
 
 	# Dirty boot lock file
@@ -25,6 +25,7 @@ ARKLONE=(
 
 	# RetroArch
 	# [retroarchContentRoot]="/roms"
+	# [retroarchCfg]="/home/user/.config/retroarch/retroarch.cfg"
 
 	# systemd
 	[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
