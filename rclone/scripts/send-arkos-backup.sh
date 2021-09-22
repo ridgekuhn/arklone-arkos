@@ -1,21 +1,11 @@
 #!/bin/bash
 # ArkOS Backup Settings to Cloud
 # By ridgek
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
-###########
-# PREFLIGHT
-###########
 # Use same log as "/opt/system/Advanced/Backup Settings.sh"
 arkloneLogger "${ARKLONE[backupDir]}/arkosbackup.log"
-
-#####
-# RUN
-#####
-printf "\n======================================================\n"
-echo "Started new cloud sync at $(date)"
-echo "------------------------------------------------------"
 
 # Exit if no network routes configured
 if [ -z "$(ip route)" ]; then
@@ -23,9 +13,13 @@ if [ -z "$(ip route)" ]; then
 	exit 1
 fi
 
+printf "\n======================================================\n"
+echo "Started new cloud sync at $(date)"
+echo "------------------------------------------------------"
+
 # Run normal ArkOS settings backup script
 echo "Backing up your ArkOS settings..."
-bash "/opt/system/Advanced/Backup Settings.sh"
+. "/opt/system/Advanced/Backup Settings.sh"
 
 if [ $? != 0 ]; then
 	printf "\nCould not create backup file! Exiting...\n"

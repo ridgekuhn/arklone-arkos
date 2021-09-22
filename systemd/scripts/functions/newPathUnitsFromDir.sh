@@ -1,6 +1,6 @@
 #!/bin/bash
-# @todo only source if func doesn't exist
-source "/opt/arklone/systemd/scripts/functions/newPathUnit.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t newPathUnit)" = "function" ] || source "/opt/arklone/systemd/scripts/functions/newPathUnit.sh"
 
 #########
 # HELPERS

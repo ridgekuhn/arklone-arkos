@@ -1,5 +1,5 @@
 #!/bin/bash
-source "/opt/arklone/functions/loadConfig.sh"
+[ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
 
 # Set default settings
 declare -A ARKLONE

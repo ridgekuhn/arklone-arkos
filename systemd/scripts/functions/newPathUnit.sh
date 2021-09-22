@@ -1,4 +1,5 @@
 #!/bin/bash
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 #########
 # HELPERS
 #########

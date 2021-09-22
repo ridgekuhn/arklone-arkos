@@ -1,6 +1,6 @@
 #!/bin/bash
 # @returns exit code 65 for ArkOS exFAT bug
-source "/opt/arklone/config.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # @todo ArkOS exFAT bug
 #		A bug in ArkOS prevents systemd path units
@@ -41,7 +41,7 @@ AUTOSYNC=(${ARKLONE[autoSync]})
 if [ "${#AUTOSYNC[@]}" = 0 ]; then
 	# Generate new RetroArch path units if none exist
 	if ! find "${ARKLONE[installDir]}/systemd/units/"*"retroarch"*; then
-		"${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+		. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 	fi
 
 	# Get all path units

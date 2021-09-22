@@ -3,11 +3,10 @@
 # by ridgek
 #
 # @param [$1] {boolean} Optionally delete all retroarch path units first
-
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
-source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[ "$(type -t deletePathUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
+[ "$(type -t newPathUnitsFromDir)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
 
 # Get array of all retroarch.cfg instances
 RETROARCHS=(${ARKLONE[retroarchCfg]})

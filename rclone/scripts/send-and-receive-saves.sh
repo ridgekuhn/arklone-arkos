@@ -10,26 +10,20 @@
 #
 #	@usage
 #		${ARKLONE[installDir]}/rclone/scripts/sync-saves.sh "/roms@retroarch/roms"
-########
-# CONFIG
-########
-source "/opt/arklone/config.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
-#########
-# HELPERS
-#########
-source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
-
-###########
-# PREFLIGHT
-###########
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
 
-arkloneLogger "${ARKLONE[log]}"
+FILTERSTRING="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
 
-printf "\n======================================================\n"
-echo "Started new cloud sync at $(date)"
-echo "------------------------------------------------------"
+# Append unit-specific filters if specified
+if [ ! -z "${FILTER}" ]; then
+	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[installDir]}/rclone/filters/${FILTER}.filter"
+fi
+
+# Begin logging
+arkloneLogger "${ARKLONE[log]}"
 
 # Exit if no network routes configured
 if [ -z "$(ip route)" ]; then
@@ -37,14 +31,9 @@ if [ -z "$(ip route)" ]; then
 	exit 1
 fi
 
-#########################
-# SYNC SAVEFILES TO CLOUD
-#########################
-FILTERSTRING="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
-# Append unit-specific filters if specified
-if [ ! -z "${FILTER}" ]; then
-	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[installDir]}/rclone/filters/${FILTER}.filter"
-fi
+printf "\n======================================================\n"
+echo "Started new cloud sync at $(date)"
+echo "------------------------------------------------------"
 
 echo "Sending ${LOCALDIR}/ to ${ARKLONE[remote]}:${REMOTEDIR}/"
 rclone copy "${LOCALDIR}/" "${ARKLONE[remote]}:${REMOTEDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
@@ -52,7 +41,4 @@ rclone copy "${LOCALDIR}/" "${ARKLONE[remote]}:${REMOTEDIR}/" ${FILTERSTRING} -u
 echo "Receiving ${ARKLONE[remote]}:${REMOTEDIR}/ to ${LOCALDIR}/"
 rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
 
-##########
-# TEARDOWN
-##########
 echo "Finished cloud sync at $(date)"

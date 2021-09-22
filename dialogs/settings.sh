@@ -18,7 +18,7 @@ source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh
 function manualBackupArkOS() {
 	local keep="${1}"
 
-	"${ARKLONE[installDir]}/rclone/scripts/sync-arkos-backup.sh"
+	. "${ARKLONE[installDir]}/rclone/scripts/sync-arkos-backup.sh"
 
 	if [ $? = 0 ]; then
 		# Delete ArkOS settings backup file
@@ -87,7 +87,7 @@ function firstRunScreen() {
 				"Please wait while we configure your settings..." \
 				16 56 8
 
-		"${ARKLONE[installDir]}/retroarch/set-recommended-settings.sh"
+		. "${ARKLONE[installDir]}/retroarch/set-recommended-settings.sh"
 	fi
 
 	# Generate RetroArch systemd path units
@@ -116,7 +116,7 @@ function setCloudScreen() {
 	# Save user selection and reload config
 	if [ "${selection}" ]; then
 		editConfig "remote" "${remotes[$selection]}" "${ARKLONE[log]}"
-		arkloneConfigLoad
+		loadConfig "${ARKLONE[userCfg]}" ARKLONE
 	fi
 
 	homeScreen
@@ -147,7 +147,7 @@ function manualSyncSavesScreen() {
 			IFS="@" read -r localdir remotedir filter <<< "${instance}"
 
 			# Sync the local and remote directories
-			"${ARKLONE[installDir]}/rclone/scripts/${script}" "${instance}"
+			"${script}" "${instance}"
 
 			if [ $? = 0 ]; then
 				whiptail \
@@ -176,7 +176,7 @@ function autoSyncSavesScreen() {
 			"Please wait while we configure your settings..." \
 			16 56 8
 
-	"${ARKLONE[installDir]}/systemd/scripts/enable-disable-path-units.sh"
+	. "${ARKLONE[installDir]}/systemd/scripts/enable-disable-path-units.sh"
 
 	# Fix incompatible settings
 	if [ $? = 65 ]; then
@@ -199,7 +199,7 @@ function autoSyncSavesScreen() {
 
 			# Change user settings
 			for retroarchCfg in ${RETROARCHS[@]}; do
-				"${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}"
+				. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}"
 			done
 
 			autoSyncSavesScreen
@@ -265,7 +265,7 @@ function regenRAunitsScreen() {
 			"Please wait while we configure your settings..." \
 			16 56 8
 
-	"${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true
+	. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true
 
 	homeScreen
 }

@@ -1,4 +1,6 @@
 #!/bin/bash
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+
 # Check if script is already running
 #
 #	If a script is already running, user is shown ${ARKLONE[log]}

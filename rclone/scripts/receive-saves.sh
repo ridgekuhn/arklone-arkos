@@ -2,9 +2,9 @@
 # arklone cloud sync on boot
 # by ridgek
 # @todo only source if doesn't exist
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
-source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
+[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 #############
 # CONTROLLERS

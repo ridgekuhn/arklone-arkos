@@ -12,9 +12,9 @@
 # sort_savestates_by_content_enable = "false"
 
 # @param $1 {string} Path to retroarch.cfg
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
 
 # Get the path to retroarch.cfg
 RETROARCH_CFG="${1}"
