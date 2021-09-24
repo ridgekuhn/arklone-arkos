@@ -8,10 +8,44 @@
 [ "$(type -t deletePathUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
 [ "$(type -t newPathUnitsFromDir)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
 
+# @todo ArkOS-specific exFAT bug
+#		A bug in ArkOS prevents systemd path units
+#		from being able to reliably watch an exFAT partition.
+#		This means automatic syncing will not work if
+#		"savefiles_in_content_dir" or "savestates_in_content_dir"
+#		are enabled.
+#
+#		User will still be able to manually sync.
+#
+#		@see https://github.com/christianhaitian/arkos/issues/289
+
+# Check if an exFAT partition named EASYROMS is present
+if [ "$(lsblk -f | grep "EASYROMS" | cut -d ' ' -f 2)" = "exfat" ]; then
+	# Get array of retroarch.cfg instances
+	RETROARCH_CFGS=(${ARKLONE[retroarchCfg]})
+
+	# Loop through all retroarch.cfg instances
+	for retroarchCfg in ${RETROARCH_CFGS[@]}; do
+		# Store retroarch.cfg settings in an array
+		declare -A r
+		loadConfig "${retroarchCfg}" r "savefiles_in_content_dir|savestates_in_content_dir"
+
+		# Check for incompatible settings
+		if
+			[ "${r[savefiles_in_content_dir]}" = "true" ] \
+			|| [ "${r[savestates_in_content_dir]}" = "true" ]
+		then
+			echo "ERROR: Incompatible settings. Cannot generate retroarch path units."
+			exit 65
+		fi
+	done
+fi
+
 # Get array of all retroarch.cfg instances
 RETROARCHS=(${ARKLONE[retroarchCfg]})
 
 # Get list of subdirs to ignore
+# @todo ArkOS specific
 IGNORE_DIRS="${ARKLONE[installDir]}/systemd/scripts/includes/arkos-retroarch-content-root.ignore"
 
 # @todo We should also be able to support screenshots and systemfiles
@@ -20,18 +54,16 @@ FILETYPES=("savefile" "savestate")
 
 # Remove old retroarch units
 if [ $1 ]; then
-	deletePathUnits "$(find "${ARKLONE[installDir]}/systemd/units/arkloned-retroarch"*".auto.path" 2>/dev/null)"
+	deletePathUnits "$(find "${ARKLONE[unitsDir]}/arkloned-retroarch"*".auto.path" 2>/dev/null)"
 fi
 
 # Loop through retroarch instances
 for retroarchCfg in ${RETROARCHS[@]}; do
-	# Get the retroarch instance's config directory
-	# @todo see if I even use this
-	retroarchCfgDir="$(dirname "${retroarchCfg}")"
-
 	# Get the retroarch instance's basename
-	# eg, retroarch or retroarch32
-	retroarchBasename="$(basename "${retroarchCfgDir}")"
+	# eg,
+	# retroarchCfg="/path/to/retroarch32/retroarch.cfg"
+	# retroarchBasename="retroarch32"
+	retroarchBasename="$(basename "$(dirname "${retroarchCfg}")")"
 
 	# Create an array to hold retroarch.cfg settings plus a few of our own
 	declare -A r
@@ -53,7 +85,7 @@ for retroarchCfg in ${RETROARCHS[@]}; do
 			# Save/append the content dir parent filter string
 			# so we can do newPathUnitsFromDir()
 			# in one shot without waiting to check for duplicate units
-			r[content_directory_filter]+="${filetype}|"
+			r[content_directory_filter]+="retroarch-${filetype}|"
 
 			# Continue to next filetype, we will generate the content dir units last
 			continue

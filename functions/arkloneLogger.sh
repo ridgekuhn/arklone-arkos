@@ -6,18 +6,21 @@
 #
 # @param $1 {string} Path to log file
 function arkloneLogger() {
-	local log_file="${1}"
+	local logFile="${1}"
+	local deleteOldLog="${2}"
 
 	# Delete log if last modification is older than system uptime
-	if [ -f "${log_file}" ] \
-		&& [ $(($(date +%s) - $(date +%s -r "${log_file}"))) -gt $(awk -F . '{print $1}' "/proc/uptime") ]
+	if
+		[ "${deleteOldLog}" = "true" ] \
+		&& [ -f "${logFile}" ] \
+		&& [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(awk -F . '{print $1}' "/proc/uptime") ]
 	then
-		rm -f "${log_file}"
+		rm -f "${logFile}"
 	fi
 
 	# Begin logging
-	if touch "${log_file}"; then
-		exec &> >(tee -a "${log_file}")
+	if touch "${logFile}"; then
+		exec &> >(tee -a "${logFile}")
 	else
 		echo "ERROR: Could not open log file..."
 		return 1

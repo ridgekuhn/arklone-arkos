@@ -126,6 +126,7 @@ function setCloudScreen() {
 function manualSyncSavesScreen() {
 	local script="${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh"
 	local instances=($(getRootInstanceNames))
+	# @todo this is a mess
 	local localdirs=$(for instance in ${instances[@]}; do filter="$(echo ${instance##*@} | awk -F '-' '/retroarch/ {$2!=""?str=$2:str=$1; str="("str")"; print str}')"; printf "${instance%@*@*}${filter} "; done)
 
 	alreadyRunning "${script}"
@@ -176,36 +177,12 @@ function autoSyncSavesScreen() {
 			"Please wait while we configure your settings..." \
 			16 56 8
 
-	. "${ARKLONE[installDir]}/systemd/scripts/enable-disable-path-units.sh"
+	local autosync=($(${ARKLONE[autoSync]}))
 
-	# Fix incompatible settings
-	if [ $? = 65 ]; then
-		whiptail \
-			--title "${ARKLONE[whiptailTitle]}" \
-			--yesno \
-				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
-				savefiles_in_content_dir\n
-				savestates_in_content_dir" \
-			16 56 8
-
-		if [ $? = 1 ]; then
-			whiptail \
-				--title "${ARKLONE[whiptailTitle]}" \
-				--msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \
-			16 56 8
-		else
-			# Get array of all retroarch.cfg instances
-			local retroarchs=(${ARKLONE[retroarchCfg]})
-
-			# Change user settings
-			for retroarchCfg in ${RETROARCHS[@]}; do
-				. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}"
-			done
-
-			autoSyncSavesScreen
-
-			return
-		fi
+	if [ "${#autosync[@]}" = 0 ]; then
+		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+	else
+		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 	fi
 
 	# Reset ${ARKLONE[autoSync]}
@@ -265,7 +242,38 @@ function regenRAunitsScreen() {
 			"Please wait while we configure your settings..." \
 			16 56 8
 
+	# Delete old retroarch path units and generate new ones
 	. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true
+
+	# Fix incompatible settings
+	if [ $? = 65 ]; then
+		whiptail \
+			--title "${ARKLONE[whiptailTitle]}" \
+			--yesno \
+				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
+				savefiles_in_content_dir\n
+				savestates_in_content_dir" \
+			16 56 8
+
+		if [ $? = 1 ]; then
+			whiptail \
+				--title "${ARKLONE[whiptailTitle]}" \
+				--msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \
+			16 56 8
+		else
+			# Get array of all retroarch.cfg instances
+			local retroarchs=(${ARKLONE[retroarchCfg]})
+
+			# Change user settings
+			for retroarchCfg in ${RETROARCHS[@]}; do
+				. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}"
+			done
+
+			autoSyncSavesScreen
+
+			return
+		fi
+	fi
 
 	homeScreen
 }

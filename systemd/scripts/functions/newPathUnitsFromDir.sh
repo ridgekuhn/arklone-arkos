@@ -51,12 +51,13 @@ function newPathUnitsFromDir() {
 	local remoteParentDir="${2}"
 
 	# Get subdirectories of depth $3
-	local subdirs=$(find "${localParentDir}" -mindepth $3 -maxdepth $3 -type d)
+	local subdirDepth=$3
+	local subdirs=$(find "${localParentDir}" -mindepth $subdirDepth -maxdepth $subdirDepth -type d)
 	local createParentUnit=$([ -z $4 ] && echo true || echo "${4}")
 	local filter="${5}"
 	local ignoreList="${6}"
 
-	local globalIgnoreList="${ARKLONE[installDir]}/systemd/scripts/ignores/global.ignore"
+	local globalIgnoreList="${ARKLONE[ignoreDir]}/global.ignore"
 
 	# Save default $IFS
 	local oIFS="${IFS}"
@@ -80,15 +81,28 @@ function newPathUnitsFromDir() {
 		IFS=$'\n'
 
 		# Build unit name
-		#
-		# Convert forward slashes / in ${remoteParentDir} to hyphens -
-		#	Convert spaces in poorly-named ${subdir} to underscores _
+
 		# Use basename to strip leading path from ${subdir}
+		#	Convert spaces in poorly-named ${subdir} to underscores _
 		# eg,
-		# remoteParentDir="retroarch32/savestates"
 		# subDir="/path/to/poorly named dir"
-		#	unitName="retroarch32-savestates-poorly_named_dir.sub.auto"
-		local unitName="${remoteParentDir//\//-}-$(basename "${subdir//\ /_}").sub.auto"
+		# subdirBasename="poorly_named_dir"
+		local subdirString="$(basename "${subdir//\ /_}")"
+
+		# Prepend depth 0 dir if depth 1
+		# eg,
+		# subDir="/path/to/foo/bar"
+		# subdirBasename="foo-bar"
+		if [ "${subdirDepth}" = 1 ]; then
+			subdirString="$(dirname "${subdir}")/${subdirString}"
+		fi
+
+		# Convert forward slashes / to hyphens -
+		# eg,
+		# subdirBasename="foo/bar"
+		# remoteParentDir="retroarch32/savestates"
+		#	unitName="retroarch32-savestates-foo-bar.sub.auto"
+		local unitName="${remoteParentDir//\//-}-${subdirString//\//}.sub.auto"
 
 		# Reset IFS
 		IFS="${oIFS}"
@@ -108,6 +122,6 @@ function newPathUnitsFromDir() {
 		# filter="retroarch-savestate"
 		#
 		# newPathUnit "retroarch32" "/path/to/savestates/nes" "retroarch32/nes" "retroarch-savestate"
-		newPathUnit "${unitName}" "${subdir}" "${remoteParentDir}/${subdir##*/}" "${filter}"
+		newPathUnit "${unitName}" "${subdir}" "${remoteParentDir}/${subdirString}" "${filter}"
 	done
 }

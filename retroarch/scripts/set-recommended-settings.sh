@@ -32,7 +32,7 @@ if [ ! -d "${RETROARCH_DIR}/saves" ]; then
 	chmod u+rw "${RETROARCH_DIR}/saves"
 fi
 
-echo "Setting savestate_directory to ${RETROARCH_DIR}/states"
+echo "Setting savefile_directory to ${RETROARCH_DIR}/saves"
 editConfig "savefile_directory" "${RETROARCH_DIR}/saves" "${RETROARCH_CFG}"
 
 echo "Setting savefiles_in_content_dir to false"
@@ -44,7 +44,7 @@ editConfig "sort_savefiles_by_content_enable" "false" "${RETROARCH_CFG}"
 echo "Setting sort_savefiles_enable to false"
 editConfig "sort_savefiles_enable" "false" "${RETROARCH_CFG}"
 
-
+# Make the states directory if it doesn't exist
 if [ ! -d "${RETROARCH_DIR}/states" ]; then
 	mkdir "${RETROARCH_DIR}/states"
 	chmod u+rw "${RETROARCH_DIR}/states"

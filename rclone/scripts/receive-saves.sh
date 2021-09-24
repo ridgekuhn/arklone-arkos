@@ -6,9 +6,6 @@
 [ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 [ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
-#############
-# CONTROLLERS
-#############
 # Receive new save data from the cloud
 #
 # Only receives data and does not send anything back, so that
@@ -34,11 +31,11 @@ for instance in ${INSTANCES[@]}; do
 	IFS="@" read -r localdir remotedir filter <<< "${instance}"
 
 	# Set global filter file
-	filterstring="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
+	filterstring="--filter-from ${ARKLONE[filterDir]}/global.filter"
 
 	# Append unit-specific filter file (if specified in the instance name)
 	if [ ! -z "${filter}" ]; then
-		filterstring="${filterstring} --filter-from ${ARKLONE[installDir]}/rclone/filters/${filter}.filter"
+		filterstring="${filterstring} --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
 	fi
 
 	rcloneExitCode=0

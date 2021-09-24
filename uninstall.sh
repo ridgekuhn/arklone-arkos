@@ -13,6 +13,9 @@ if [ ! -z "${UNITS}" ]; then
 	done
 fi
 
+# Unlink service template
+sudo systemctl disable "arkloned@.service"
+
 # If user already had rclone installed,
 # restore rclone.conf to original state
 if [ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ]; then
@@ -25,7 +28,7 @@ else
 fi
 
 # Remove user-accessible backup dir if it did not exist on install
-if [ -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]; then
+if [ ! -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]; then
 	rm -rf "${ARKLONE[backupDir]}"
 
 # Else, only remove the directories created by arklone
@@ -38,7 +41,7 @@ fi
 rm -rf "${ARKLONE[userCfgDir]}"
 
 # Remove arklone
-sudo rm -rf /opt/arklone
+sudo rm -rf "${ARKLONE[installDir]}"
 
 echo "Uninstallation complete. Thanks for trying arklone!"
 

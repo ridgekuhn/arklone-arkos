@@ -27,7 +27,7 @@
 function unitExists() {
 	local localDir="${1}"
 	local filter="${2}"
-	local existingUnits=($(find "${ARKLONE[installDir]}/systemd/units/"*".path"))
+	local existingUnits=($(find "${ARKLONE[unitsDir]}/"*".path"))
 
 	# Loop through existing units
 	for existingUnit in ${existingUnits[@]}; do
@@ -141,9 +141,9 @@ function newPathUnit() {
 	local instanceName=$(systemd-escape "${localDir}@${remoteDir}@${filter}")
 
 	# Generate the new unit
-	echo "Creating new path unit: ${ARKLONE[installDir]}/systemd/units/arkloned-${unitName}.path"
+	echo "Creating new path unit: ${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 
-	cat <<EOF > "${ARKLONE[installDir]}/systemd/units/arkloned-${unitName}.path"
+	cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 [Path]
 PathChanged=${localDir}
 Unit=arkloned@${instanceName}.service
@@ -152,7 +152,7 @@ Unit=arkloned@${instanceName}.service
 WantedBy=multi-user.target
 EOF
 
-	# For readability
+	# For stdout readability
 	echo ''
 }
 

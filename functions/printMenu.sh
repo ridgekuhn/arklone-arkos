@@ -1,5 +1,5 @@
 #!/bin/bash
-# Print items formatted for whiptail menu
+# Print array items formatted for whiptail menu
 #
 # @param $1 {string} list of menu options
 #

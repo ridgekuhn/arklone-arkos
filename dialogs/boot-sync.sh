@@ -1,7 +1,6 @@
 #!/bin/bash
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
-source "${ARRKLONE[installDir]}/systemd/scripts/functions/stopPathUnits.sh"
 
 #############
 # SUB SCREENS
@@ -74,8 +73,11 @@ function mainScreen() {
 
 	# Check for dirty boot
 	if [ -f "${arklone[dirtyBoot]}" ]; then
-		dirtyBootScreen
+		# Clean up dirty boot state before showing the whiptail to the user
 		rm "${arklone[dirtyBoot]}"
+		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+
+		dirtyBootScreen
 	fi
 
 	# Check for network connection
@@ -103,8 +105,8 @@ function mainScreen() {
 		else
 			errorScreen
 
-			stopPathUnits
-
+			# Set dirty boot state
+			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 			touch "${arklone[dirtyBoot]}"
 		fi
 	fi

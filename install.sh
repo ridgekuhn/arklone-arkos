@@ -14,7 +14,7 @@ if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
 fi
 
 # Copy default config to user config path
-cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfgDir]}/arklone.cfg"
+cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfg]}"
 
 # Create backup dir from user setting in ${ARKLONE[userCfg]}
 # ArkOS default is /roms/backup
@@ -25,7 +25,8 @@ if [ ! -d "${ARKLONE[backupDir]}" ]; then
 	mkdir "${ARKLONE[backupDir]}"
 	chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
 
-	# Create a lock file so we know if we can safely delete on uninstall
+# Create a lock file so we know not to delete on uninstall
+else
 	touch "${ARKLONE[userCfgDir]}/.backupDir.lock"
 fi
 
@@ -63,7 +64,7 @@ ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclo
 # ARKLONE
 #########
 # Make scripts executable
-SCRIPTS=($(find /opt/arklone/ -type f -name "*.sh"))
+SCRIPTS=($(find "${ARKLONE[installDir]}" -type f -name "*.sh"))
 for script in ${SCRIPTS[@]}; do
 	sudo chmod a+x "${script}"
 done

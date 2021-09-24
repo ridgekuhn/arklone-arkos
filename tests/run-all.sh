@@ -1,0 +1,23 @@
+#!/bin/bash
+source "/opt/arklone/config.sh"
+
+# Get all tests
+TESTS=($(find "${ARKLONE[installDir]}/tests" -type f -name "*.sh"))
+
+# Run all tests, except this one
+for test in ${TESTS[@]}; do
+	# Avoid running undesirable tests
+	if
+		[ "${test}" != "${ARKLONE[installDir]}/tests/run-all.sh" ] \
+		&& [ "${test}" != "${ARKLONE[installDir]}/tests/install.sh" ] \
+		&& [ "${test}" != "${ARKLONE[installDir]}/tests/uninstall.sh" ]
+	then
+		"${test}"
+
+		exitCode=$?
+
+		if [ $exitCode != 0 ]; then
+			"${test} failed with exit code ${exitCode}"
+		fi
+	fi
+done

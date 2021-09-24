@@ -15,11 +15,11 @@
 
 IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
 
-FILTERSTRING="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
+FILTERSTRING="--filter-from ${ARKLONE[filterDir]}/global.filter"
 
 # Append unit-specific filters if specified
 if [ ! -z "${FILTER}" ]; then
-	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[installDir]}/rclone/filters/${FILTER}.filter"
+	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[filterDir]}/${FILTER}.filter"
 fi
 
 # Begin logging

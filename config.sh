@@ -19,6 +19,7 @@ ARKLONE=(
 	# rclone
 	# [rcloneConf]="/home/ark/.config/rclone/rclone.conf"
 	# [remote]=""
+	[filterDir]="${ARKLONE[installDir]}/rclone/filters"
 
 	# Log
 	# [log]="/dev/shm/arklone.log"
@@ -29,6 +30,8 @@ ARKLONE=(
 
 	# systemd
 	[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
+	[unitsDir]="${ARKLONE[installDir]}/systemd/units"
+	[ignoreDir]="${ARKLONE[installDir]}/systemd/scripts/ignores"
 
 	# Whiptail settings
 	[whiptailTitle]="arklone cloud sync utility"
