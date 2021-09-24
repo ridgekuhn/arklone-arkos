@@ -20,8 +20,10 @@ function isIgnored() {
 	local ignoreList=($(cat "${2}" 2>/dev/null))
 
 	for ignoreDir in ${ignoreList[@]}; do
-		if [ -z ${subdir##*/$ignoreDir} ]; then
-			echo "${subdir} is in ignore list: ${ignoreList}. Skipping..."
+		if [ -z ${dir##*/$ignoreDir} ]; then
+			echo "${dir} is in ignore list: ${ignoreList}. Skipping..."
+			echo ""
+
 			return
 		fi
 	done
@@ -51,12 +53,13 @@ function newPathUnitsFromDir() {
 	local remoteParentDir="${2}"
 
 	# Get subdirectories of depth $3
-	local subdirs=$(find "${localParentDir}" -mindepth $3 -maxdepth $3 -type d)
+	local subdirDepth=$3
+	local subdirs=($(find "${localParentDir}" -mindepth $subdirDepth -maxdepth $subdirDepth -type d 2>/dev/null))
 	local createParentUnit=$([ -z $4 ] && echo true || echo "${4}")
 	local filter="${5}"
 	local ignoreList="${6}"
 
-	local globalIgnoreList="${ARKLONE[installDir]}/systemd/scripts/ignores/global.ignore"
+	local globalIgnoreList="${ARKLONE[ignoreDir]}/global.ignore"
 
 	# Save default $IFS
 	local oIFS="${IFS}"
@@ -64,7 +67,7 @@ function newPathUnitsFromDir() {
 	#####
 	# RUN
 	#####
-	# @todo Make root unit
+	# Make root unit
 	if [ "${createParentUnit}" = "true" ]; then
 		# Convert forward slashes / in ${remoteParentDir} to hyphens -
 		# eg,
@@ -75,28 +78,42 @@ function newPathUnitsFromDir() {
 		newPathUnit "${remoteParentDir//\//-}.auto" "${localParentDir}" "${remoteParentDir}" "${filter}"
 	fi
 
-	for subdir in ${subdirs[@]|}; do
+	for subdir in ${subdirs[@]}; do
 		# Escape tab and space
 		IFS=$'\n'
 
 		# Build unit name
-		#
-		# Convert forward slashes / in ${remoteParentDir} to hyphens -
-		#	Convert spaces in poorly-named ${subdir} to underscores _
+
 		# Use basename to strip leading path from ${subdir}
+		#	Convert spaces in poorly-named ${subdir} to underscores _
 		# eg,
-		# remoteParentDir="retroarch32/savestates"
 		# subDir="/path/to/poorly named dir"
-		#	unitName="retroarch32-savestates-poorly_named_dir.sub.auto"
-		local unitName="${remoteParentDir//\//-}-$(basename "${subdir//\ /_}").sub.auto"
+		# subdirString="poorly_named_dir"
+		local subdirString="$(basename "${subdir//\ /_}")"
+
+		# Prepend depth 1 dir if depth 2
+		# eg,
+		# subDir="/path/to/savestates/foo/bar"
+		# subdirString="foo/bar"
+		if [ "${subdirDepth}" = 2 ]; then
+			subdirString="$(basename $(dirname "${subdir}"))/${subdirString}"
+		fi
+
+		# Convert forward slashes / to hyphens -
+		# eg,
+		# subdirBasename="foo/bar"
+		# remoteParentDir="retroarch32/savestates"
+		#	unitName="retroarch32-savestates-foo-bar.sub.auto"
+		local unitName="${remoteParentDir//\//-}-${subdirString//\//-}.sub.auto"
 
 		# Reset IFS
 		IFS="${oIFS}"
 
 		# Check ignore lists and continue to next subdir if in ignore list
-		isIgnored "${subdir}" "${globalIgnoreList}" || isIgnored "${subdir}" "${ignoreList}"
-
-		if [ $? = 0 ]; then
+		if \
+			isIgnored "${subdir}" "${globalIgnoreList}" \
+			|| isIgnored "${subdir}" "${ignoreList}"
+		then
 			continue
 		fi
 
@@ -108,6 +125,6 @@ function newPathUnitsFromDir() {
 		# filter="retroarch-savestate"
 		#
 		# newPathUnit "retroarch32" "/path/to/savestates/nes" "retroarch32/nes" "retroarch-savestate"
-		newPathUnit "${unitName}" "${subdir}" "${remoteParentDir}/${subdir##*/}" "${filter}"
+		newPathUnit "${unitName}" "${subdir}" "${remoteParentDir}/${subdirString}" "${filter}"
 	done
 }

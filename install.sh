@@ -3,6 +3,8 @@
 # by ridgek
 source "/opt/arklone/config.sh"
 
+echo "Now installing arklone cloud sync utility..."
+
 ############
 # FILESYSTEM
 ############
@@ -13,9 +15,6 @@ if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
 	mkdir "${ARKLONE[userCfgDir]}"
 fi
 
-# Copy default config to user config path
-cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfgDir]}/arklone.cfg"
-
 # Create backup dir from user setting in ${ARKLONE[userCfg]}
 # ArkOS default is /roms/backup
 # Should be somewhere easily-accessible for non-Linux users,
@@ -25,7 +24,8 @@ if [ ! -d "${ARKLONE[backupDir]}" ]; then
 	mkdir "${ARKLONE[backupDir]}"
 	chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
 
-	# Create a lock file so we know if we can safely delete on uninstall
+# Create a lock file so we know not to delete on uninstall
+else
 	touch "${ARKLONE[userCfgDir]}/.backupDir.lock"
 fi
 
@@ -48,9 +48,14 @@ else
 	touch "${ARKLONE[userCfgDir]}/.rclone.lock"
 
 	# Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
+	# @todo ArkOS-specific
 	if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
+		echo "Backing up and moving your rclone.conf to EASYROMS"
+
 		cp "${HOME}/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
-		mv "${HOME}/.config/rclone/rclone.conf" "${ARKLONE[backupDir]}/rclone/rclone.conf"
+
+		# Suppress errors
+		mv "${HOME}/.config/rclone/rclone.conf" "${ARKLONE[backupDir]}/rclone/rclone.conf" 2>/dev/null
 	fi
 fi
 
@@ -63,7 +68,7 @@ ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclo
 # ARKLONE
 #########
 # Make scripts executable
-SCRIPTS=($(find /opt/arklone/ -type f -name "*.sh"))
+SCRIPTS=($(find "${ARKLONE[installDir]}" -type f -name "*.sh"))
 for script in ${SCRIPTS[@]}; do
 	sudo chmod a+x "${script}"
 done

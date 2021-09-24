@@ -4,10 +4,10 @@
 source "/opt/arklone/config.sh"
 
 # Get list of installed units
-UNITS=($(systemctl list-unit-files "arkloned*"))
+UNITS=($(systemctl list-unit-files | grep "arklone" | cut -d ' ' -f 1))
 
-# Remove units from systemd
-if [ ! -z "${UNITS}" ]; then
+# Remove arklone from systemd
+if [ "${#UNITS[@]}" -gt 0 ]; then
 	for unit in ${UNITS[@]}; do
 		sudo systemctl disable "${unit}"
 	done
@@ -19,13 +19,15 @@ if [ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ]; then
 	echo "Restoring your rclone settings..."
 
 	cp "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
-	mv "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
 else
 	sudo apt remove rclone -y
 fi
 
+rm "${HOME}/.config/rclone/rclone.conf"
+mv "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
+
 # Remove user-accessible backup dir if it did not exist on install
-if [ -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]; then
+if [ ! -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]; then
 	rm -rf "${ARKLONE[backupDir]}"
 
 # Else, only remove the directories created by arklone
@@ -38,7 +40,7 @@ fi
 rm -rf "${ARKLONE[userCfgDir]}"
 
 # Remove arklone
-sudo rm -rf /opt/arklone
+sudo rm -rf "${ARKLONE[installDir]}"
 
 echo "Uninstallation complete. Thanks for trying arklone!"
 

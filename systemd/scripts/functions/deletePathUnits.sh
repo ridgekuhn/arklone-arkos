@@ -17,7 +17,7 @@ function deletePathUnits() {
 		printf "\nRemoving old unit: ${oldUnit##*/}...\n"
 
 		# Disable the linked unit
-		if [ ${linked} ]; then
+		if [ "${linked}" ]; then
 			sudo systemctl disable "${oldUnit##*/}"
 		fi
 

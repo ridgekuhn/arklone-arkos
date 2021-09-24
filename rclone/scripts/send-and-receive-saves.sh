@@ -2,10 +2,10 @@
 # rclone cloud syncing for ArkOS
 # by ridgek
 #
-# @param $1 {string} directory paths in format: "${localDir}@${remoteDir}@${filter}
-#		${localDir} should be absolute path, no trailing slash
-#		${remoteDir} no opening or trailing slashes
-#		${filter} name from file in ${ARKLONE[installDir]}/rclone/filters,
+# @param $1 {string} directory paths in format: "${LOCALDIR}@${REMOTEDIR}@${FILTERS}
+#		${LOCALDIR} should be absolute path, no trailing slash
+#		${REMOTEDIR} no opening or trailing slashes
+#		${FILTERS} name from file in ${ARKLONE[installDir]}/rclone/filters,
 #			no leading directory path or .filter extension
 #
 #	@usage
@@ -13,13 +13,18 @@
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
-IFS="@" read -r LOCALDIR REMOTEDIR FILTER <<< "${1}"
+IFS="@" read -r LOCALDIR REMOTEDIR FILTERS <<< "${1}"
 
-FILTERSTRING="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
+FILTERSTRING="--filter-from ${ARKLONE[filterDir]}/global.filter"
 
 # Append unit-specific filters if specified
-if [ ! -z "${FILTER}" ]; then
-	FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[installDir]}/rclone/filters/${FILTER}.filter"
+if [ ! -z "${FILTERS}" ]; then
+	# Split pipe | delimited list of ${FILTERS} into array
+	FILTERS=($(tr '|' '\n' <<<"${FILTER}"))
+
+	for filter in ${FILTERS[@]}; do
+		FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
+	done
 fi
 
 # Begin logging

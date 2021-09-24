@@ -6,9 +6,6 @@
 [ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 [ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
-#############
-# CONTROLLERS
-#############
 # Receive new save data from the cloud
 #
 # Only receives data and does not send anything back, so that
@@ -30,15 +27,18 @@ arkloneLogger "${ARKLONE[log]}"
 
 for instance in ${INSTANCES[@]}; do
 	# Read paths from instance name
-	localdir remote dir filter
-	IFS="@" read -r localdir remotedir filter <<< "${instance}"
+	IFS="@" read -r LOCALDIR REMOTEDIR FILTERS <<< "${instance}"
 
-	# Set global filter file
-	filterstring="--filter-from ${ARKLONE[installDir]}/rclone/filters/global.filter"
+	FILTERSTRING="--filter-from ${ARKLONE[filterDir]}/global.filter"
 
-	# Append unit-specific filter file (if specified in the instance name)
-	if [ ! -z "${filter}" ]; then
-		filterstring="${filterstring} --filter-from ${ARKLONE[installDir]}/rclone/filters/${filter}.filter"
+	# Append unit-specific filters if specified
+	if [ ! -z "${FILTERS}" ]; then
+		# Split pipe | delimited list of ${FILTERS} into array
+		FILTERS=($(tr '|' '\n' <<<"${FILTER}"))
+
+		for filter in ${FILTERS[@]}; do
+			FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
+		done
 	fi
 
 	rcloneExitCode=0
@@ -47,8 +47,8 @@ for instance in ${INSTANCES[@]}; do
 	echo "Started new cloud sync at $(date)"
 	echo "------------------------------------------------------"
 
-	echo "Receiving ${ARKLONE[remote]}:${remotedir}/ to ${localdir}/"
-	rclone copy "${ARKLONE[remote]}:${remotedir}/" "${localdir}/" ${filterstring} -u -v --config "${ARKLONE[rcloneConf]}"
+	echo "Receiving ${ARKLONE[remote]}:${REMOTEDIR}/ to ${LOCALDIR}/"
+	rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${filterstring} -u -v --config "${ARKLONE[rcloneConf]}"
 
 	rcloneExitCode=$?
 

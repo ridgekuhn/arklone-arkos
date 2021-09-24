@@ -8,6 +8,14 @@
 # Results in new values in passed array:
 # myArray[someOption]="someSetting"
 #
+# @usage
+#		declare -A MYARRAY
+#		MYARRAY=(
+#			[foo]="bar"
+#		)
+#
+#		loadConfig "/path/to/cfg" MYARRAY
+#
 # @param $1 {string} Path to config file
 # @param $2 {var} Array to append to
 # @param [$3] {string} Optional pattern to match
