@@ -13,7 +13,7 @@ function arkloneLogger() {
 	if
 		[ "${deleteOldLog}" = "true" ] \
 		&& [ -f "${logFile}" ] \
-		&& [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(awk -F . '{print $1}' "/proc/uptime") ]
+		&& [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(cut -d '.' -f 1 "/proc/uptime") ]
 	then
 		rm -f "${logFile}"
 	fi

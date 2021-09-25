@@ -137,13 +137,43 @@ function setCloudScreen() {
 function manualSyncSavesScreen() {
 	local script="${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh"
 	local instances=($(getRootInstanceNames))
-	# @todo this is a mess
-	local localdirs=$(for instance in ${instances[@]}; do filter="$(echo ${instance##*@} | awk -F '-' '/retroarch/ {$2!=""?str=$2:str=$1; str="("str")"; print str}')"; printf "${instance%@*@*}${filter} "; done)
 
+	# Build a list of local directories
+	local localdirs=$(
+		for instance in ${instances[@]}; do
+			local filterString=""
+
+			# Populate ${filterString} if filter names begin with "retroarch-"
+			if grep "retroarch-" <<<"${instance##*@}" >/dev/null 2>&1; then
+				# Get array of filters from instance name
+				local filters=($(tr '|' '\n' <<<"${instance##*@}"))
+
+				# Separate multiple filters with pipe | and remove "retroarch-" prefix
+				if [ "${#filters[@]}" -gt 1 ]; then
+					filterString="($(
+						for filter in ${filters[@]}; do
+							printf "${filter##retroarch-}|"
+						done
+					))"
+				# Just remove "retroarch-" prefix
+				else
+					filterString="(${filters##retroarch-})"
+				fi
+			fi
+
+			# Print localdir and filter
+			# eg,
+			# "/path/to/foo(savefile|savestate)"
+			printf "${instance%@*@*}${filterString/%|)/)} "
+		done
+	)
+
+	# Check if sync script is already running
 	alreadyRunning "${script}"
 
 	if [ $? != 0 ]; then
 		homeScreen
+
 	else
 		local selection=$(whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
