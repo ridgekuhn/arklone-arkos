@@ -12,7 +12,7 @@ function deletePathUnits() {
 
 	for oldUnit in ${oldUnits[@]}; do
 		# Check if path unit is linked to systemd
-		linked=$(systemctl list-unit-files | awk -v oldUnit="${oldUnit##*/}" '$0~oldUnit {print $1}')
+		linked=$(systemctl list-unit-files | grep "${oldUnit##*/}")
 
 		printf "\nRemoving old unit: ${oldUnit##*/}...\n"
 

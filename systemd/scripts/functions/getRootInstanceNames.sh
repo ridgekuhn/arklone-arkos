@@ -5,11 +5,10 @@
 #
 # @returns {string} space-delimted list of unescaped instance names
 function getRootInstanceNames() {
-	# @todo replace xargs with regex in find argument
-	local units=($(find "${ARKLONE[unitsDir]}/"*".path" -print0 | xargs -0 -I {} bash -c 'unit={}; if [ ! -z "${unit##*sub.auto.path}" ]; then echo "${unit}"; fi'))
+	local units=($(find "${ARKLONE[unitsDir]}/arkloned-"*".path" | grep -v "sub.auto.path"))
 
-	for (( i = 0; i < ${#units[@]}; i++ )); do
-		local escapedName=$(awk -F '@' '/Unit/ {split($2, arr, ".service"); print arr[1]}' "${units[i]}")
+	for unit in ${units[@]}; do
+		local escapedName=$(grep "Unit=" ${unit} | sed -e 's/^Unit=arkloned@//' -e 's/.service$//')
 		local instanceName=$(systemd-escape -u -- "${escapedName}")
 
 		printf "${instanceName} "
