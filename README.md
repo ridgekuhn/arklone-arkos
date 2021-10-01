@@ -1,9 +1,34 @@
 # arklone #
-rclone cloud syncing for ArkOS
+
+rclone cloud sync utility for ArkOS
+
+Watches save directories for RetroArch, and select standalone games.
+
+This project offers no warranties or guarantees. Always make extra backup copies of your data. Use at your own risk!
+
+arklone is released under a GNU GPLv3 license. See [LICENSE.md](/LICENSE.md) for more information.
+
+rclone, RetroArch, EmulationStation, and ArkOS are the properties of their respective owners.
+
+---
+
+**Table of Contents**
+
+1. [Installation](#installation)
+2. [rclone Configuration](#configuration)
+3. [First Run](#first-run)
+4. [Settings Dialog](#settings-dialog)
+5. [Syncing with the Cloud](#syncing-with-the-cloud)
+6. [Advanced RetroArch Configuration](#settings-dialog)
+7. [Recommended RetroArch Configuration](#known-bugs)
+8. [Advanced arklone Configuration](#advanced-arklone-configuration)
+9. [Troubleshooting](#troubleshooting)
+10. [FAQ](#FAQ)
 
 ---
 
 ## Installation ##
+
 This module is not yet integrated into ArkOS. See [this pull request](https://github.com/christianhaitian/arkos/pull/126) for updates.
 
 To test and install manually,
@@ -18,8 +43,7 @@ chmod a+x installArklone.sh
 
 This will also install the [joy2key](https://github.com/ridgekuhn/joy2key) library.
 
-## Uninstallation ##
-The uninstall script will remove everything except for rclone (in case the user already had it installed).
+### Uninstallation ###
 
 ```shell
 cd ~
@@ -28,298 +52,237 @@ chmod a+x uninstallArklone.sh
 ./uninstallArklone.sh
 ```
 
-### Configure rclone.conf ###
-Your `rclone.conf` file is stored on the EASYROMS partition at:
-`backup/rclone/rclone.conf` 
+---
 
-See the [rclone docs](https://rclone.org/docs/) for instructions on how to
-configure your `rclone.conf` file for supported cloud providers.
-For most cloud providers, you will need access to a desktop computer
-with rclone, and a web browser to generate your API keys.
-`rclone` will generate the `rclone.conf` file for you at the end of the process,
-then you can simply copy the generated file from your desktop computer
-to the EASYROMS partition of your microSD card.
+## rclone Configuration ##
 
-If you don't wish to install rclone on your desktop computer,
-Dropbox is the only cloud provider we've tested which doesn't require the use
-of rclone to get the needed API keys, so we will use Dropbox for
-the following tutorial:
+To begin using arklone, you must create an rclone config file. For [most cloud providers](https://rclone.org/remote_setup/), this will involve installing `rclone` to a computer with a web browser, like your desktop or laptop. See the [rclone docs](https://rclone.org/docs/#configure) for more information on how to do this for your specific provider. Make sure you [install the latest version of rclone](https://rclone.org/downloads/), (1.56.2 when this was written). *If you use a package manager like `apt`, the repository version will be outdated.*
 
-1. Log in to your Dropbox account.
+Once you have completed this process, copy the `rclone.conf` file from your computer to your ArkOS device. Your `rclone.conf` can be located by running:
 
-2. Visit [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps)
-		and click on the "App Console" button.
-![Go to app console](/.github/dropbox2.png)
-
-
-3. Click on the "Create App" button.
-![Create app](/.github/dropbox3.png)
-
-
-4. Select "Scoped access", "App folder", and give your new app a name.
-		Dropbox will create a folder named "Apps" at the root directory
-		of your Dropbox account, and whatever you choose here will be
-		a subdirectory inside of the Apps folder.
-![Dropbox app setup](/.github/dropbox4.png)
-
-
-5. Click on the "Permissions" tab.
-		Assign all read/write permissions to your app.
-![Set app permissions](/.github/dropbox5.png)
-
-
-6. Click on the "Settings" tab, and scroll down.
-![Set app general settings](/.github/dropbox6.png)
-
-
-7. Under "Access token expiration", select "No expiration".
-		Under "Generated access token", click the "Generate" button.
-![Generate access token](/.github/dropbox7.png)
-
-
-8. Copy "App key", "App secret", and "Generated access token"
-		to your `rclone.conf` file.
-![Get app key, secret, and token](/.github/dropbox8.png)
-
-
-Your `rlone.conf` file should look like this:
 ```
-[dropbox]
-type = dropbox
-client_id = YOUR_APP_KEY
-client_secret = YOUR_APP_SECRET
-token = {"access_token":"YOUR_ACCESS_TOKEN","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
+rclone config file
 ```
 
-## Run it! ##
-In EmulationStation, navigate to Options -> Cloud Settings
+On your ArkOS SD card, copy `rclone.conf` to:
+`EASYROMS/backup/rclone/rclone.conf` 
 
-### First Run ###
-On first run, you will be greeted by a prompt asking if you'd like to change
-your RetroArch configurations to the recommended settings.
+If you already had rclone installed on your device, your `rclone.conf` has been moved to EASYROMS for easier access, and symlinked to its original location. arklone will restore the original arrangement if uninstalled.
+
+---
+
+## First Run ##
+
+From EmulationStation, navigate to Options -> Cloud Settings
+
+On first run, you will be greeted by a prompt asking if you'd like to change your RetroArch configurations to the recommended settings.
+
 Obviously, this is recommended!
+
+This will set the following settings in your retroarch.cfg (and your retroarch32/retroarch.cfg):
+
+```
+savefile_directory = "~/.config/retroarch/saves"
+savefiles_in_content_dir = "false"
+sort_savefiles_enable = "false"
+sort_savefiles_by_content_enable = "true"
+
+savestate_directory = "~/.config/retroarch/saves"
+savestates_in_content_dir = "false"
+sort_savestates_enable = "false"
+sort_savestates_by_content_enable = "true"
+```
+
+This will result in savefiles and savestates being stored in the same directory hierarchy as your RetroArch content root, in `~/.config/retroarch/saves`
+
+eg,
+`~/.config/retroarch/saves/nes/TheLegendOfZelda.srm`
+`~/.config/retroarch/saves/nes/TheLegendOfZelda.savestate0`
 
 ![First run screen](/.github/arklone1.png)
 
-### Main Menu ###
+### Settings Dialog ###
+
 * **Set cloud service**
-		Allows you to select from the cloud providers you set up in `rclone.conf`
-* **Manually sync savefiles/savestates**
-		Allows you to manually sync a single directory for which a path unit exists.
+		Allows you to select from the remotes you set up in `rclone.conf`
+* **Manually sync saves**
+		Manually sync a single directory.
 * **Enable/Disable automatic saves sync**
-		Watches directories for changes if a path unit exists,
-		and syncs the directory to the cloud
+		Watches directories for changes and syncs them to your selected remote.
 * **Manual backup/sync ArkOS settings**
-		Runs the ArkOS backup script and uploads the file to the cloud
+		Runs the ArkOS backup script and uploads the file to the selected remote.
 * **Regenerate RetroArch path units**
-		Re-scans for new directories to watch and generates path units for them.
+		Re-scans for new RetroArch directories to watch and generates path units for them.
 
 ![Arklone main menu](/.github/arklone2.png)
 
-## Advanced Configuration ##
-This section is for users who wish to have more control
-over their retroarch.cfg settings and save directories.
+---
 
-### Supported Settings ###
+## Syncing with the Cloud #
+
+Keeping multiple devices synced can be difficult. arklone tries to do its best, but you should always keep an extra backup copy just in case.
+
+### Automatic Syncing ###
+
+If you enable automatic syncing in the settings dialog, arklone assumes the copy of your data stored in the cloud is the canonical and "always correct" version. On system boot, arklone will run before EmulationStation and attempt to receive updates from the cloud remote. *If the remote contains a newer version of a file, it will overwrite the local copy.* On this initial sync, *arklone only receives updates and does not send anything back*. If this process fails for any reason, the user is notified, and the [dirty boot state](#dirty-boot-state) is set.
+
+If the boot sync process succeeds, arklone then assumes your local device contains the correct copy for the rest of the session, and will *send updates first, overwriting older copies on the remote, before receiving new content*.
+
+## Manual Syncing ###
+
+If you do not enable automatic syncing, arklone assumes the data on your device is the "always correct" version. Manually syncing a directory from the settings dialog will always *send updates first, overwriting older copies on the remote, before receiving new content*. Be careful, as this can lead to data loss when doing this with multiple devices.
+
+---
+
+### Dirty Boot State ###
+
+After boot, but before EmulationStation starts, arklone checks for a network connection and attempts to receive any new updates from the configured remote. It does not send any data back until a file has been written on the device. This ensures that the cloud copy is the canonical and "always correct" one. 
+
+If this process fails at any point, the dirtyboot state is set. Automatic syncing is disabled for the rest of the session, and the user will be warned about potential data loss on the following boot.
+
+To manually reset the dirtyboot state, delete the lock file located at:
+`~/.config/arklone/.dirtyboot`
+
+---
+
+## Advanced RetroArch Configuration ##
+
+This section is for users who wish to have more control over their retroarch.cfg settings and save directories.
+
+### Supported RetroArch Configuration ###
+
 ArkOS includes 64-bit and 32-bit builds of RetroArch.
 The configuration files are stored at
 `/home/ark/.config/retroarch/retroarch.cfg` and
 `/home/ark/.config/retroarch32/retroarch.cfg`.
 
 The following settings are supported:
+
 ```
 savefile_directory
 savefiles_in_content_dir
 sort_savefiles_enable
+sort_savefiles_by_content_enable
 
 savestate_directory
 savestates_in_content_dir
 sort_savestates_enable
-```
-
-### Unsupported Settings ###
-The following settings are implemented differently depending on which
-build of RetroArch you are using,
-and are unsupported so we can ensure compatibility with all platforms.
-
-_Both settings must be set to_ `"false"`:
-```
-sort_savefiles_by_content_enable
 sort_savestates_by_content_enable
 ```
 
+For the next examples, `filetype` refers to either `savefile` or `savestate`.
+
+If `filetypes_in_content_dir = "true"`, it will override the other related settings, and create save data next to the content file.
+
+Otherwise, if `sort_filetypes_enable = "true"`, save data will be organized by libretro core inside `filetype_directory`.
+eg,
+`/path/to/filetype_directory/FCEUmm/TheLegendOfZelda.srm`
+
+If `sort_filetypes_by_content_enable = "true"`, save data will be organized by the parent directory of the content file.
+eg,
+`/path/to/filetype_directory/nes/TheLegendOfZelda.srm`
+
+If both `sort_filetypes_enable = "true"` and `sort_filetypes_by_content_enable = "true"`, save data will be organized by the parent directory of the content file, then by libretro core.
+eg,
+`/path/to/filetype_directory/nes/FCEUmm/TheLegendOfZelda.srm`
+
 ### Known Bugs ###
-ArkOS currently contains a bug which prevents systemd path units
-from watching subdirectories of exFAT partitions. (See [issue #289](https://github.com/christianhaitian/arkos/issues/289).)
 
-This means that savefiles/savestates can not be watched
-and automatically synced if they are stored
-in the content directories (on EASYROMS, eg `/EASYROMS/nes`),
-via the `savefiles_in_content_dir` and `savestates_in_content_dir` settings.
+ArkOS currently contains a bug which prevents systemd path units from watching subdirectories of exFAT partitions. (See [issue #289](https://github.com/christianhaitian/arkos/issues/289).) This means that savefiles/savestates can not be watched (and automatically synced) if `filetypes_in_content_dir = "true"`.
 
-Until this bug is resolved, if you wish to store your saves on EASYROMS,
-you must manually sync your saves from the arklone dialog.
+Until this bug is resolved, if you wish to store your saves next to the content, you must manually sync your saves from the arklone dialog.
 
-Since the bug only applies to exFAT partitions,
-advanced users who really want to use automatic syncing
-and keep savefiles/savestates in the content directories
-can re-format the EASYROMS partition
-to FAT32, ext4, etc and edit the mount entry in `/etc/fstab`.
+Since the bug only applies to exFAT partitions, advanced users who really want to use automatic syncing and keep savefiles/savestates in the content directories can re-format the EASYROMS partition to FAT32, ext4, etc and edit the mount entry in `/etc/fstab`.
 
-### Recommended Settings ###
+### Recommended RetroArch Configuration ###
+
 ```
 savefile_directory = "~/.config/retroarch/saves"
 savefiles_in_content_dir = "false"
 sort_savefiles_enable = "false"
-sort_savefiles_by_content_enable = "false"
+sort_savefiles_by_content_enable = "true"
 
 savestate_directory = "~/.config/retroarch/states"
 savestates_in_content_dir = "false"
 sort_savestates_enable = "false"
-sort_savestates_by_content_enable = "false"
+sort_savestates_by_content_enable = "true"
 ```
-
-### Example Settings ###
-We use `savefile` for the following examples,
-but the same applies for `savestate`:
-```
-savefile_directory = "~/.config/retroarch/saves"
-savefiles_in_content_dir = "true"
-sort_savefiles_enable = "false"
-// Save directory: ${CONTENT_DIR}/${system}
-
-savefile_directory = "~/.config/retroarch/saves"
-savefiles_in_content_dir = "true"
-sort_savefiles_enable = "false"
-// Save directory: ${CONTENT_DIR}/${system}
-
-savefile_directory = "~/.config/retroarch/saves"
-savefiles_in_content_dir = "true"
-sort_savefiles_enable = "true"
-// Save directory: ${CONTENT_DIR}/${system}
-
-savefile_directory = "~/.config/retroarch/saves"
-savefiles_in_content_dir = "false"
-sort_savefiles_enable = "false"
-// Save directory: ${savefile_directory}
-
-savefile_directory = "~/.config/retroarch/saves"
-savefiles_in_content_dir = "false"
-sort_savefiles_enable = "false"
-// Save directory: ${savefile_directory}/${libRetroCore}
-```
-
-#### Troubleshooting ####
-Watchers are created for directories
-based on your `retroarch.cfg` settings above.
-
-If you have `sort_savefiles_enable` or `sort_savestates_enable` set to `"true"`,
-some of the directories may not be created until you have launched the related
-content from RetroArch. If some of your save directories
-are not being synced automatically,
-try manually regenerating them from the arklone dialog menu.
-
-If you change any of the above settings in `retroarch.cfg`,
-you must also manually regenerate the path units.
 
 ---
 
-## Developers ##
-This module contains four main parts:
-* A systemd service template for monitoring instance directories
-* A standalone script which syncs the ArkOS settings backup to the cloud
-* A standalone script which syncs two directories using rclone
-* A whiptail frontend for the scripts and services above
+## Advanced arklone Configuration ##
 
-### [systemd units](/systemd/units) ###
-To watch a directory, create a new file at `/opt/arkloned/systemd/units/arkloned-${myPathUnit}.path`. Only 3 lines are needed:
+Arklone has a few settings that can be changed by the user, mostly paths where arklone looks for various files. The user configuration file is stored at `~/.config/arklone/arklone.cfg`.
 
-```shell
-[Path]
-PathChanged=/path/to/watch
-Unit=arkloned@-path-to-watch\x40path-to-sync-to\x40filter
-```
+### Resetting to "First Run" State ###
 
-The `Unit=` value must be in the format:
-`arkloned@${escapedString}`, where the escaped string is in the format:
-`${localDir}@${remoteDir}@${filter}`
+Setting `remote` to an empty string forces the settings dialog to show the "first run" screen again.
 
-`${filter}` refers to a .filter file in `arklone/rclone/filters`
-The filter is optional, but the string must containing the preceding `@`.
-
-Do not use trailing slashes for either path.
-The remote directory must also not have an opening slash.
-
-You can generate an escaped string using the `systemd-escape` tool:
-
-```shell
-$ systemd-escape "/path/to/watch@path/to/sync/to@myFilter"
-# outputs:
-# -path-to-watch\x40path-to-sync-to\x40myFilter
-```
-
-[settings.sh](/dialogs/settings.sh) will automatically handle enabling
-and starting the path unit when the user enables automatic syncing.
-
-#### Generating systemd RetroArch Units ####
-Retroarch path units are generated automatically by [generate-retroarch-units.sh](/systemd/scripts/generate-retroarch-units.sh)
-
-The script supports multiple instances of RetroArch,
-and all permutations of the following settings in retroarch.cfg:
-```
-`savefile_directory`
-`savefiles_in_content_dir`
-`sort_savefiles_enable`
-
-`savestate_directory`
-`savestates_in_content_dir`
-`sort_savestates_enable`
-```
-
-The following settings are implemented inconsistently
-between builds of RetroArch, and are unsupported by this script.
-If the script detects the value of these settings as "true",
-it will exit with code 73.
-```
-sort_savefiles_by_content_enable
-sort_savestates_by_content_enable
-```
-
-### [arklone-saves.sh](/rclone/script/arklone-saves.sh) ###
-Syncs two directories using rclone
-
-Called by:
-* [arkloned@.service template](/systemd/units/arkloned@.service) when a corresponding _arkloned-*.path_ unit is started.
-* [settings.sh](/dialogs/settings.sh)
-
-To execute manually, pass two directories and a filter
-as a string to the first argument, in the format `localDir@remoteDir@filter`.
-
-`filter` refers to a .filter file in `arklone/rclone/filters`
-
-_Do not use trailing slashes. The remote directory also must not have an opening slash._
-
-```shell
-$ /opt/arklone/arklone.sh "/roms@retroarch/roms@retroarch-savefiles"
+**arklone.cfg**
 
 ```
+remote = ""
+```
 
-### [arklone-arkos.sh](/rclone/script/arklone-arkos.sh) ###
-Calls the ArkOS backup script and syncs the resulting file to the cloud.
+### Changing RetroArch Content Root ###
 
-Called by:
-* [settings.sh](/dialogs/settings.sh)
+Where `filetype` refers to either `savefile` or `savestate`:
 
-### [settings.sh](/dialogs/settings.sh) ###
-A whiptail dialog menu which allows the user to execute the above scripts.
+If your `retroarch.cfg` contains the settings `filetypes_in_content_dir = "true"` or `sort_filetypes_by_content_enable = "true"`, arklone expects your RetroArch content to be organized in a directory hierarchy with one level of subdirectories, where each contains all content for a particular platform.
+eg,
+`retroarchContentRoot/nes/TheLegendOfZelda.rom`
 
-The script is loosely divided into an MVC pattern,
-where whiptail dialogs are "view" functions and the script functionality
-lives in separate "controller" functions.
+**arklone.cfg**
 
-The main views are:
-* Set cloud service
-* Manual sync savefiles/savestates
-* Enable/Disable automatic syncing
-* Regenerate RetroArch path units
-* Manual sync ArkOS Settings
+```
+retroarchContentRoot = "/absolute/path/to/retroarchContentRoot"
+```
+
+arklone also supports select standalone software and "ports". See the [systemd/units](/systemd/units) for a list, and the [Path Units](/DEVELOPERS.md#path-units) section of the developer docs for more info.
+
+### Multiple RetroArch Instances ###
+
+arklone supports multiple instances of RetroArch, in case your distro has both 64-bit and 32-bit builds installed. Set `retroarchCfg` to a space-delimited list of absolute paths to each `retroarch.cfg`.
+
+**arklone.cfg**
+
+```
+retroarchCfg = "/home/user/.config/retroarch/retroarch.cfg /home/user/.config/retroarch32/retroarch.cfg"
+```
+
+### rclone Filters ###
+
+arklone passes various filter lists to `rclone` when a sync script is run. See the [Path Units](/DEVELOPERS.md#path-units) and [rclone Filters](/DEVELOPERS.md#rclone-filters) sections of the developer docs for more info.
+
+---
+
+## Troubleshooting ##
+
+### RetroArch Saves Not Syncing? ###
+
+arklone only watches the RetroArch save directories it knew about when it first generated the corresponding path units. If some of your save directories are not being synced automatically, try manually regenerating them from the arklone dialog menu. If you change any of the above settings in `retroarch.cfg`, you must also manually regenerate the path units.
+
+To avoid this, if you select "Set Recommended Settings" on your first run, arklone will automatically generate path units for all your RetroArch content directories which are not empty.
+
+### Logging ###
+
+To save unnecessary writes to your SD card or hard drive, arklone writes logs to the RAM filesystem at `/dev/shm/arklone.log`. This file disappears when the system is powered down. 
+
+---
+
+## FAQ ##
+
+#### Can I use it on Windows, MacOS, or other Linux Distros? ####
+
+**Linux**
+arklone is written in bash, relies on systemd for automatic syncing, and installs dependencies using apt. It should theoretically work on any Debian-based distro, as long as your game content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). A RetroPie release is planned soon.
+
+**Windows**
+If you have Windows Subsystem for Linux (WSL) and a Debian-based distro installed, you will not be able to use automatic syncing because systemd is disabled in WSL. You can still run the arklone settings dialog, or run arklone's [rclone scripts](/rclone/scripts) manually, by passing the expected arguments. See the inline documentation in each script for more info. If your cloud provider offers a desktop client, you should install and use this instead.
+
+**MacOS**
+You will not be able to use automatic syncing because systemd does not exist in MacOS. Newer versions of MacOS also use zsh instead of bash. You can run the arklone settings dialog, or run [rclone scripts](/rclone/scripts) manually, by changing your shell to bash and passing the expected arguments. See the inline documentation in each script for more info. If your cloud provider offers a desktop client, you should install and use this instead.
+
+#### Can I Add Custom Directories? ####
+
+See the [Path Units](/DEVELOPERS.md#path-units) section of the developer docs.

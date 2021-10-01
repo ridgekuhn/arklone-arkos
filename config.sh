@@ -18,8 +18,7 @@ ARKLONE=(
 	[userCfg]="${ARKLONE[userCfgDir]}/arklone.cfg"
 
 	# Dirty boot lock file
-	# @todo ArkOS-specific
-	[dirtyBoot]="${ARKLONE[userCfgDir]}/dirtyboot"
+	[dirtyBoot]="${ARKLONE[userCfgDir]}/.dirtyboot"
 
 	# rclone
 	# @todo ArkOS-specific
@@ -36,6 +35,7 @@ ARKLONE=(
 	# [retroarchCfg]="/home/user/.config/retroarch/retroarch.cfg"
 
 	# systemd
+	# @todo This should be its own function
 	[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
 	[unitsDir]="${ARKLONE[installDir]}/systemd/units"
 	[ignoreDir]="${ARKLONE[installDir]}/systemd/scripts/ignores"

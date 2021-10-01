@@ -58,7 +58,7 @@ function homeScreen() {
 		--menu "Choose an option:" \
 			16 60 8 \
 			"1" "Set cloud service (now: $([ "${ARKLONE[remote]}" ] && echo "${ARKLONE[remote]}" || echo "NONE"))" \
-			"2" "Manual sync savefiles/savestates" \
+			"2" "Manually sync saves" \
 			"3" "${ableString} automatic saves sync" \
 			"4" "Manual backup/sync ArkOS Settings" \
 			"5" "Regenerate RetroArch path units" \
@@ -236,6 +236,7 @@ function autoSyncSavesScreen() {
 	fi
 
 	# Reset ${ARKLONE[autoSync]}
+	# @todo This should be its own function
 	ARKLONE[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
 
 	homeScreen
@@ -303,7 +304,7 @@ function regenRAunitsScreen() {
 		whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
 			--yesno \
-				"You have the following incompatible settings enabled in your retroarch.cfg files. Would you like us to disable them?:\n
+				"Due to a bug in ArkOS, the following settings are incompatible with automatic syncing. Would you like to use the recommended settings?:\n
 				savefiles_in_content_dir\n
 				savestates_in_content_dir" \
 			16 56 8
