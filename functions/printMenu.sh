@@ -1,5 +1,10 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Print array items formatted for whiptail menu
+# @todo Remove this, ${!array[@]} does the same thing
 #
 # @param $1 {string} list of menu options
 #

@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Check if passed subdirectory is in ignore list
 #
 # Ignore list should be a text file of subdirectory names, one per line
@@ -6,6 +10,7 @@
 # (leading path/slashes are dropped)
 #
 # @param $1 {string} Path to subdir to check
+#
 # @param $2 {string} Path to ignore list
 #
 # @returns 1 if $1 is NOT in ignore list
@@ -24,3 +29,4 @@ function isIgnored() {
 
 	return 1
 }
+

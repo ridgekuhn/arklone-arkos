@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
 [ "$(type -t newPathUnit)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
@@ -6,15 +10,20 @@
 # Make path unit for directory, and optionally for subdirectories
 #
 # @param $1 {string} Absolute path to the local parent directory
+#
 # @param $2 {string} Remote parent directory path.
 #		No opening or trailing slashes.
+#
 # @param $3 {number} Depth of subdirectories to recurse
+#
 # @param [$4] {boolean} Create a path unit for the parent directory.
 #		Defaults to true
+#
 # @param [$5] {string} Optional pipe | delimited list of rclone filter names in
 #		${ARKLONE[installDir]}/rclone/filters
 #		Pass file name only, no extension or leading directory path.
 #		Filter will be shared by all subdirectory path units.
+#
 # @param [$6] {string} Optional absolute path
 #		to a list of directory names to ignore
 function newPathUnitsFromDir() {
@@ -97,3 +106,4 @@ function newPathUnitsFromDir() {
 		newPathUnit "${unitName}" "${subdir}" "${remoteParentDir}/${subdirString}" "${filter}"
 	done
 }
+

@@ -1,9 +1,19 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 
+###########
+# MOCK DATA
+###########
 # Uninstall first, to reset to defaults
 "${ARKLONE[installDir]}/uninstall.sh" true
 
+#####
+# RUN
+#####
 # Run install test
 "${ARKLONE[installDir]}/tests/install.sh"
 
@@ -36,5 +46,9 @@ for test in ${TESTS[@]}; do
 	fi
 done
 
+##########
+# TEARDOWN
+##########
 # Run uninstall test
 "${ARKLONE[installDir]}/tests/uninstall.sh" true
+

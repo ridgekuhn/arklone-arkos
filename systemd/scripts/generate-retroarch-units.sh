@@ -1,8 +1,14 @@
 #!/bin/bash
-# arklone retroarch path unit generator
+# arklone cloud sync utility
 # by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+# Generate systemd path units for save directories in all retroarch.cfg instances
 #
 # @param [$1] {boolean} Optionally delete all retroarch path units first
+#
+# @returns 65 for ArkOS-specific exFAT bug
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 [ "$(type -t deletePathUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
@@ -18,6 +24,7 @@
 #
 #		User will still be able to manually sync.
 #
+#		@see dialogs/settings.sh
 #		@see https://github.com/christianhaitian/arkos/issues/289
 
 # Check if an exFAT partition named EASYROMS is present
@@ -126,5 +133,7 @@ for retroarchCfg in ${RETROARCHS[@]}; do
 		newPathUnitsFromDir "${ARKLONE[retroarchContentRoot]}" "${retroarchBasename}/$(basename "${ARKLONE[retroarchContentRoot]}")" 1 true "${r[content_directory_filter]%%|}" "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore"
 	fi
 
+	# Unset r to prevent conflicts
 	unset r
 done
+

@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # Check if a path unit using a local directory and rclone filter already exists
@@ -21,6 +25,7 @@
 #		fi
 #
 # @param $1 {string} Absolute path to local directory
+#
 # @param $2 {string} rclone filter name
 #		ie, the name of the file in ${ARKLONE[installDir]}/rclone/filters,
 #		without the .filter extension

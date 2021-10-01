@@ -1,6 +1,12 @@
 #!/bin/bash
-# rclone cloud syncing for ArkOS
+# arklone cloud sync utility
 # by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+# Copy a directory's save data to the cloud, then receive new updates back
+#
+#	@usage
+#		${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh "/roms@retroarch/roms"
 #
 # @param $1 {string} directory paths in format: "${LOCALDIR}@${REMOTEDIR}@${FILTERS}
 #		${LOCALDIR} should be absolute path, no trailing slash
@@ -8,8 +14,8 @@
 #		${FILTERS} name from file in ${ARKLONE[installDir]}/rclone/filters,
 #			no leading directory path or .filter extension
 #
-#	@usage
-#		${ARKLONE[installDir]}/rclone/scripts/sync-saves.sh "/roms@retroarch/roms"
+# @returns 1 if no network connection, or rclone exit code
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
@@ -47,3 +53,4 @@ echo "Receiving ${ARKLONE[remote]}:${REMOTEDIR}/ to ${LOCALDIR}/"
 rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
 
 echo "Finished cloud sync at $(date)"
+

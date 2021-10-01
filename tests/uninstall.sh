@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 
 # Test uninstaller
@@ -41,3 +45,4 @@ fi
 
 # Done
 echo "SUCCESS"
+

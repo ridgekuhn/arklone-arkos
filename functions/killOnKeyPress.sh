@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Run a script and kill it on user keypress
 #
 # @param $1 {number} The script to run
@@ -25,3 +29,4 @@ function killOnKeypress() {
 	# Return $script's exit code
 	return $?
 }
+

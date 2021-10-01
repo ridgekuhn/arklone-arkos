@@ -1,11 +1,15 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Load config file to array
 #
 # Parses a config file in the format:
 # 'someOption = "someSetting"'
 # without single-quotes, one per line
 #
-# Results in new values in passed array:
+# Populates passed array $2 like:
 # myArray[someOption]="someSetting"
 #
 # @usage
@@ -17,7 +21,9 @@
 #		loadConfig "/path/to/cfg" MYARRAY
 #
 # @param $1 {string} Path to config file
-# @param $2 {var} Array to append to
+#
+# @param $2 {var} Name-reference of array to append to
+#
 # @param [$3] {string} Optional pattern to match
 function loadConfig() {
 	local cfgFile="${1}"
@@ -32,12 +38,13 @@ function loadConfig() {
 
 	# Parse user config file
 	while read line; do
-		if grep -F '=' <<<"${line}" &>/dev/null; then
+		if grep -F '=' <<<"${line}" >/dev/null 2>&1; then
 			# Get the option name
 			local option=$(sed -e 's/ *=.*$//' <<<"${line}")
 
 			# Add the option/value to ${arr[@]}
 			arr[$option]=$(sed -e 's/^.*= *"//' -e 's/" *$//' <<<"${line}")
 		fi
-	done < <(grep -E "${3}" "${cfgFile}")
+	done < <(grep -E "${pattern}" "${cfgFile}")
 }
+

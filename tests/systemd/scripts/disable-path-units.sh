@@ -1,12 +1,23 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
+
+###########
+# MOCK DATA
+###########
+# Unlink conflicting real units
+sudo systemctl disable "arkloned@.service"
+sudo systemctl disable "arkloned-receive-saves-boot.service"
+
+# Mock watched path
+mkdir "/dev/shm/foo"
 
 # Mock enabled units
 ARKLONE[unitsDir]="/dev/shm/units"
-ARKLONE[autoSync]="arkloned-test.path"
-
 mkdir "${ARKLONE[unitsDir]}"
-mkdir "/dev/shm/foo"
 
 cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-test.path"
 [Path]
@@ -43,32 +54,53 @@ ExecStart=/bin/bash -c "echo instance is %I"
 WantedBy=multi-user.target
 EOF
 
-# Unlink conflicting real units
-sudo systemctl disable "arkloned@.service"
-sudo systemctl disable "arkloned-receive-saves-boot.service"
-
 sudo systemctl link "${ARKLONE[unitsDir]}/arkloned@.service"
 sudo systemctl enable "${ARKLONE[unitsDir]}/arkloned-test.path"
 sudo systemctl enable "${ARKLONE[unitsDir]}/arkloned-receive-saves-boot.service"
 
-# Disable path units
+# Populate ${ARKLONE[autoSync]}
+ARKLONE[autoSync]="arkloned-test.path"
+
+#####
+# RUN
+#####
 . "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 
+[ $? = 0 ] || exit $?
+
+########
+# TEST 1
+########
 # Service template unit is not linked
 if systemctl list-unit-files "arkloned@.service" | grep "linked"; then
 	exit 78
 fi
 
+echo "TEST 1 passed."
+
+########
+# TEST 2
+########
 # Path unit is disabled
 if systemctl list-unit-files "arkloned-test.path" | grep "enabled"; then
 	exit 78
 fi
 
+echo "TEST 2 passed."
+
+########
+# TEST 3
+########
 # Boot service is disabled
 if systemctl list-unit-files "arkloned-receive-saves-boot.service" | grep "enabled"; then
 	exit 78
 fi
 
-# Teardown
+echo "TEST 3 passed."
+
+##########
+# TEARDOWN
+##########
 rm -rf "/dev/shm/foo"
 rm -rf "${ARKLONE[unitsDir]}"
+

@@ -1,12 +1,19 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
-ARKLONE[unitsDir]="/dev/shm/units"
-TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
-
+###########
+# MOCK DATA
+###########
 # Mock path unit
+ARKLONE[unitsDir]="/dev/shm/units"
 mkdir "${ARKLONE[unitsDir]}"
+
+TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
 
 cat <<EOF >"${TEST_UNIT}"
 [Path]
@@ -17,11 +24,21 @@ Unit=arkloned@test.service
 WantedBy=multi-user.target
 EOF
 
-# Run function
+#####
+# RUN
+#####
 INSTANCE_NAME=$(getRootInstanceNames)
 
+########
+# TEST 1
+########
 # Check instance name
 [ "${INSTANCE_NAME}" = "test " ] || exit 71
 
-# Teardown
+echo "TEST 1 passed."
+
+##########
+# TEARDOWN
+##########
 rm -rf "${ARKLONE[unitsDir]}"
+

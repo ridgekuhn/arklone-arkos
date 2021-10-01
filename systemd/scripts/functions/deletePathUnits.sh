@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Delete path units
 #
 # Accepts multiple path unit paths as arguments
@@ -25,3 +29,4 @@ function deletePathUnits() {
 		sudo rm -v "${oldUnit}"
 	done
 }
+

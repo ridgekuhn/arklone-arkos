@@ -1,6 +1,8 @@
 #!/bin/bash
-# arklone installation script
+# arklone cloud sync utility
 # by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 
 echo "Now installing arklone cloud sync utility..."

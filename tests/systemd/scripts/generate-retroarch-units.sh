@@ -1,6 +1,13 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 
+###########
+# MOCK DATA
+###########
 # Mock retroarch.cfg to test ArkOS exFAT bug
 # @todo How can we test this on non-ArkOS without creating an exFAT partition?
 #ARKLONE[retroarchCfg]="/dev/shm/retroarch.cfg"
@@ -24,14 +31,13 @@ function deletePathUnits() {
 }
 
 # Mock retroarch.cfg
+mkdir "/dev/shm/retroarch32"
 ARKLONE[retroarchCfg]="/dev/shm/retroarch32/retroarch.cfg"
 
-mkdir "/dev/shm/retroarch32"
-
-##################################################################
+########
 # TEST 1
+########
 # Only generate root directory units
-##################################################################
 cat <<EOF >"${ARKLONE[retroarchCfg]}"
 savefile_directory = "/foo/bar"
 savefiles_in_content_dir = "false"
@@ -59,12 +65,14 @@ function newPathUnitsFromDir() {
 # Run script
 . "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 
-echo "Test 1: SUCCESS"
+[ $? = 0 ] || exit $?
 
-##################################################################
+echo "TEST 1 passed."
+
+########
 # TEST 2
+########
 # newPathUnitsFromDir() was called with correct values for depth 1
-##################################################################
 cat <<EOF >"${ARKLONE[retroarchCfg]}"
 savefile_directory = "/foo/bar"
 savefiles_in_content_dir = "false"
@@ -99,11 +107,13 @@ function newPathUnitsFromDir() {
 # Run script
 . "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 
+[ $? = 0 ] || exit $?
+
 echo "Test 2: SUCCESS"
 
-##################################################################
+########
 # TEST 3
-# newPathUnitsFromDir() was called with correct values for depth 2
+########
 ##################################################################
 cat <<EOF >"${ARKLONE[retroarchCfg]}"
 savefile_directory = "/foo/bar"
@@ -139,12 +149,13 @@ function newPathUnitsFromDir() {
 # Run script
 . "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 
+[ $? = 0 ] || exit $?
+
 echo "Test 3: SUCCESS"
 
-######################################################################
+########
 # TEST 4
-# newPathUnitsFromDir() was called with correct values for content dir
-######################################################################
+########
 ARKLONE[retroarchContentRoot]="/foo/baz"
 
 cat <<EOF >"${ARKLONE[retroarchCfg]}"
@@ -182,17 +193,16 @@ function newPathUnitsFromDir() {
 # Run script
 . "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
 
+[ $? = 0 ] || exit $?
+
 echo "Test 4: SUCCESS"
 
-###########################
+########
 # TEST 5
+########
 # deletePathUnits was called
-###########################
-# Mock old unit
 ARKLONE[unitsDir]="/dev/shm/units"
-
 mkdir "${ARKLONE[unitsDir]}"
-
 touch "${ARKLONE[unitsDir]}/arkloned-retroarch-foo.auto.path"
 
 # Mock functions
@@ -209,6 +219,9 @@ function newPathUnitsFromDir() {
 
 echo "Test 5: SUCCESS"
 
-# Teardown
+##########
+# TEARDOWN
+##########
 rm "${ARKLONE[retroarchCfg]}"
 rm -rf "${ARKLONE[unitsDir]}"
+

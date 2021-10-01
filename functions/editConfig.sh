@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 # Edit an option setting in a config file
 #
 # Where config values are stored like:
@@ -6,7 +10,9 @@
 # without single-quotes, one per line
 #
 # @param $1 {string} The name of the option
+#
 # @param $2 {string} The new value to save
+#
 # @param $3 {string} Path of the file to edit
 function editConfig() {
 	local option="${1}"
@@ -15,3 +21,4 @@ function editConfig() {
 
 	sed -i 's|^'${option}'.*=.*|'${option}' = "'${newVal}'"|' "${3}"
 }
+

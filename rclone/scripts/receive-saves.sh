@@ -1,10 +1,7 @@
 #!/bin/bash
-# arklone cloud sync on boot
+# arklone cloud sync utility
 # by ridgek
-# @todo only source if doesn't exist
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
-[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+# Released under GNU GPLv3 license, see LICENSE.md.
 
 # Receive new save data from the cloud
 #
@@ -20,6 +17,11 @@
 # @see systemd/scripts/generate-retroarch-units.sh
 #
 # @returns rclone exit code
+
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
+[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+
 INSTANCES=($(getRootInstanceNames))
 EXIT_CODE=0
 
@@ -59,3 +61,4 @@ for instance in ${INSTANCES[@]}; do
 done
 
 exit $exitCode
+

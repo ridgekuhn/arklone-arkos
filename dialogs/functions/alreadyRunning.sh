@@ -1,9 +1,13 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # Check if script is already running
 #
-#	If a script is already running, user is shown ${ARKLONE[log]}
+#	If script is already running, user is shown ${ARKLONE[log]}
 #
 # @param $1 {string} Path to script
 #
@@ -32,3 +36,4 @@ function alreadyRunning() {
 		return 1
 	fi
 }
+

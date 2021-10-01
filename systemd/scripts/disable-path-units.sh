@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # Store list of enabled unit names in an array
@@ -13,3 +17,4 @@ if [ "${#AUTOSYNC[@]}" -gt 0 ]; then
 	# Unlink path unit service template
 	sudo systemctl disable "arkloned@.service"
 fi
+

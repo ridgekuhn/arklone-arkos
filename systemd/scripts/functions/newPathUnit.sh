@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t unitExists)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/unitExists.sh"
 
@@ -6,8 +10,12 @@
 #
 # Creates a new systemd path unit file in ${ARKLONE[installDir]}/systemd/units/
 # using the the arkloned@.service unit template.
-#
 # @see systemd/units/arkloned@.service
+#
+# Checks all existing path units for
+# the same local sync directory passed to $2
+# If a unit is found, attempts to
+# apply the new rclone filter to the existing unit
 #
 # @usage
 #		newPathUnit "retroarch32-savestate" "/path/to/savestates/nes" "retroarch32/nes" "retroarch-savefile|retroarch-savestate"

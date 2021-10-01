@@ -1,4 +1,8 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 [ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
 
 # Set default settings
@@ -45,8 +49,11 @@ if [ ! -f "${ARKLONE[userCfg]}" ]; then
 	# Create userCfgDir if missing
 	[ -d "${ARKLONE[userCfgDir]}" ] || mkdir "${ARKLONE[userCfgDir]}"
 
+	# Copy userCfg back to default path
+	# @todo Should we symlink this to ${ARKLONE[backupDir]} for ArkOS users?
 	cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfg]}"
 fi
 
 # Load the user's config file
 loadConfig "${ARKLONE[userCfg]}" ARKLONE
+

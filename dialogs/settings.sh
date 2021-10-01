@@ -1,12 +1,12 @@
 #!/bin/bash
-# arklone settings utility
+# arklone cloud sync utility
 # by ridgek
-########
-# CONFIG
-########
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 source "${ARKLONE[installDir]}/functions/editConfig.sh"
+# @todo Replace printMenu with ${!array[@]}
 source "${ARKLONE[installDir]}/functions/printMenu.sh"
 source "${ARKLONE[installDir]}/dialogs/functions/alreadyRunning.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
@@ -66,6 +66,8 @@ function homeScreen() {
 		3>&1 1>&2 2>&3 \
 	)
 
+	# Send user to selected screen
+	# @todo Add screen to dump log to SD card
 	case $selection in
 		1) setCloudScreen ;;
 		2) manualSyncSavesScreen ;;
@@ -117,6 +119,7 @@ function setCloudScreen() {
 	# Get list of rclone remotes
 	local remotes=($(rclone listremotes | cut -d ':' -f 1))
 
+	# @todo Replace printMenu with ${!array[@]}
 	local selection=$(whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
 		--menu \
@@ -176,7 +179,10 @@ function manualSyncSavesScreen() {
 	if [ $? != 0 ]; then
 		homeScreen
 
+	# Allow user to select a directory to sync
+	# @todo Add a "sync all" option
 	else
+		# @todo Replace printMenu with ${!array[@]}
 		local selection=$(whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
 			--menu \
@@ -220,6 +226,7 @@ function autoSyncSavesScreen() {
 			"Please wait while we configure your settings..." \
 			16 56 8
 
+	# Enable or disable path units
 	local autosync=(${ARKLONE[autoSync]})
 
 	if [ "${#autosync[@]}" = 0 ]; then
@@ -240,15 +247,14 @@ function manualBackupArkOSScreen() {
 
 	alreadyRunning "${script}"
 
-	if [ $? != 0 ]; then
-		homeScreen
-	else
+	if [ $? = 0 ]; then
 		whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
 			--yesno \
 				"This will create a backup of your settings at ${ARKLONE[backupDir]}/arkosbackup.tar.gz. Do you want to keep this file after it is uploaded to ${ARKLONE[remote]}?" \
 				16 56
 
+		# Store whether user wanted to keep the arkosbackup.tar.gz or not
 		local keep=$?
 
 		whiptail \
@@ -257,6 +263,7 @@ function manualBackupArkOSScreen() {
 				"Please wait while we back up your settings..." \
 				16 56 8
 
+		# manualBackupArkOS calls ${script}
 		manualBackupArkOS "${keep}"
 
 		if [ $? = 0 ]; then
@@ -272,13 +279,15 @@ function manualBackupArkOSScreen() {
 					"Update failed. Please check the log file at ${ARKLONE[log]}." \
 					16 56 8
 		fi
-
-		homeScreen
 	fi
+
+	homeScreen
 }
 
 # Regenerate RetroArch savestates/savefiles units screen
 function regenRAunitsScreen() {
+	local script="${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+
 	whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
 		--infobox \
@@ -286,9 +295,10 @@ function regenRAunitsScreen() {
 			16 56 8
 
 	# Delete old retroarch path units and generate new ones
-	. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true
+	. "${script}" true
 
 	# Fix incompatible settings
+	# @todo ArkOS-specific
 	if [ $? = 65 ]; then
 		whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
@@ -303,12 +313,10 @@ function regenRAunitsScreen() {
 				--title "${ARKLONE[whiptailTitle]}" \
 				--msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \
 			16 56 8
+
+		# Change user's settings
 		else
 			retroarchSetRecommended
-
-			autoSyncSavesScreen
-
-			return
 		fi
 	fi
 
@@ -318,10 +326,13 @@ function regenRAunitsScreen() {
 #####
 # RUN
 #####
-# If ${ARKLONE[remote]} doesn't exist,
-# assume this is the user's first run
+# If ${ARKLONE[remote]} doesn't exist, assume this is the user's first run
 if [ -z "${ARKLONE[remote]}" ]; then
 	firstRunScreen
+
+	# Exit here so user doesn't quit back to homeScreen
+	exit
 fi
 
 homeScreen
+

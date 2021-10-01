@@ -1,5 +1,13 @@
 #!/bin/bash
-# @returns exit code 65 for ArkOS exFAT bug
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+# Enable systemd path units for watching directories
+#
+# Since systemd is incapable of watching subdirectories,
+# only enables units ending in .path, and .sub.auto.path, but not .auto.path
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # Store list of enabled unit names in an array
@@ -40,3 +48,4 @@ if [ "${#AUTOSYNC[@]}" = 0 ]; then
 	# Enable boot sync service
 	sudo systemctl enable "${ARKLONE[unitsDir]}/arkloned-receive-saves-boot.service"
 fi
+

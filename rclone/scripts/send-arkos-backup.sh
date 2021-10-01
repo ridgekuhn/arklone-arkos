@@ -1,6 +1,10 @@
 #!/bin/bash
-# ArkOS Backup Settings to Cloud
-# By ridgek
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+# Runs the ArkOS backup script and sends the archive to the cloud
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 

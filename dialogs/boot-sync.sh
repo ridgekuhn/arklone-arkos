@@ -1,4 +1,15 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+# Dialog shown to user on boot
+#
+# Checks for dirty boot state, and configured network connection.
+# If network is up, attempts to run
+# @see rclone/scripts/receive-saves.sh
+#
+# @returns Exit code of receive-saves.sh
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
 
@@ -121,4 +132,7 @@ clear
 
 mainScreen
 
+clear
+
 exit $?
+

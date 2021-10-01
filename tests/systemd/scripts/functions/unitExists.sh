@@ -1,12 +1,19 @@
 #!/bin/bash
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/unitExists.sh"
 
-ARKLONE[unitsDir]="/dev/shm/units"
-TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
-
+###########
+# MOCK DATA
+###########
 # Mock units
+ARKLONE[unitsDir]="/dev/shm/units"
 mkdir "${ARKLONE[unitsDir]}"
+
+TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
 
 cat <<EOF >"${TEST_UNIT}"
 [Path]
@@ -17,27 +24,43 @@ Unit=arkloned@-path-to-foo\x40path-to-bar\x40filter1\x7cfilter2\x7cfilter3.servi
 WantedBy=multi-user.target
 EOF
 
-# Unit exists
+#####
+# RUN
+#####
 unitExists "/path/to/foo" "filter3"
 
 [ $? = 0 ] || exit 70
 
+########
+# TEST 1
+########
 # Unit exists, but with different filters
 FILTER_LIST=$((unitExists "/path/to/foo" "filter4") 2>&1)
 
-# Unit does not exit with code 0
 [ $? != 0 ] || exit 70
 
+echo "TEST 1 passed."
+
+########
+# TEST 2
+########
 # unitExists returns expected string
 [ "${FILTER_LIST}" = "filter1|filter2|filter3|filter4" ] || exit 70
 
+echo "TEST 2 passed."
+
+########
+# TEST 3
+########
 # Unit does not exist
 unitExists "/path/to/bar" "foo"
 
-# Unit does not exit with code 0
 [ $? != 0 ] || exit 70
 
-# Teardown
-rm -rf "${ARKLONE[unitsDir]}"
+echo "TEST 3 passeed"
 
+##########
+# TEARDOWN
+##########
+rm -rf "${ARKLONE[unitsDir]}"
 

@@ -1,5 +1,9 @@
 #!/bin/bash
-#	Set retroarch and retroarch32 retroarch.cfg files to the following settings:
+# arklone cloud sync utility
+# by ridgek
+# Released under GNU GPLv3 license, see LICENSE.md.
+
+#	Set retroarch.cfg file to the following settings:
 #
 # savefile_directory = "~/.config/retroarch/saves"
 # savefiles_in_content_dir = "false"
@@ -11,9 +15,17 @@
 # sort_savestates_enable = "false"
 # sort_savestates_by_content_enable = "true"
 #
+# Results in savefiles and savestates stored in the same directory hierarchy
+# as "${ARKLONE[retroarchContentDir]}" in saves dir
+# eg,
+# ~/.config/retroarch/saves/nes/TheLegendOfZelda.srm
+# ~/.config/retroarch/saves/nes/TheLegendOfZelda.savestate0
+#
 # @param $1 {string} Path to retroarch.cfg
+#
 # @param [$2] {string} Optional path to saves dir,
 #		Defaults to "$(dirname ${1})/saves"
+
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 [ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
@@ -81,3 +93,4 @@ editConfig "sort_savestates_by_content_enable" "true" "${RETROARCH_CFG}"
 
 echo "Setting sort_savestates_enable to false"
 editConfig "sort_savestates_enable" "false" "${RETROARCH_CFG}"
+
