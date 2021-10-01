@@ -38,8 +38,10 @@ function retroarchSetRecommended() {
 	local retroarchs=(${ARKLONE[retroarchCfg]})
 
 	# Change user settings
+	# Use "${retroarchs[0]}/saves" as parent for savefiles and savestates
+	# for all instances of retroarch.cfg
 	for retroarchCfg in ${retroarchs[@]}; do
-		. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}"
+		. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${retroarchCfg}" "$(dirname "${retroarchs[0]}")/saves"
 	done
 }
 
@@ -120,13 +122,13 @@ function setCloudScreen() {
 		--menu \
 			"Choose a cloud service:" \
 			16 60 8 \
-			$(printMenu "${REMOTES[@]}") \
+			$(printMenu "${remotes[@]}") \
 		3>&1 1>&2 2>&3 \
 	)
 
 	# Save user selection and reload config
 	if [ "${selection}" ]; then
-		editConfig "remote" "${remotes[$selection]}" "${ARKLONE[log]}"
+		editConfig "remote" "${remotes[$selection]}" "${ARKLONE[userCfg]}"
 		loadConfig "${ARKLONE[userCfg]}" ARKLONE
 	fi
 

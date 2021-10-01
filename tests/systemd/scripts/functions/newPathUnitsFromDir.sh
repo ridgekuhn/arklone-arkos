@@ -17,16 +17,6 @@ cat <<EOF > "${ARKLONE[ignoreDir]}/test.ignore"
 ignoremetoo
 EOF
 
-# Dir is in ignore list
-isIgnored "/path/to/ignoreme" "${ARKLONE[ignoreDir]}/global.ignore"
-
-[ $? = 0 ] || exit 70
-
-# Dir is not in ignore list
-isIgnored "/path/to/foo" "${ARKLONE[ignoreDir]}/global.ignore"
-
-[ $? != 0 ] || exit 70
-
 # Mock directory tree
 SAVES_DIR="/dev/shm/saves"
 

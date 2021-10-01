@@ -4,61 +4,80 @@
 # savefile_directory = "~/.config/retroarch/saves"
 # savefiles_in_content_dir = "false"
 # sort_savefiles_enable = "false"
-# sort_savefiles_by_content_enable = "false"
+# sort_savefiles_by_content_enable = "true"
 #
 # savestate_directory = "~/.config/retroarch/saves"
 # savestates_in_content_dir = "false"
 # sort_savestates_enable = "false"
-# sort_savestates_by_content_enable = "false"
-
+# sort_savestates_by_content_enable = "true"
+#
 # @param $1 {string} Path to retroarch.cfg
+# @param [$2] {string} Optional path to saves dir,
+#		Defaults to "$(dirname ${1})/saves"
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 [ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
 
 # Get the path to retroarch.cfg
 RETROARCH_CFG="${1}"
-RETROARCH_DIR=$(dirname "${RETROARCH_CFG}")
+SAVES_DIR=$([ ${2} ] && echo "${2}" || echo "$(dirname "${RETROARCH_CFG}")/saves")
 
 echo "========================================================================="
 echo "Now editing ${RETROARCH_CFG}"
 echo "-------------------------------------------------------------------------"
 
+# Make the save directory if it doesn't exist
+if [ ! -d "${SAVES_DIR}" ]; then
+	mkdir "${SAVES_DIR}"
+	chmod u+rw "${SAVES_DIR}"
+fi
+
+# Replicate RetroArch content dir hierarchy in ${SAVES_DIR}
+RA_CONTENT_DIRS=($(find "${ARKLONE[retroarchContentRoot]}" -mindepth 1 -maxdepth 1 -type d))
+
+for contentDir in ${RA_CONTENT_DIRS[@]}; do
+	# If ${contentDir} is not empty, and not in global or RetroArch ignore lists
+	# @todo ArkOS-specific
+	if \
+		[ ! -z "$(ls -A "${contentDir}")" ] \
+		&& ! isIgnored "${contentDir}" "${ARKLONE[ignoreDir]}/global.ignore" \
+		&& ! isIgnored "${contentDir}" "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore"
+	then
+		# Make a corresponding directory in ${SAVES_DIR}
+		saveDir="${SAVES_DIR}/$(basename "${contentDir}")"
+
+		if [ ! -d "${saveDir}" ]; then
+		 	mkdir "${saveDir}"
+		fi
+	fi
+done
+
 # Backup retroarch.cfg
 cp -v "${RETROARCH_CFG}" "${RETROARCH_CFG}.arklone$(date +%s).bak"
 
-# Make the save directory if it doesn't exist
-if [ ! -d "${RETROARCH_DIR}/saves" ]; then
-	mkdir "${RETROARCH_DIR}/saves"
-	chmod u+rw "${RETROARCH_DIR}/saves"
-fi
-
-echo "Setting savefile_directory to ${RETROARCH_DIR}/saves"
-editConfig "savefile_directory" "${RETROARCH_DIR}/saves" "${RETROARCH_CFG}"
+# Modify savefile settings
+echo "Setting savefile_directory to ${SAVES_DIR}"
+editConfig "savefile_directory" "${SAVES_DIR}" "${RETROARCH_CFG}"
 
 echo "Setting savefiles_in_content_dir to false"
 editConfig "savefiles_in_content_dir" "false" "${RETROARCH_CFG}"
 
-echo "Setting sort_savefiles_by_content_enable to false"
-editConfig "sort_savefiles_by_content_enable" "false" "${RETROARCH_CFG}"
+echo "Setting sort_savefiles_by_content_enable to true"
+editConfig "sort_savefiles_by_content_enable" "true" "${RETROARCH_CFG}"
 
 echo "Setting sort_savefiles_enable to false"
 editConfig "sort_savefiles_enable" "false" "${RETROARCH_CFG}"
 
-# Make the states directory if it doesn't exist
-if [ ! -d "${RETROARCH_DIR}/states" ]; then
-	mkdir "${RETROARCH_DIR}/states"
-	chmod u+rw "${RETROARCH_DIR}/states"
-fi
-
-echo "Setting savestate_directory to ${RETROARCH_DIR}/states"
-editConfig "savestate_directory" "${RETROARCH_DIR}/states" "${RETROARCH_CFG}"
+# Modify savestate settings
+echo "Setting savestate_directory to ${SAVES_DIR}"
+editConfig "savestate_directory" "${SAVES_DIR}" "${RETROARCH_CFG}"
 
 echo "Setting savestates_in_content_dir to false"
 editConfig "savestates_in_content_dir" "false" "${RETROARCH_CFG}"
 
-echo "Setting sort_savestates_by_content_enable to false"
-editConfig "sort_savestates_by_content_enable" "false" "${RETROARCH_CFG}"
+echo "Setting sort_savestates_by_content_enable to true"
+editConfig "sort_savestates_by_content_enable" "true" "${RETROARCH_CFG}"
 
 echo "Setting sort_savestates_enable to false"
 editConfig "sort_savestates_enable" "false" "${RETROARCH_CFG}"
