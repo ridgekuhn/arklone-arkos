@@ -46,17 +46,17 @@ if ! rclone --version &> /dev/null; then
 else
 	# Set a lock file so we can know to restore user's settings on uninstall
 	touch "${ARKLONE[userCfgDir]}/.rclone.lock"
+fi
 
-	# Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
-	# @todo ArkOS-specific
-	if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
-		echo "Backing up and moving your rclone.conf to EASYROMS"
+# Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
+# @todo ArkOS-specific
+if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
+	echo "Backing up and moving your rclone.conf to EASYROMS"
 
-		cp "${HOME}/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
+	cp "${HOME}/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
 
-		# Suppress errors
-		mv "${HOME}/.config/rclone/rclone.conf" "${ARKLONE[backupDir]}/rclone/rclone.conf" 2>/dev/null
-	fi
+	# Suppress errors
+	mv "${HOME}/.config/rclone/rclone.conf" "${ARKLONE[backupDir]}/rclone/rclone.conf" 2>/dev/null
 fi
 
 # Create user-accessible rclone.conf in ${ARKLONE[backupDir]}

@@ -3,6 +3,10 @@
 # by ridgek
 source "/opt/arklone/config.sh"
 
+# Uninstall arklone
+# @param $1 {boolean} Keep install dir if true
+KEEP_INSTALL_DIR=$1
+
 # Get list of installed units
 UNITS=($(systemctl list-unit-files | grep "arklone" | cut -d ' ' -f 1))
 
@@ -40,7 +44,9 @@ fi
 rm -rf "${ARKLONE[userCfgDir]}"
 
 # Remove arklone
-sudo rm -rf "${ARKLONE[installDir]}"
+if [ ! $KEEP_INSTALL_DIR ]; then
+	sudo rm -rf "${ARKLONE[installDir]}"
+fi
 
 echo "Uninstallation complete. Thanks for trying arklone!"
 

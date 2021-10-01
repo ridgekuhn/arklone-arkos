@@ -1,8 +1,12 @@
 #!/bin/bash
 source "/opt/arklone/config.sh"
 
+# Test uninstaller
+# @param $1 {boolean} Keep install dir if true
+KEEP_INSTALL_DIR=$1
+
 # Run uninstaller
-"/opt/arklone/uninstall.sh"
+"${ARKLONE[installDir]}/uninstall.sh" $KEEP_INSTALL_DIR
 
 # Check units were removed from systemd
 if systemctl list-unit-files | grep -E '^arklone'; then
@@ -29,7 +33,11 @@ fi
 [ ! -d "${ARKLONE[userCfgDir]}" ] || exit 78
 
 # arklone install dir was removed
-[ ! -d "${ARKLONE[installDir]}" ] || exit 78
+if [ $KEEP_INSTALL_DIR ]; then
+	[ -d "${ARKLONE[installDir]}" ] || exit 78
+else
+	[ ! -d "${ARKLONE[installDir]}" ] || exit 78
+fi
 
 # Done
 echo "SUCCESS"

@@ -1,6 +1,12 @@
 #!/bin/bash
 source "/opt/arklone/config.sh"
 
+# Uninstall first, to reset to defaults
+"${ARKLONE[installDir]}/uninstall.sh" true
+
+# Run install test
+"${ARKLONE[installDir]}/tests/install.sh"
+
 # Get all tests
 TESTS=($(find "${ARKLONE[installDir]}/tests" -type f -name "*.sh"))
 
@@ -29,3 +35,6 @@ for test in ${TESTS[@]}; do
 		fi
 	fi
 done
+
+# Run uninstall test
+"${ARKLONE[installDir]}/tests/uninstall.sh" true
