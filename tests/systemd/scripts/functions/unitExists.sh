@@ -57,7 +57,7 @@ unitExists "/path/to/bar" "foo"
 
 [ $? != 0 ] || exit 70
 
-echo "TEST 3 passeed"
+echo "TEST 3 passed."
 
 ##########
 # TEARDOWN

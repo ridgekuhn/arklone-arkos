@@ -14,6 +14,9 @@ if [ "${#AUTOSYNC[@]}" -gt 0 ]; then
 		sudo systemctl disable "${unit}"
 	done
 
+	# Disable boot service
+	sudo systemctl disable "arkloned-receive-saves-boot.service"
+
 	# Unlink path unit service template
 	sudo systemctl disable "arkloned@.service"
 fi

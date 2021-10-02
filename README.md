@@ -275,7 +275,7 @@ To save unnecessary writes to your SD card or hard drive, arklone writes logs to
 #### Can I use it on Windows, MacOS, or other Linux Distros? ####
 
 **Linux**
-arklone is written in bash, relies on systemd for automatic syncing, and installs dependencies using apt. It should theoretically work on any Debian-based distro, as long as your game content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). A RetroPie release is planned soon.
+arklone is written in bash, relies on systemd for automatic syncing, and installs dependencies using dpkg. It should theoretically work on any Debian-based distro, as long as your game content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). A RetroPie release is planned soon.
 
 **Windows**
 If you have Windows Subsystem for Linux (WSL) and a Debian-based distro installed, you will not be able to use automatic syncing because systemd is disabled in WSL. You can still run the arklone settings dialog, or run arklone's [rclone scripts](/rclone/scripts) manually, by passing the expected arguments. See the inline documentation in each script for more info. If your cloud provider offers a desktop client, you should install and use this instead.

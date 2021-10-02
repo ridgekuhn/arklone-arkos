@@ -9,7 +9,7 @@ source "/opt/arklone/config.sh"
 # MOCK DATA
 ###########
 # Uninstall first, to reset to defaults
-"${ARKLONE[installDir]}/uninstall.sh" true
+"${ARKLONE[installDir]}/uninstall.sh" true 2>/dev/null
 
 #####
 # RUN
@@ -51,4 +51,6 @@ done
 ##########
 # Run uninstall test
 "${ARKLONE[installDir]}/tests/uninstall.sh" true
+
+echo "All tests ran successfully"
 

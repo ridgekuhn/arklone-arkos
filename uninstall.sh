@@ -25,8 +25,10 @@ if [ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ]; then
 	echo "Restoring your rclone settings..."
 
 	cp "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"
+
+# Else, uninstall rclone
 else
-	sudo apt remove rclone -y
+	sudo dpkg -P rclone
 fi
 
 rm "${HOME}/.config/rclone/rclone.conf"

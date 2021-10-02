@@ -42,13 +42,31 @@ fi
 ########
 # RCLONE
 ########
-# Install rclone
-if ! rclone --version &> /dev/null; then
-	sudo apt update && sudo apt install rclone -y || (echo "Could not install required dependencies" && exit 1)
-else
+# Get the system architecture
+SYS_ARCH=$(uname -m)
+
+case $SYS_ARCH in
+	aarch64 | arm64)
+		SYS_ARCH="arm64"
+	;;
+	x86_64)
+		SYS_ARCH="amd64"
+	;;
+esac
+
+#Get the rclone download URL
+RCLONE_PKG="rclone-current-linux-${SYS_ARCH}.deb"
+RCLONE_URL="https://downloads.rclone.org/${RCLONE_PKG}"
+
+# Check if user already has rclone installed
+if rclone --version >/dev/null 2>&1; then
 	# Set a lock file so we can know to restore user's settings on uninstall
 	touch "${ARKLONE[userCfgDir]}/.rclone.lock"
 fi
+
+# Upgrade the user to the latest rclone
+wget "${RCLONE_URL}" && sudo dpkg --force-overwrite -i "${RCLONE_PKG}"
+rm "${RCLONE_PKG}"
 
 # Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
 # @todo ArkOS-specific
