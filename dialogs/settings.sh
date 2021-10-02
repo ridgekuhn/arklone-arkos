@@ -6,7 +6,6 @@
 source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 source "${ARKLONE[installDir]}/functions/editConfig.sh"
-# @todo Replace printMenu with ${!array[@]}
 source "${ARKLONE[installDir]}/functions/printMenu.sh"
 source "${ARKLONE[installDir]}/dialogs/functions/alreadyRunning.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
@@ -117,21 +116,22 @@ function firstRunScreen() {
 # Cloud service selection dialog
 function setCloudScreen() {
 	# Get list of rclone remotes
-	local remotes=($(rclone listremotes | cut -d ':' -f 1))
+	local remotes=$(rclone listremotes | cut -d ':' -f 1)
 
-	# @todo Replace printMenu with ${!array[@]}
 	local selection=$(whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
 		--menu \
 			"Choose a cloud service:" \
 			16 60 8 \
-			$(printMenu "${remotes[@]}") \
+			$(printMenu "${remotes}") \
 		3>&1 1>&2 2>&3 \
 	)
 
 	# Save user selection and reload config
-	if [ "${selection}" ]; then
+	if [ ! -z "${selection}" ]; then
+		remotes=(${remotes})
 		editConfig "remote" "${remotes[$selection]}" "${ARKLONE[userCfg]}"
+
 		loadConfig "${ARKLONE[userCfg]}" ARKLONE
 	fi
 
@@ -182,7 +182,6 @@ function manualSyncSavesScreen() {
 	# Allow user to select a directory to sync
 	# @todo Add a "sync all" option
 	else
-		# @todo Replace printMenu with ${!array[@]}
 		local selection=$(whiptail \
 			--title "${ARKLONE[whiptailTitle]}" \
 			--menu \
