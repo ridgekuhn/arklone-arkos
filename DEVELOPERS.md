@@ -10,8 +10,9 @@ arklone should be installed at `/opt/arklone`
     * [arkloned@.service Template](#arklonedservice-template)
     * [Path Units](#path-units)
     * [rclone Filters](#rclone-filters)
+    * [Watching Recursively with inotifywait](#recursive-watching-with-inotifywait)
 
-2. [Scripts](#scripts)
+2. [rclone Scripts](#rclone-scripts)
 
 3. [API](#api)
     * [${ARKLONE[@]}](#arklone)
@@ -87,9 +88,54 @@ Filters in the path unit's instance name are a pipe-delimited list used for pass
 - *
 ```
 
+### Ignoring Units when Automatic Syncing is Enabled ###
+
+To prevent a systemd path unit or service from being enabled when the user selects automatic syncing, add the name of the unit to [systemd/scripts/ignores/autosync.ignore](/systemd/scripts/ignores/autosync.ignore).
+
+### Watching Recursively with inotifywait ###
+
+Unforunately, systemd path units are not currently capable of recursively watching a directory. In this case, [watch-directory.sh](/systemd/scripts/inotify/watch-directory.sh) is provided as a workaround (to call the [arkloned@.service](/systemd/units/arkloned@.service) template, as would normally be done by the path unit), and should be called from a custom systemd service unit. If the custom service unit is placed in [systemd/units](/systemd/units), it will automatically be enabled when [enable-path-units.sh](/systemd/scripts/enable-path-units.sh) is run. A corresponding path unit must still be created.
+
+[watch-directory.sh](/systemd/scripts/inotify/watch-directory.sh) takes two or more arguments. The first parameter is the path to the corresponding systemd path unit, and should be called in the `ExecStart=` line of the service unit file. The second argument and beyond are patterns to exclude from `inotifywait`, as regular expression strings.
+
+[arkloned-ppsspp.service](/systemd/units/arkloned-ppsspp.service):
+
+```
+[Unit]
+Description=arklone - ppsspp sync service
+Requires=network-online.target arkloned-receive-saves-boot.service
+After=network-online.target arkloned-receive-saves-boot.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '/opt/arklone/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/systemd/units/arkloned-ppsspp.path" "/SYSTEM/"'
+
+[Install]
+WantedBy=multi-user.target
+```
+
+[arkloned-ppsspp.path](/systemd/units/arkloned-ppsspp.path):
+
+```
+[Path]
+PathChanged=/home/ark/.config/ppsspp
+Unit=arkloned@-home-ark-.config-ppsspp\x40ppssppx40ppsspp.service
+
+[Install]
+WantedBy=multi-user.target
+```
+
+To prevent the path unit from being enabled in systemd when [enable-path-units.sh](/systemd/scripts/enable-path-units.sh) is run, add the name of the path unit to the `systemd/scripts/ignores/autosync.ignore` file.
+
+[autosync.ignore](/systemd/scripts/ignores/autosync.ignore)
+
+```
+arkloned-ppsspp.path
+```
+
 ---
 
-## SCRIPTS ##
+## rclone Scripts ##
 
 ### receive-saves.sh ###
 
@@ -134,7 +180,7 @@ source "/opt/arklone/config.sh"
 echo "${ARKLONE[log]}"
 
 # Print a list of enabled arklone systemd units
-tr ' ' '\n' <<<"${ARKLONE[autoSync]}"
+tr ' ' '\n' <<<"${ARKLONE[enabledUnits]}"
 ```
 
 If your script can run directly from the command line, or be `source`d in another script where ${ARKLONE[@]} is already defined:
@@ -308,17 +354,16 @@ function autoSyncSavesScreen() {
 			16 56 8
 
 	# Enable or disable path units
-	local autosync=(${ARKLONE[autoSync]})
+	local enabledUnits=(${ARKLONE[enabledUnits]})
 
-	if [ "${#autosync[@]}" = 0 ]; then
+	if [ "${#enabledUnits[@]}" = 0 ]; then
 		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
 	else
 		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 	fi
 
-	# Reset ${ARKLONE[autoSync]}
-	# @todo This should be its own function
-	ARKLONE[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
+	# Reset ${ARKLONE[enabledUnits]}
+	ARKLONE[enabledUnits]=$(getEnabledUnits)
 
 	homeScreen
 }

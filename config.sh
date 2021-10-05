@@ -4,11 +4,16 @@
 # Released under GNU GPLv3 license, see LICENSE.md.
 
 [ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
+[ "$(type -t getEnabledUnits)" = "function" ] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
+
+# Set default user/group if run as root
+# @todo ArkOS-specific
+[ "${USER}" ] || USER="ark"
+[ "${HOME}" ] || HOME="/home/${USER}"
 
 # Set default settings
 declare -A ARKLONE
 ARKLONE=(
-	# Install Paths
 	[installDir]="/opt/arklone"
 	[userCfgDir]="${HOME}/.config/arklone"
 	# @todo ArkOS-specific
@@ -35,8 +40,7 @@ ARKLONE=(
 	# [retroarchCfg]="/home/user/.config/retroarch/retroarch.cfg"
 
 	# systemd
-	# @todo This should be its own function
-	[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
+	[enabledUnits]="$(getEnabledUnits)"
 	[unitsDir]="${ARKLONE[installDir]}/systemd/units"
 	[ignoreDir]="${ARKLONE[installDir]}/systemd/scripts/ignores"
 

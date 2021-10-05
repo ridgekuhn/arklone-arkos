@@ -58,8 +58,8 @@ sudo systemctl link "${ARKLONE[unitsDir]}/arkloned@.service"
 sudo systemctl enable "${ARKLONE[unitsDir]}/arkloned-test.path"
 sudo systemctl enable "${ARKLONE[unitsDir]}/arkloned-receive-saves-boot.service"
 
-# Populate ${ARKLONE[autoSync]}
-ARKLONE[autoSync]="arkloned-test.path"
+# Populate ${ARKLONE[enabledUnits]}
+ARKLONE[enabledUnits]="arkloned@.service arkloned-test.path arkloned-receive-saves-boot.service"
 
 #####
 # RUN

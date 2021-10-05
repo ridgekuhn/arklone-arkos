@@ -11,6 +11,7 @@ StandardOutput=tty
 StandardError=tty
 TTYPath=/dev/tty1
 ExecStart=/bin/bash -c '/opt/joy2key/listen.sh "/opt/arklone/dialogs/boot-sync.sh"'
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

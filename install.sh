@@ -18,9 +18,9 @@ if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
 fi
 
 # Create backup dir from user setting in ${ARKLONE[userCfg]}
-# ArkOS default is /roms/backup
 # Should be somewhere easily-accessible for non-Linux users,
 # like a FAT partition or samba share
+# ArkOS default is /roms/backup
 # @todo ArkOS specific
 if [ ! -d "${ARKLONE[backupDir]}" ]; then
 	mkdir "${ARKLONE[backupDir]}"
@@ -65,7 +65,9 @@ if rclone --version >/dev/null 2>&1; then
 fi
 
 # Upgrade the user to the latest rclone
-wget "${RCLONE_URL}" && sudo dpkg --force-overwrite -i "${RCLONE_PKG}"
+wget "${RCLONE_URL}" -O "${RCLONE_PKG}" \
+	&& sudo dpkg --force-overwrite -i "${RCLONE_PKG}"
+
 rm "${RCLONE_PKG}"
 
 # Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
@@ -83,6 +85,18 @@ fi
 # and symlink it to the default rclone location
 touch "${ARKLONE[backupDir]}/rclone/rclone.conf"
 ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
+
+###############
+# INOTIFY-TOOLS
+###############
+# Check if user already has inotify-tools installed
+if inotifywait --help >/dev/null 2>&1; then
+	# Set a lock file so we can know to not remove on uninstall
+	touch "${ARKLONE[userCfgDir]}/.inotify-tools.lock"
+else
+	# Install inotify-tools
+	sudo apt update && sudo apt install inotify-tools -y
+fi
 
 #########
 # ARKLONE

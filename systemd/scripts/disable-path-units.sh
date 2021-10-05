@@ -6,18 +6,12 @@
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
 # Store list of enabled unit names in an array
-AUTOSYNC=(${ARKLONE[autoSync]})
+ENABLED_UNITS=(${ARKLONE[enabledUnits]})
 
 # Disable path units
-if [ "${#AUTOSYNC[@]}" -gt 0 ]; then
-	for unit in ${AUTOSYNC[@]}; do
+if [ "${#ENABLED_UNITS[@]}" -gt 0 ]; then
+	for unit in ${ENABLED_UNITS[@]}; do
 		sudo systemctl disable "${unit}"
 	done
-
-	# Disable boot service
-	sudo systemctl disable "arkloned-receive-saves-boot.service"
-
-	# Unlink path unit service template
-	sudo systemctl disable "arkloned@.service"
 fi
 

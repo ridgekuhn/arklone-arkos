@@ -8,6 +8,7 @@ source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 source "${ARKLONE[installDir]}/functions/editConfig.sh"
 source "${ARKLONE[installDir]}/functions/printMenu.sh"
 source "${ARKLONE[installDir]}/dialogs/functions/alreadyRunning.sh"
+source "${ARKLONE[installDir]}/systemd/scripts/functions/getEnabledUnits.sh"
 source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 #############
@@ -50,7 +51,7 @@ function retroarchSetRecommended() {
 # Point-of-entry dialog
 function homeScreen() {
 	# Set automatic sync mode string
-	local ableString=$([ "${ARKLONE[autoSync]}" ] && echo "Disable" || echo "Enable")
+	local ableString=$([ "${ARKLONE[enabledUnits]}" ] && echo "Disable" || echo "Enable")
 
 	local selection=$(whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
@@ -226,17 +227,17 @@ function autoSyncSavesScreen() {
 			16 56 8
 
 	# Enable or disable path units
-	local autosync=(${ARKLONE[autoSync]})
+	local enabledUnits=(${ARKLONE[enabledUnits]})
 
-	if [ "${#autosync[@]}" = 0 ]; then
+	if [ "${#enabledUnits[@]}" = 0 ]; then
 		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
 	else
 		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 	fi
 
-	# Reset ${ARKLONE[autoSync]}
+	# Reset ${ARKLONE[enabledUnits]}
 	# @todo This should be its own function
-	ARKLONE[autoSync]=$(systemctl list-unit-files arkloned* | grep "enabled" | cut -d " " -f 1)
+	ARKLONE[enabledUnits]=$(getEnabledUnits)
 
 	homeScreen
 }

@@ -88,6 +88,16 @@ echo "TEST 5 passed."
 ########
 # TEST 6
 ########
+# inotifywait exists
+if ! inotifywait --help >/dev/null 2>&1; then
+	exit 72
+fi
+
+echo "TEST 6 passed."
+
+########
+# TEST 7
+########
 # Check script executable permissions
 SCRIPTS=($(find "${ARKLONE[installDir]}" -type f -name "*.sh"))
 
@@ -97,15 +107,15 @@ for script in ${SCRIPTS[@]}; do
 	fi
 done
 
-echo "TEST 6 passed."
+echo "TEST 7 passed."
 
 ########
-# TEST 7
+# TEST 8
 ########
 # systemd units directory is owned by user
 if ! ls -al "${ARKLONE[installDir]}/systemd/units" | grep "${USER} ${USER}" >/dev/null; then
 	exit 77
 fi
 
-echo "TEST 7 passed."
+echo "TEST 8 passed."
 

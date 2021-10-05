@@ -9,6 +9,9 @@ source "/opt/arklone/config.sh"
 # @param $1 {boolean} Keep install dir if true
 KEEP_INSTALL_DIR=$1
 
+#########
+# SYSTEMD
+#########
 # Get list of installed units
 UNITS=($(systemctl list-unit-files | grep "arklone" | cut -d ' ' -f 1))
 
@@ -19,6 +22,16 @@ if [ "${#UNITS[@]}" -gt 0 ]; then
 	done
 fi
 
+###############
+# INOTIFY-TOOLS
+###############
+if [ ! -f "${ARKLONE[userCfgDir]}/.inotify-tools.sh" ]; then
+	sudo apt remove inotify-tools -y
+fi
+
+########
+# RCLONE
+########
 # If user already had rclone installed,
 # restore rclone.conf to original state
 if [ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ]; then
@@ -34,6 +47,9 @@ fi
 rm "${HOME}/.config/rclone/rclone.conf"
 mv "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
 
+############
+# FILESYSTEM
+############
 # Remove user-accessible backup dir if it did not exist on install
 if [ ! -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]; then
 	rm -rf "${ARKLONE[backupDir]}"
@@ -44,6 +60,9 @@ else
 	rm -rf "${ARKLONE[backupDir]}/arklone"
 fi
 
+#########
+# ARKLONE
+#########
 # Remove arklone user config dir
 rm -rf "${ARKLONE[userCfgDir]}"
 

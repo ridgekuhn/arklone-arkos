@@ -1,0 +1,6 @@
+[Path]
+PathChanged=/home/ark/.config/ppsspp
+Unit=arkloned@-home-ark-.config-ppsspp\x40ppssppx40ppsspp.service
+
+[Install]
+WantedBy=multi-user.target

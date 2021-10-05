@@ -1,7 +1,7 @@
 [Unit]
 Description=Arklone - rclone sync for ArkOS
-Wants=network-online.target
-After=network-online.target
+Requires=network-online.target arkloned-receive-saves-boot.service
+After=network-online.target arkloned-receive-saves-boot.service
 
 [Service]
 Type=oneshot

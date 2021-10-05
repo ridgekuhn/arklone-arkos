@@ -3,24 +3,24 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-# Check if passed subdirectory is in ignore list
+# Check if passed file or directory is in ignore list
 #
-# Ignore list should be a text file of subdirectory names, one per line
-# Wildcard * is allowed, but only the basename of the subdirectory is checked
+# Ignore list should be a text file of file/directory names, one per line
+# Wildcard * is allowed, but only the basename of the file is checked
 # (leading path/slashes are dropped)
 #
-# @param $1 {string} Path to subdir to check
+# @param $1 {string} Path of file to check
 #
 # @param $2 {string} Path to ignore list
 #
 # @returns 1 if $1 is NOT in ignore list
 function isIgnored() {
-	local dir="${1}"
+	local checkedFile="${1}"
 	local ignoreList=($(cat "${2}" 2>/dev/null))
 
-	for ignoreDir in ${ignoreList[@]}; do
-		if [ -z ${dir##*/$ignoreDir} ]; then
-			echo "${dir} is in ignore list: ${2}. Skipping..."
+	for ignoredFile in ${ignoreList[@]}; do
+		if [ -z ${checkedFile##*/$ignoredFile} ]; then
+			echo "${checkedFile} is in ignore list: ${2}. Skipping..."
 			echo ""
 
 			return
