@@ -6,11 +6,6 @@
 [ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
 [ "$(type -t getEnabledUnits)" = "function" ] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
 
-# Set default user/group if run as root
-# @todo ArkOS-specific
-[ "${USER}" ] || USER="ark"
-[ "${HOME}" ] || HOME="/home/${USER}"
-
 # Set default settings
 declare -A ARKLONE
 ARKLONE=(

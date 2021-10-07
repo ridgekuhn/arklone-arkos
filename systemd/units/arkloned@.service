@@ -5,6 +5,8 @@ After=network-online.target arkloned-receive-saves-boot.service
 
 [Service]
 Type=oneshot
+User=ark
+Group=ark
 StandardOutput=journal+console
 ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/send-and-receive-saves.sh %I"
 
