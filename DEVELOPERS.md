@@ -22,6 +22,7 @@ arklone should be installed at `/opt/arklone`
     * [Create a New Path Unit](#create-a-new-path-unit)
     * [Create Path Units from a Directory](#create-path-units-from-a-directory)
     * [Wrapper to Kill a Script on Keypress](#wrapper-to-kill-a-script-on-keypress)
+    * [Wrapper to Accept Gamepad Input for Interactive Programs](#wrapper-to-accept-gamepad-input-for-interactive-programs)
     * [Logging](#logging)
     * [Dialogs](#dialogs)
     * [Dirty Boot State](#dirty-boot-state)
@@ -307,7 +308,7 @@ newPathUnitsFromDir "/path/to/roms" "retroarch/roms" 1 true "retroarch-savefile|
 
 ### Wrapper to Kill a Script on Keypress ###
 
-[killOnKeyPress](functions/killOnKeyPress.sh) runs a command and allows the user to kill the process by pressing any key. Along with [joy2key](https://github.com/ridgekuhn/joy2key), this is useful for letting the user quit a process when their only connected input device is a gamepad.
+[killOnKeyPress](functions/killOnKeyPress.sh) runs a command and allows the user to kill the process by pressing any key. Along with [oga_controls](#wrapper-to-accept-gamepad-input-for-interactive-programs), this is useful for letting the user quit a process when their only connected input device is a gamepad.
 
 ```shell
 #!/bin/bash
@@ -315,6 +316,16 @@ source "/opt/arklone/config.sh"
 source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
 
 killOnKeyPress "/path/to/my/script.sh"
+```
+
+---
+
+### Wrapper to Accept Gamepad Input for Interactive Programs ###
+
+[oga_controls](/vendor/oga_controls) ([source](https://github.com/christianhaitian/oga_controls)) converts gamepad input to key codes and mouse input data. [A wrapper script](/dialogs/input-listener.sh) is provided to automatically detect the input device and execute a command passed to it.
+
+```shell
+/opt/arklone/dialogs/input-listener.sh "/path/to/my/script.sh"
 ```
 
 ---

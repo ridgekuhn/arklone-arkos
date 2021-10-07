@@ -41,8 +41,6 @@ chmod a+x installArklone.sh
 ./installArklone.sh
 ```
 
-This will also install the [joy2key](https://github.com/ridgekuhn/joy2key) library.
-
 ### Uninstallation ###
 
 ```shell

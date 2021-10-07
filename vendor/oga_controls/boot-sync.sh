@@ -3,6 +3,22 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
+whiptail --msgbox fuck 10 30
+exit
+
+chvt 2
+
+echo arklone has ${#ARKLONE[@]}
+echo "${ARKLONE[balls]}"
+
+for ((i = 30; i > 0; i--)); do
+	echo $i
+	sleep 1
+done
+chvt 1
+kill $(pidof oga_controls)
+exit
+
 # Dialog shown to user on boot
 #
 # Checks for dirty boot state, and configured network connection.
@@ -10,7 +26,6 @@
 # @see rclone/scripts/receive-saves.sh
 #
 # @returns Exit code of receive-saves.sh
-
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t killOnKeyPress)" = "function" ] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
 
@@ -47,8 +62,6 @@ function networkCheckScreen() {
 }
 
 # Receive updates from cloud
-#
-# Wrapped with killOnKeypress so user can abort at any time
 function receiveSavesScreen() {
 	whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
@@ -131,19 +144,11 @@ function mainScreen() {
 #####
 # RUN
 #####
-# Change the virtual terminal to tty2.
-# This script is called by arkloned-receive-saves-boot.service,
-# which runs on tty2 to temporarily override the display-manager
-# on systems with a graphical environment.
-# @see systemd/units/arkloned-receive-saves-boot.service
-chvt 2
+clear
 
 mainScreen
 
-EXIT_CODE=$?
+clear
 
-# Reset the virtual terminal
-chvt 1
-
-exit $EXIT_CODE
+exit $?
 

@@ -3,13 +3,13 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-source "${ARKLONE[installDir]}/functions/editConfig.sh"
-source "${ARKLONE[installDir]}/functions/printMenu.sh"
-source "${ARKLONE[installDir]}/dialogs/functions/alreadyRunning.sh"
-source "${ARKLONE[installDir]}/systemd/scripts/functions/getEnabledUnits.sh"
-source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[ "$(type -t printMenu)" = "function" ] || source "${ARKLONE[installDir]}/functions/printMenu.sh"
+[ "$(type -t alreadyRunning)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/functions/alreadyRunning.sh"
+[ "$(type -t getEnabledUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getEnabledUnits.sh"
+[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 #############
 # CONTROLLERS
