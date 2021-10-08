@@ -1,8 +1,8 @@
 [Unit]
 Description=arklone - boot sync service
 Requires=network-online.target
-Before=emulationstation.service
-After=network-online.target
+Before=emulationstation.service display-manager.service
+After=network-online.target plymouth-quit.service
 
 [Service]
 Type=oneshot
@@ -11,8 +11,10 @@ Group=ark
 StandardInput=tty
 StandardOutput=tty
 StandardError=tty
-TTYPath=/dev/tty1
-ExecStart=/bin/bash -c '/opt/joy2key/listen.sh "/opt/arklone/dialogs/boot-sync.sh"'
+TTYReset=yes
+TTYVHangup=yes
+TTYPath=/dev/tty2
+ExecStart=/opt/joy2key/listen.sh "/opt/arklone/dialogs/boot-sync.sh"
 RemainAfterExit=yes
 
 [Install]
