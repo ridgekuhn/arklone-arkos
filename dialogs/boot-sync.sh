@@ -25,6 +25,15 @@ function dirtyBootScreen() {
 		16 56 8
 }
 
+# Tell user to wait
+function waitScreen() {
+	whiptail \
+		--title "${ARKLONE[whiptailTitle]}" \
+		--infobox \
+			"Please wait..." \
+			16 56 8
+}
+
 # Check for network config
 #
 # @returns 1 if no routes available
@@ -129,6 +138,8 @@ function mainScreen() {
 			errorScreen
 
 			# Disable all units except boot service
+			waitScreen
+
 			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" true
 
 			# Set dirty boot lock

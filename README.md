@@ -23,7 +23,8 @@ rclone, RetroArch, EmulationStation, and ArkOS are the properties of their respe
 7. [Recommended RetroArch Configuration](#known-bugs)
 8. [Advanced arklone Configuration](#advanced-arklone-configuration)
 9. [Troubleshooting](#troubleshooting)
-10. [FAQ](#FAQ)
+10. [Developers](/DEVELOPERS.md)
+11. [FAQ](#FAQ)
 
 ---
 
@@ -268,6 +269,12 @@ To save unnecessary writes to your SD card or hard drive, arklone writes logs to
 
 ---
 
+## Developers ##
+
+Please see the [developer docs](/DEVELOPERS.md).
+
+---
+
 ## FAQ ##
 
 #### Can I use it on Windows, MacOS, or other Linux Distros? ####
@@ -275,7 +282,7 @@ To save unnecessary writes to your SD card or hard drive, arklone writes logs to
 **Linux**
 arklone is written in bash, and relies on tools like `apt`, `dpkg`, and `inotify-tools`. It should theoretically work on any Debian-based distro, as long as your content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). A RetroPie release is planned soon.
 
-**Windows and MacOS **
+**Windows and MacOS**
 If your cloud provider offers a desktop client, you should install and use that instead.
 
 #### Can I add my own custom directories? ####

@@ -231,6 +231,14 @@ function autoSyncSavesScreen() {
 
 	if [ "${#enabledUnits[@]}" = 0 ]; then
 		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+
+		# Let user choose to reboot now
+		rebootScreen
+
+		if [ $? = 0 ]; then
+			sudo reboot
+		fi
+
 	else
 		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 	fi
@@ -322,6 +330,17 @@ function regenRAunitsScreen() {
 	fi
 
 	homeScreen
+}
+
+# Reboot screen
+function rebootScreen() {
+	whiptail \
+		--title "${ARKLONE[whiptailTitle]}" \
+		--yesno \
+			"You will need to reboot for the settings to take effect." \
+			16 56 \
+		--yes-button "Reboot Now" \
+		--no-button "Later"
 }
 
 #####
