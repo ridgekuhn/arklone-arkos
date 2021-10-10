@@ -45,6 +45,10 @@ if [ ! -d "${SAVES_DIR}" ]; then
 	chmod u+rw "${SAVES_DIR}"
 fi
 
+# Escape whitespace
+oIFS="${IFS}"
+IFS=$'\n'
+
 # Replicate RetroArch content dir hierarchy in ${SAVES_DIR}
 RA_CONTENT_DIRS=($(find "${ARKLONE[retroarchContentRoot]}" -mindepth 1 -maxdepth 1 -type d))
 
@@ -64,6 +68,9 @@ for contentDir in ${RA_CONTENT_DIRS[@]}; do
 		fi
 	fi
 done
+
+# Reset IFS
+IFS=$oIFS
 
 # Backup retroarch.cfg
 cp -v "${RETROARCH_CFG}" "${RETROARCH_CFG}.arklone$(date +%s).bak"
