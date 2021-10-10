@@ -70,6 +70,11 @@ wget "${RCLONE_URL}" -O "${RCLONE_PKG}" \
 
 rm "${RCLONE_PKG}"
 
+# Make rclone config directory if it doesn't exit
+if [ ! -d "${HOME}/.config/rclone" ]; then
+	mkdir "${HOME}/.config/rclone"
+fi
+
 # Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
 # @todo ArkOS-specific
 if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
