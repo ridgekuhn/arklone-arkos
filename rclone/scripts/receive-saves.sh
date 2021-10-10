@@ -54,11 +54,17 @@ for instance in ${INSTANCES[@]}; do
 
 	rcloneExitCode=$?
 
-	# Record non-zero exit code if any instance fails to sync
-	if [ "${rcloneExitCode}" != 0 ]; then
-		exitCode="${rcloneExitCode}"
+	# Record non-zero exit code if any instance fails to sync,
+	# except exit code 3 (directory not found)
+	# because it doesn't matter if we can't receive a directory
+	# that doesn't exist on the remote
+	# @see https://rclone.org/docs/#exit-code
+	if
+		[ "${rcloneExitCode}" != 0 ] \
+		&& [ "${rcloneExitCode}" != 3 ]; then
+		EXIT_CODE="${rcloneExitCode}"
 	fi
 done
 
-exit $exitCode
+exit $EXIT_CODE
 

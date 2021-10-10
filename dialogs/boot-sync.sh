@@ -85,13 +85,15 @@ function errorScreen() {
 function mainScreen() {
 	local exitCode=0
 
-	# Check for dirty boot
-	if [ -f "${arklone[dirtyBoot]}" ]; then
-		# Clean up dirty boot state before showing the whiptail to the user
-		rm "${arklone[dirtyBoot]}"
-		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
-
+	# Notify user of dirty boot state and clean up
+	if [ -f "${ARKLONE[dirtyBoot]}" ]; then
 		dirtyBootScreen
+
+		waitScreen
+
+		rm "${ARKLONE[dirtyBoot]}"
+
+		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
 	fi
 
 	# Check for network connection
@@ -106,6 +108,13 @@ function mainScreen() {
 
 	# Try again if there were any errors
 	if [ "${exitCode}" != 0 ]; then
+		# Wait for script to finish
+		while pgrep "receive-saves.sh" >/dev/null 2>&1; do
+			sleep 1
+		done
+
+		clear
+
 		tryAgainScreen
 
 		# Allow user to start over
@@ -115,13 +124,15 @@ function mainScreen() {
 			# so it doesn't get overwritten by the current value
 			exitCode=$?
 
-		# Warn user of error, stop automatic sync, and set dirty boot lockfile
 		else
+			# Warn user of error
 			errorScreen
 
-			# Set dirty boot state
-			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
-			touch "${arklone[dirtyBoot]}"
+			# Disable all units except boot service
+			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" true
+
+			# Set dirty boot lock
+			touch "${ARKLONE[dirtyBoot]}"
 		fi
 	fi
 
