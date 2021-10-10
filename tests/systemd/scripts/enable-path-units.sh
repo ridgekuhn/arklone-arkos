@@ -123,6 +123,8 @@ echo "TEST 4 passed."
 ##########
 # TEARDOWN
 ##########
+"${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
+
 rm -rf "/dev/shm/foo"
 rm -rf "${ARKLONE[unitsDir]}"
 

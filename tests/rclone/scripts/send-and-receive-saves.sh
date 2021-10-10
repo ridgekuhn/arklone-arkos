@@ -27,11 +27,11 @@ mkdir "${ARKLONE[filterDir]}"
 touch "${ARKLONE[filterDir]}/global.filter"
 
 cat <<EOF > "${ARKLONE[filterDir]}/test.filter"
-ignoreme
+- ignoreme
 EOF
 
 cat <<EOF > "${ARKLONE[filterDir]}/test2.filter"
-ignoremetoo
+- ignoremetoo
 EOF
 
 # Mock test rclone.conf
