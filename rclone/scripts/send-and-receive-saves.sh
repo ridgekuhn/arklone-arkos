@@ -26,10 +26,10 @@ FILTERSTRING="--filter-from ${ARKLONE[filterDir]}/global.filter"
 # Append unit-specific filters if specified
 if [ ! -z "${FILTERS}" ]; then
 	# Split pipe | delimited list of ${FILTERS} into array
-	FILTERS=($(tr '|' '\n' <<<"${FILTER}"))
+	FILTERS=($(tr '|' '\n' <<<"${FILTERS}"))
 
 	for filter in ${FILTERS[@]}; do
-		FILTERSTRING="${FILTERSTRING} --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
+		FILTERSTRING+=" --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
 	done
 fi
 
