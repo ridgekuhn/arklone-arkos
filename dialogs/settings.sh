@@ -232,6 +232,11 @@ function autoSyncSavesScreen() {
 	if [ "${#enabledUnits[@]}" = 0 ]; then
 		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
 
+		# Make sure user has a remote selected
+		if [ -z "${ARKLONE[remote]}" ]; then
+			setCloudScreen
+		fi
+
 		# Let user choose to reboot now
 		rebootScreen
 
