@@ -25,6 +25,14 @@ function dirtyBootScreen() {
 		16 56 8
 }
 
+# Show the arklone log
+function logScreen() {
+	whiptail \
+		--textbox "${ARKLONE[log]}" \
+		16 56 \
+		--scrolltext
+}
+
 # Tell user to wait
 function waitScreen() {
 	whiptail \
@@ -79,8 +87,8 @@ function tryAgainScreen() {
 function errorScreen() {
 	whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
-		--msgbox "WARNING: Could not receive all save data updates from the cloud. To minimize potential data loss, automatic syncing will be stopped for this session. For more info, see the log file at:\n${ARKLONE[log]}" \
-		16 56 8
+		--yesno "WARNING: Could not receive all save data updates from the cloud. To minimize potential data loss, automatic syncing will be stopped for this session. Would you like to view the log?" \
+		16 56
 }
 
 #############
@@ -136,6 +144,11 @@ function mainScreen() {
 		else
 			# Warn user of error
 			errorScreen
+
+			# Show log
+			if [ $? = 0 ]; then
+				logScreen
+			fi
 
 			# Disable all units except boot service
 			waitScreen

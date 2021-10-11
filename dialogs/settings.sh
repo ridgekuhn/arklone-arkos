@@ -62,18 +62,19 @@ function homeScreen() {
 			"3" "${ableString} automatic saves sync" \
 			"4" "Manual backup/sync ArkOS Settings" \
 			"5" "Regenerate RetroArch path units" \
+			"6" "View log file" \
 			"x" "Exit" \
 		3>&1 1>&2 2>&3 \
 	)
 
 	# Send user to selected screen
-	# @todo Add screen to dump log to SD card
 	case $selection in
 		1) setCloudScreen ;;
 		2) manualSyncSavesScreen ;;
 		3) autoSyncSavesScreen ;;
 		4) manualBackupArkOSScreen ;;
 		5) regenRAunitsScreen ;;
+		6) logScreen ;;
 	esac
 }
 
@@ -208,9 +209,13 @@ function manualSyncSavesScreen() {
 			else
 				whiptail \
 					--title "${ARKLONE[whiptailTitle]}" \
-					--msgbox \
-						"Update failed. Please check the log file at ${ARKLONE[log]}." \
-						16 56 8
+					--yesno \
+						"Update failed. Would you like to view the log?" \
+						16 56
+
+				if [ $? = 0 ]; then
+					logScreen
+				fi
 			fi
 		fi
 
@@ -284,14 +289,21 @@ function manualBackupArkOSScreen() {
 			whiptail \
 				--title "${ARKLONE[whiptailTitle]}" \
 				--msgbox \
-					"ArkOS backup synced to ${ARKLONE[remote]}:ArkOS. Log saved to ${ARKLONE[log]}." \
+					"ArkOS backup synced to ${ARKLONE[remote]}:ArkOS. Log saved to ${ARKLONE[backupDir]}/arkosbackup.log." \
 					16 56 8
 		else
 			whiptail \
 				--title "${ARKLONE[whiptailTitle]}" \
 				--msgbox \
-					"Update failed. Please check the log file at ${ARKLONE[log]}." \
+					"Update failed. Would you like to view the log?." \
 					16 56 8
+
+			if [ $? = 0 ]; then
+				whiptail \
+					--textbox "${ARKLONE[backupDir]}/arkosbackup.log" \
+					16 56 \
+					--scrolltext
+			fi
 		fi
 	fi
 
@@ -335,6 +347,14 @@ function regenRAunitsScreen() {
 	fi
 
 	homeScreen
+}
+
+# Show the arklone log
+function logScreen() {
+	whiptail \
+		--textbox "${ARKLONE[log]}" \
+		16 56 \
+		--scrolltext
 }
 
 # Reboot screen
