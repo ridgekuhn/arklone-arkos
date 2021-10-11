@@ -53,6 +53,6 @@ EOF
 ###########
 ## TEARDOWN
 ###########
-#rm -rf "${ARKLONE[backupDir]}"
-#rm "${ARKLONE[rcloneConf]}"
+rm -rf "${ARKLONE[backupDir]}"
+rm "${ARKLONE[rcloneConf]}"
 

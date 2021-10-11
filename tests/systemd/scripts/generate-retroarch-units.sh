@@ -224,5 +224,6 @@ echo "TEST 5 passed."
 # TEARDOWN
 ##########
 rm "${ARKLONE[retroarchCfg]}"
+rm -rf "/dev/shm/retroarch32"
 rm -rf "${ARKLONE[unitsDir]}"
 

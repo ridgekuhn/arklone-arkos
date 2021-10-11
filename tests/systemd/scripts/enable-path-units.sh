@@ -126,5 +126,6 @@ echo "TEST 4 passed."
 "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 
 rm -rf "/dev/shm/foo"
+rm -rf "/dev/shm/ppsspp"
 rm -rf "${ARKLONE[unitsDir]}"
 

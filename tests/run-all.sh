@@ -40,6 +40,15 @@ for test in ${TESTS[@]}; do
 			"${test} failed with exit code ${exitCode}"
 			"Please manually clean /dev/shm/ before continuing"
 			exit
+
+		elif systemctl list-unit-files arkloned* 1>/dev/null 2>&1 | grep arklone; then
+			echo "${test} did not clean up systemd"
+			exit
+
+		elif find /dev/shm/* 2>/dev/null; then
+			echo "${test} did not clean up /dev/shm"
+			exit
+
 		else
 			echo "SUCCESS!"
 		fi

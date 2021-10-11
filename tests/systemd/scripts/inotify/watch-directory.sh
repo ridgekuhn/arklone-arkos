@@ -24,6 +24,8 @@ EOF
 cat <<EOF >"${ARKLONE[unitsDir]}/arkloned-test.service"
 [Service]
 Type=oneshot
+User=ark
+Group=ark
 ExecStart=/bin/bash -c 'touch "${TEST_FILE}"'
 
 [Install]
@@ -62,4 +64,6 @@ echo "TEST 1 passed."
 # TEARDOWN
 ##########
 rm -rf "${ARKLONE[unitsDir]}"
+rm "${TEST_FILE}"
+rm -rf "${TEST_DIR}"
 

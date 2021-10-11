@@ -25,5 +25,8 @@ echo "TEST 1 passed."
 ##########
 # TEARDOWN
 ##########
+# Give tee time to stop writing to the log
+sleep 1
+
 rm "/dev/shm/test.log"
 
