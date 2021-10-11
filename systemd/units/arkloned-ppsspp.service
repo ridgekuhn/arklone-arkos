@@ -7,7 +7,7 @@ After=network-online.target arkloned-receive-saves-boot.service
 Type=simple
 User=ark
 Group=ark
-ExecStart=/bin/bash -c '/opt/arklone/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/systemd/units/arkloned-ppsspp.path" "/SYSTEM/"'
+ExecStart=/bin/bash -c '/opt/arklone/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/systemd/units/arkloned-ppsspp.path" "/SYSTEM/" "/CACHE/"'
 
 [Install]
 WantedBy=multi-user.target

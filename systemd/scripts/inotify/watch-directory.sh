@@ -22,7 +22,7 @@ EXCLUDE_STRING=""
 
 # Construct EXCLUDE_STRING
 for exclude in ${EXCLUDES[@]}; do
-	EXCLUDE_STRING+="--exclude ${exclude} "
+	EXCLUDE_STRING+="--exclude \"${exclude}\" "
 done
 
 # @todo Confirm these presumptions:
@@ -31,7 +31,7 @@ done
 # 	2. Starting the systemd service
 #		instead of running send-and-receive-saves.sh directly
 #		should avoid running multiple concurrent processes
-while inotifywait -qq -r -e close_write "${EXCLUDE_STRING}" "${PATH_CHANGED}"; do
+while inotifywait -qq -r -e close_write ${EXCLUDE_STRING} "${PATH_CHANGED}"; do
 	sudo systemctl start "${SERVICE_UNIT}"
 done
 
