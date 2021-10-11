@@ -376,8 +376,11 @@ if [ -z "${ARKLONE[remote]}" ]; then
 	firstRunScreen
 
 	# Exit here so user doesn't quit back to homeScreen
+	clear
 	exit
 fi
 
 homeScreen
+
+clear
 
