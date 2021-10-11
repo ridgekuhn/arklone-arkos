@@ -131,11 +131,8 @@ function mainScreen() {
 
 	# Try again if there were any errors
 	if [ "${exitCode}" != 0 ]; then
-		# Wait for script to finish
-		while pgrep "receive-saves.sh" >/dev/null 2>&1; do
-			sleep 1
-		done
-
+		# Wait for receive-saves.sh to die
+		sleep 2
 		clear
 
 		tryAgainScreen
