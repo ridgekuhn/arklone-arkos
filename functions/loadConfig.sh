@@ -33,7 +33,7 @@ function loadConfig() {
 	# Error if no user config found
 	if [ ! -f "${cfgFile}" ]; then
 		echo "ERROR: ${cfgFile} not found!"
-		exit 1
+		exit 72
 	fi
 
 	# Parse user config file

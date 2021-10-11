@@ -3,6 +3,10 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
+# Set defaults built-ins if run as root
+[ $USER ] || USER="ark"
+[ $HOME ] || HOME="/home/ark"
+
 [ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
 [ "$(type -t getEnabledUnits)" = "function" ] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
 
@@ -55,4 +59,3 @@ fi
 
 # Load the user's config file
 loadConfig "${ARKLONE[userCfg]}" ARKLONE
-
