@@ -9,10 +9,11 @@ source "/opt/arklone/config.sh"
 # MOCK DATA
 ###########
 LOCAL_DIR="/dev/shm/localdir"
-REMOTE_DIR="/dev/shm/remotedir"
+REMOTE_DIR="/dev/shm/arklone/remotedir"
 
 # Create some test directories and files
 mkdir "${LOCAL_DIR}"
+mkdir "/dev/shm/arklone"
 mkdir "${REMOTE_DIR}"
 
 touch "${LOCAL_DIR}/foo"
@@ -48,8 +49,11 @@ ARKLONE[remote]="test"
 #####
 # RUN
 #####
+# Run rclone in /dev/shm because remote is local filesystem
+cd "/dev/shm"
+
 # Source script, but run in subshell so it can exit without exiting the test
-(. "${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh" "${LOCAL_DIR}@${REMOTE_DIR}@test|test2")
+(. "${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh" "${LOCAL_DIR}@${REMOTE_DIR##*arklone/}@test|test2")
 
 [ $? = 0 ] || exit 70
 
@@ -90,6 +94,7 @@ echo "TEST 4 passed."
 # TEARDOWN
 ##########
 rm -rf "${LOCAL_DIR}"
+rm -rf "/dev/shm/arklone"
 rm -rf "${REMOTE_DIR}"
 rm -rf "${ARKLONE[filterDir]}"
 rm "${ARKLONE[rcloneConf]}"

@@ -22,19 +22,6 @@ else
 	exit 1
 fi
 
-# Use same log as "/opt/system/Advanced/Backup Settings.sh"
-arkloneLogger "${ARKLONE[backupDir]}/arkosbackup.log"
-
-# Exit if no network routes configured
-if [ -z "$(ip route)" ]; then
-	echo "ERROR: No internet connection. Exiting..."
-	exit 1
-fi
-
-printf "\n======================================================\n"
-echo "Started new cloud sync at $(date)"
-echo "------------------------------------------------------"
-
 # Run normal ArkOS settings backup script
 echo "Backing up your ArkOS settings..."
 "${BACKUP_SCRIPT}"
@@ -42,10 +29,23 @@ echo "Backing up your ArkOS settings..."
 if [ $? != 0 ]; then
 	printf "\nCould not create backup file! Exiting...\n"
 	exit 1
-else
-	# Sync backup to cloud
-	echo "Sending ArkOS backup to ${ARKLONE[remote]}"
-
-	rclone copy "${ARKLONE[backupDir]}/" "${ARKLONE[remote]}:ArkOS/" -v --filter "+ arkosbackup*" --filter "- *" --config "${ARKLONE[rcloneConf]}"
 fi
+
+# Exit if no network routes configured
+if [ -z "$(ip route)" ]; then
+	echo "ERROR: No internet connection. Exiting..."
+	exit 1
+fi
+
+# Use same log as ArkOS backup Script
+arkloneLogger "/roms/backup/arkosbackup.log"
+
+printf "\n======================================================\n"
+echo "Started new cloud sync at $(date)"
+echo "------------------------------------------------------"
+
+# Sync backup to cloud
+echo "Sending ArkOS backup to ${ARKLONE[remote]}"
+
+rclone copy "${ARKLONE[backupDir]}/" "${ARKLONE[remote]}:arklone/ArkOS/" -v --filter "+ arkosbackup*" --filter "- *" --config "${ARKLONE[rcloneConf]}"
 

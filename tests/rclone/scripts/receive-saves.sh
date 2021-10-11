@@ -9,10 +9,11 @@ source "/opt/arklone/config.sh"
 # MOCK DATA
 ###########
 LOCAL_DIR="/dev/shm/localdir"
-REMOTE_DIR="/dev/shm/remotedir"
+REMOTE_DIR="/dev/shm/arklone/remotedir"
 
 # Create some test directories and files
 mkdir "${LOCAL_DIR}"
+mkdir "/dev/shm/arklone"
 mkdir "${REMOTE_DIR}"
 
 touch "${REMOTE_DIR}/test"
@@ -21,7 +22,7 @@ touch "${REMOTE_DIR}/ignoremetoo"
 
 # Mock getRootInstanceNames()
 function getRootInstanceNames() {
-	echo "${LOCAL_DIR}@${REMOTE_DIR}@test|test2"
+	echo "${LOCAL_DIR}@${REMOTE_DIR##*arklone/}@test|test2"
 }
 
 # Mock filters
@@ -52,6 +53,9 @@ ARKLONE[remote]="test"
 #####
 # RUN
 #####
+# Run rclone in /dev/shm because remote is local filesystem
+cd "/dev/shm"
+
 # Source script, but run in subshell so it can exit without exiting the test
 (. "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh")
 
@@ -86,6 +90,7 @@ echo "TEST 3 passed."
 # TEARDOWN
 ##########
 rm -rf "${LOCAL_DIR}"
+rm -rf "/dev/shm/arklone"
 rm -rf "${REMOTE_DIR}"
 rm -rf "${ARKLONE[filterDir]}"
 rm "${ARKLONE[rcloneConf]}"

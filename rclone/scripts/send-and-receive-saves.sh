@@ -46,11 +46,11 @@ printf "\n======================================================\n"
 echo "Started new cloud sync at $(date)"
 echo "------------------------------------------------------"
 
-echo "Sending ${LOCALDIR}/ to ${ARKLONE[remote]}:${REMOTEDIR}/"
-rclone copy "${LOCALDIR}/" "${ARKLONE[remote]}:${REMOTEDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
+echo "Sending ${LOCALDIR}/ to ${ARKLONE[remote]}:arklone/${REMOTEDIR}/"
+rclone copy "${LOCALDIR}/" "${ARKLONE[remote]}:arklone/${REMOTEDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
 
-echo "Receiving ${ARKLONE[remote]}:${REMOTEDIR}/ to ${LOCALDIR}/"
-rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
+echo "Receiving ${ARKLONE[remote]}:arklone/${REMOTEDIR}/ to ${LOCALDIR}/"
+rclone copy "${ARKLONE[remote]}:arklone/${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}" || exit $?
 
 echo "Finished cloud sync at $(date)"
 
