@@ -32,12 +32,11 @@ rclone, RetroArch, EmulationStation, and ArkOS are the properties of their respe
 
 This module is not yet integrated into ArkOS. See [this pull request](https://github.com/christianhaitian/arkos/pull/126) for updates.
 
-To test and install manually,
-download the installation script, and run it from a terminal:
+To test, install manually by downloading the [installation script](https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/install.sh), and run it from a terminal:
 
 ```shell
 cd ~
-wget https://raw.githubusercontent.com/ridgekuhn/arkos/cloudbackups/arklone20210118/install.sh -O installArklone.sh
+wget https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/install.sh -O installArklone.sh
 chmod a+x installArklone.sh
 ./installArklone.sh
 ```
@@ -46,7 +45,7 @@ chmod a+x installArklone.sh
 
 ```shell
 cd ~
-wget https://raw.githubusercontent.com/ridgekuhn/arkos/cloudbackups/arklone20210118/uninstall.sh -O uninstallArklone.sh
+wget https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/uninstall.sh -O uninstallArklone.sh
 chmod a+x uninstallArklone.sh
 ./uninstallArklone.sh
 ```
