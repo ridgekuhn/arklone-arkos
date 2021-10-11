@@ -21,8 +21,10 @@
 function dirtyBootScreen() {
 	whiptail \
 		--title "${ARKLONE[whiptailTitle]}" \
-		--msgbox "WARNING: There was a problem receiving save data from the cloud during your last session. Please verify that your cloud copy is correct. Proceeding may overwrite data on your device if the cloud copy has a newer timestamp." \
-		16 56 8
+		--yesno "WARNING: There was a problem receiving save data from the cloud during a previous session. Please verify that your cloud copy is correct. Proceeding may overwrite data on your device if the cloud copy has a newer timestamp." \
+		16 56 \
+		--yes-button "Continue" \
+		--no-button "Abort"
 }
 
 # Show the arklone log
@@ -103,6 +105,10 @@ function mainScreen() {
 	# Notify user of dirty boot state and clean up
 	if [ -f "${ARKLONE[dirtyBoot]}" ]; then
 		dirtyBootScreen
+
+		if [ $? != 0 ]; then
+			return 1
+		fi
 
 		waitScreen
 
