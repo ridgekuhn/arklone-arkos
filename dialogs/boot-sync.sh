@@ -63,8 +63,6 @@ function receiveSavesScreen() {
 		--title "${ARKLONE[whiptailTitle]}" \
 		--infobox "Attempting to receive new save data from the cloud.\nPress any key to abort at any time." \
 		16 56 8
-
-	killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh"
 }
 
 # Allow user to try to sync again on error
@@ -112,6 +110,8 @@ function mainScreen() {
 	# Receive cloud sync
 	if [ "${exitCode}" = 0 ]; then
 		receiveSavesScreen
+
+		killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh"
 		exitCode=$?
 	fi
 

@@ -50,8 +50,12 @@ fi
 # but can still use `exit` without exiting this script
 (. "${RUNCOMMAND}")
 
+EXIT_CODE=$?
+
 # Teardown
 if [ $OGAC_PID ]; then
 	kill -s SIGKILL $OGAC_PID
 fi
+
+exit $EXIT_CODE
 
