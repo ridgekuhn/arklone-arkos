@@ -43,14 +43,12 @@ for instance in ${INSTANCES[@]}; do
 		done
 	fi
 
-	rcloneExitCode=0
-
 	printf "\n======================================================\n"
 	echo "Started new cloud sync at $(date)"
 	echo "------------------------------------------------------"
 
 	echo "Receiving ${ARKLONE[remote]}:${REMOTEDIR}/ to ${LOCALDIR}/"
-	rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${filterstring} -u -v --config "${ARKLONE[rcloneConf]}"
+	rclone copy "${ARKLONE[remote]}:${REMOTEDIR}/" "${LOCALDIR}/" ${FILTERSTRING} -u -v --config "${ARKLONE[rcloneConf]}"
 
 	rcloneExitCode=$?
 

@@ -48,7 +48,8 @@ ARKLONE[remote]="test"
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh" "${LOCAL_DIR}@${REMOTE_DIR}@test|test2"
+# Source script, but run in subshell so it can exit without exiting the test
+(. "${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh" "${LOCAL_DIR}@${REMOTE_DIR}@test|test2")
 
 [ $? = 0 ] || exit 70
 
@@ -92,4 +93,4 @@ rm -rf "${LOCAL_DIR}"
 rm -rf "${REMOTE_DIR}"
 rm -rf "${ARKLONE[filterDir]}"
 rm "${ARKLONE[rcloneConf]}"
-
+rm "${ARKLONE[log]}"

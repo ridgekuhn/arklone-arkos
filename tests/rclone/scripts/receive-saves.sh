@@ -31,11 +31,11 @@ mkdir "${ARKLONE[filterDir]}"
 touch "${ARKLONE[filterDir]}/global.filter"
 
 cat <<EOF > "${ARKLONE[filterDir]}/test.filter"
-ignoreme
+- ignoreme
 EOF
 
 cat <<EOF > "${ARKLONE[filterDir]}/test2.filter"
-ignoremetoo
+- ignoremetoo
 EOF
 
 # Mock test rclone.conf
@@ -52,7 +52,8 @@ ARKLONE[remote]="test"
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh"
+# Source script, but run in subshell so it can exit without exiting the test
+(. "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh")
 
 [ $? = 0 ] || exit 70
 
@@ -88,4 +89,5 @@ rm -rf "${LOCAL_DIR}"
 rm -rf "${REMOTE_DIR}"
 rm -rf "${ARKLONE[filterDir]}"
 rm "${ARKLONE[rcloneConf]}"
+rm "${ARKLONE[log]}"
 
