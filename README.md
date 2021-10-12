@@ -26,6 +26,8 @@ rclone, RetroArch, EmulationStation, and ArkOS are the properties of their respe
 10. [Developers](/DEVELOPERS.md)
 11. [FAQ](#FAQ)
 
+
+
 ---
 
 ## Installation ##
@@ -35,20 +37,23 @@ This module is not yet integrated into ArkOS. See [this pull request](https://gi
 To test, install manually by downloading the [installation script](https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/install.sh), and run it from a terminal:
 
 ```shell
-cd ~
 wget https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/install.sh -O installArklone.sh
 chmod a+x installArklone.sh
 ./installArklone.sh
+rm ./installArklone.sh
 ```
+
 
 ### Uninstallation ###
 
 ```shell
-cd ~
 wget https://github.com/ridgekuhn/arkos/raw/cloudbackups/10092021/uninstall.sh -O uninstallArklone.sh
 chmod a+x uninstallArklone.sh
 ./uninstallArklone.sh
+rm ./uninstallArklone.sh
 ```
+
+
 
 ---
 
@@ -62,10 +67,13 @@ Once you have completed this process, copy the `rclone.conf` file from your comp
 rclone config file
 ```
 
+
 On your ArkOS SD card, copy `rclone.conf` to:
 `EASYROMS/backup/rclone/rclone.conf` 
 
 If you already had rclone installed on your device, your `rclone.conf` has been moved to EASYROMS for easier access, and symlinked to its original location. arklone will restore the original arrangement if uninstalled.
+
+
 
 ---
 
@@ -91,6 +99,7 @@ sort_savestates_enable = "false"
 sort_savestates_by_content_enable = "true"
 ```
 
+
 This will result in savefiles and savestates being stored in the same directory hierarchy as your RetroArch content root, in `~/.config/retroarch/saves`
 
 eg,
@@ -98,6 +107,7 @@ eg,
 `~/.config/retroarch/saves/nes/TheLegendOfZelda.savestate0`
 
 ![First run screen](/.github/arklone1.png)
+
 
 ### Settings Dialog ###
 
@@ -111,8 +121,12 @@ eg,
 		Runs the ArkOS backup script and uploads the file to the selected remote.
 * **Regenerate RetroArch path units**
 		Re-scans for new RetroArch directories to watch and generates path units for them.
+* **View log file**
+		Shows the log file.
 
 ![Arklone main menu](/.github/arklone2.png)
+
+
 
 ---
 
@@ -126,9 +140,12 @@ If you enable automatic syncing in the settings dialog, arklone assumes the copy
 
 If the boot sync process succeeds, arklone then assumes your local device contains the correct copy for the rest of the session, and will *send updates first, overwriting older copies on the remote, before receiving new content*.
 
+
 ## Manual Syncing ###
 
 If you do not enable automatic syncing, arklone assumes the data on your device is the "always correct" version. Manually syncing a directory from the settings dialog will always *send updates first, overwriting older copies on the remote, before receiving new content*. Be careful, as this can lead to data loss when doing this with multiple devices.
+
+
 
 ---
 
@@ -141,11 +158,14 @@ If this process fails at any point, the dirtyboot state is set. Automatic syncin
 To manually reset the dirtyboot state, delete the lock file located at:
 `~/.config/arklone/.dirtyboot`
 
+
+
 ---
 
 ## Advanced RetroArch Configuration ##
 
 This section is for users who wish to have more control over their retroarch.cfg settings and save directories.
+
 
 ### Supported RetroArch Configuration ###
 
@@ -168,6 +188,7 @@ sort_savestates_enable
 sort_savestates_by_content_enable
 ```
 
+
 For the next examples, `filetype` refers to either `savefile` or `savestate`.
 
 If `filetypes_in_content_dir = "true"`, it will override the other related settings, and create save data next to the content file.
@@ -184,6 +205,7 @@ If both `sort_filetypes_enable = "true"` and `sort_filetypes_by_content_enable =
 eg,
 `/path/to/filetype_directory/nes/FCEUmm/TheLegendOfZelda.srm`
 
+
 ### Known Bugs ###
 
 ArkOS currently contains a bug which prevents systemd path units from watching subdirectories of exFAT partitions. (See [issue #289](https://github.com/christianhaitian/arkos/issues/289).) This means that savefiles/savestates can not be watched (and automatically synced) if `filetypes_in_content_dir = "true"`.
@@ -191,6 +213,7 @@ ArkOS currently contains a bug which prevents systemd path units from watching s
 Until this bug is resolved, if you wish to store your saves next to the content, you must manually sync your saves from the arklone dialog.
 
 Since the bug only applies to exFAT partitions, advanced users who really want to use automatic syncing and keep savefiles/savestates in the content directories can re-format the EASYROMS partition to FAT32, ext4, etc and edit the mount entry in `/etc/fstab`.
+
 
 ### Recommended RetroArch Configuration ###
 
@@ -206,11 +229,14 @@ sort_savestates_enable = "false"
 sort_savestates_by_content_enable = "true"
 ```
 
+
+
 ---
 
 ## Advanced arklone Configuration ##
 
 Arklone has a few settings that can be changed by the user, mostly paths where arklone looks for various files. The user configuration file is stored at `~/.config/arklone/arklone.cfg`.
+
 
 ### Resetting to "First Run" State ###
 
@@ -221,6 +247,7 @@ Setting `remote` to an empty string forces the settings dialog to show the "firs
 ```
 remote = ""
 ```
+
 
 ### Changing RetroArch Content Root ###
 
@@ -236,7 +263,9 @@ eg,
 retroarchContentRoot = "/absolute/path/to/retroarchContentRoot"
 ```
 
+
 arklone also supports select standalone software and "ports". See the [systemd/units](/systemd/units) for a list, and the [Path Units](/DEVELOPERS.md#path-units) section of the developer docs for more info.
+
 
 ### Multiple RetroArch Instances ###
 
@@ -248,29 +277,42 @@ arklone supports multiple instances of RetroArch, in case your distro has both 6
 retroarchCfg = "/home/user/.config/retroarch/retroarch.cfg /home/user/.config/retroarch32/retroarch.cfg"
 ```
 
+
 ### rclone Filters ###
 
 arklone passes various filter lists to `rclone` when a sync script is run. See the [Path Units](/DEVELOPERS.md#path-units) and [rclone Filters](/DEVELOPERS.md#rclone-filters) sections of the developer docs for more info.
+
+
 
 ---
 
 ## Troubleshooting ##
 
-### RetroArch Saves Not Syncing? ###
+### RetroArch Saves Not Syncing ###
 
-arklone only watches the RetroArch save directories it knew about when it first generated the corresponding path units. If some of your save directories are not being synced automatically, try manually regenerating them from the arklone dialog menu. If you change any of the above settings in `retroarch.cfg`, you must also manually regenerate the path units.
+arklone only watches the RetroArch save directories it knew about when it first generated the corresponding path units. If you selected "Set Recommended Settings" on your first run, arklone will automatically generate path units for all your RetroArch content directories which are not empty. If you've added games since then and some of your save directories are not being synced automatically, try manually regenerating them from the arklone dialog menu.
 
-To avoid this, if you select "Set Recommended Settings" on your first run, arklone will automatically generate path units for all your RetroArch content directories which are not empty.
+If you change any of the above settings in `retroarch.cfg`, you must also manually regenerate the path units.
+
+
+### Ports, Standalone Apps, or Other Game Saves Not Syncing ###
+
+ArkOS is constantly updated with new apps and ports, and we probably haven't caught up to them yet. Please [create a new issue](https://github.com/ridgekuhn/arklone-arkos/issues) so we can include it in a future update.
+
 
 ### Logging ###
 
-To save unnecessary writes to your SD card or hard drive, arklone writes logs to the RAM filesystem at `/dev/shm/arklone.log`. This file disappears when the system is powered down. 
+To save unnecessary writes to your SD card or hard drive, arklone writes logs to the RAM filesystem at `/dev/shm/arklone.log`. This file disappears when the system is powered down, but you can view it by opening the arklone settings dialog and selecting "View log file".
+
+
 
 ---
 
 ## Developers ##
 
-Please see the [developer docs](/DEVELOPERS.md).
+Contributions are welcome! Please see the [developer docs](/DEVELOPERS.md).
+
+
 
 ---
 
@@ -279,12 +321,25 @@ Please see the [developer docs](/DEVELOPERS.md).
 #### Can I use it on Windows, MacOS, or other Linux Distros? ####
 
 **Linux**
-arklone is written in bash, and relies on tools like `apt`, `dpkg`, and `inotify-tools`. It should theoretically work on any Debian-based distro, as long as your content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). A RetroPie release is planned soon.
+
+A RetroPie release is planned soon. arklone is written in bash, and relies on tools like `apt`, `dpkg`, and `inotify-tools`. It should theoretically work on any Debian-based distro, as long as your content is organized in the [expected directory hierarchy](#changing-retroarch-content-root). See [Advanced arklone Configuration](#advanced-arklone-configuration) for more info.
 
 **Windows and MacOS**
+
 If your cloud provider offers a desktop client, you should install and use that instead.
+
 
 #### Can I add my own custom directories? ####
 
 See the [Path Units](/DEVELOPERS.md#path-units) section of the developer docs.
+
+
+#### Why Am I Seeing "ERROR: Directory Not Found" During Boot?  ####
+
+If you have automatic syncing enabled, arklone attempts to download all the different save directories it knows about from the cloud remote. If they don't exist on the cloud remote, these messages are generated for logging and debugging purposes. If there are any actual problems downloading save data from the cloud, you will be presented with a dialog screen, and asked if you want to proceed or view the log file. If you don't see this dialog screen and your device boots straight into EmulationStation, then everything is ok!
+
+
+#### Can I Use arklone to Sync ROMs or BIOS files? ####
+
+Not unless you want to [set it up yourself](/DEVELOPERS.md). Many users' game libraries are massive and would probably exceed the storage limit on your cloud account several times over. There are also system performance implications for keeping this much data synced on low-power devices, like the ones ArkOS is designed for, where the background sync operations may affect gameplay. It's probably much faster/efficient to transfer your game libraries from device-to-device via USB or over your LAN.
 
