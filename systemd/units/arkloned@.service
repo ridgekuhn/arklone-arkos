@@ -1,14 +1,14 @@
 [Unit]
 Description=Arklone - rclone sync for ArkOS
-Requires=network-online.target arkloned-receive-saves-boot.service
-After=network-online.target arkloned-receive-saves-boot.service
+Requires=network-online.target
+After=network-online.target
 
 [Service]
 Type=oneshot
 User=ark
 Group=ark
 StandardOutput=journal+console
-ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/send-and-receive-saves.sh %I"
+ExecStart=/opt/arklone/rclone/scripts/sync-one-dir.sh "send" "%I"
 
 [Install]
 WantedBy=multi-user.target

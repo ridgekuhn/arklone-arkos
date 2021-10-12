@@ -3,30 +3,33 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-# Run a script and kill it on user keypress
+# Run a command and kill it on user keypress
 #
-# @param $1 {number} The script to run
+# @param $1 {number} The command to run
+#
+# @param [$2] {*} Optional arguments to pass to command
 #
 # @returns Exit/return code of script $1
 function killOnKeypress() {
-	local script=${1}
+	local runcommand="${1}"
+	local args=(${@:2})
 
-	# Run the script in the background
-	$script &
+	# Run the command in the background
+	"${runcommand}" ${args[@]} &
 
-	# Get the process id of $script
+	# Get the process id of $runcommand
 	local pid=$!
 
-	# Monitor $script and listen for keypress in foreground
+	# Monitor $runcommand and listen for keypress in foreground
 	while kill -0 "${pid}" >/dev/null 2>&1; do
-		# If key pressed, kill $script and return with code 1
+		# If key pressed, kill $runcommand and return with code 1
 		read -sr -n 1 -t 1 && kill "${pid}" && return 1
 	done
 
-	# Set $? to return code of $script
+	# Set $? to return code of $runcommand
 	wait $pid
 
-	# Return $script's exit code
+	# Return $runcommand's exit code
 	return $?
 }
 

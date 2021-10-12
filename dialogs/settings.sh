@@ -18,7 +18,7 @@
 function manualBackupArkOS() {
 	local keep="${1}"
 
-	. "${ARKLONE[installDir]}/rclone/scripts/sync-arkos-backup.sh"
+	(. "${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh")
 
 	if [ $? = 0 ]; then
 		# Delete ArkOS settings backup file
@@ -142,7 +142,7 @@ function setCloudScreen() {
 
 # Manual sync savefiles/savestates dialog
 function manualSyncSavesScreen() {
-	local script="${ARKLONE[installDir]}/rclone/scripts/send-and-receive-saves.sh"
+	local script="${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
 	local instances=($(getRootInstanceNames))
 
 	# Build a list of local directories
@@ -198,7 +198,8 @@ function manualSyncSavesScreen() {
 			IFS="@" read -r localdir remotedir filter <<< "${instance}"
 
 			# Sync the local and remote directories
-			. "${script}" "${instance}"
+			# Source the script in a subshell so it can exit without exiting this script
+			(. "${script}" "send" "${instance}") && (. "${script}" "receive" "${instance}")
 
 			if [ $? = 0 ]; then
 				whiptail \
@@ -321,7 +322,8 @@ function regenRAunitsScreen() {
 			16 56 8
 
 	# Delete old retroarch path units and generate new ones
-	. "${script}" true
+	# Source the script in a subshell so it can exit without exiting this script
+	(. "${script}" true)
 
 	# Fix incompatible settings
 	# @todo ArkOS-specific

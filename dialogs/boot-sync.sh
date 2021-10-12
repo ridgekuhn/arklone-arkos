@@ -5,11 +5,11 @@
 
 # Dialog shown to user on boot
 #
-# Checks for dirty boot state, and configured network connection.
-# If network is up, attempts to run
-# @see rclone/scripts/receive-saves.sh
+# Checks for dirty boot state and configured network connection.
+# If network is up, attempts to receive all save data from remote
+# @see rclone/scripts/sync-all-saves.sh
 #
-# @returns Exit code of receive-saves.sh
+# @returns Exit code of sync-all-saves.sh
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t killOnKeyPress)" = "function" ] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
@@ -125,13 +125,13 @@ function mainScreen() {
 	if [ "${exitCode}" = 0 ]; then
 		receiveSavesScreen
 
-		killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh"
+		killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "receive"
 		exitCode=$?
 	fi
 
 	# Try again if there were any errors
 	if [ "${exitCode}" != 0 ]; then
-		# Wait for receive-saves.sh to die
+		# Wait for sync-all-saves.sh to die
 		sleep 2
 		clear
 
@@ -173,7 +173,7 @@ function mainScreen() {
 # This script is called by arkloned-receive-saves-boot.service,
 # which runs on tty2 to temporarily override the display-manager
 # on systems with a graphical environment.
-# @see systemd/units/arkloned-receive-saves-boot.service
+# @see systemd/units/arkloned-receive-all-saves-boot.service
 chvt 2
 
 mainScreen

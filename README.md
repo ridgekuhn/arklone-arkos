@@ -138,7 +138,7 @@ Keeping multiple devices synced can be difficult. arklone tries to do its best, 
 
 If you enable automatic syncing in the settings dialog, arklone assumes the copy of your data stored in the cloud is the canonical and "always correct" version. On system boot, arklone will run before EmulationStation and attempt to receive updates from the cloud remote. *If the remote contains a newer version of a file, it will overwrite the local copy.* On this initial sync, *arklone only receives updates and does not send anything back*. If this process fails for any reason, the user is notified, and the [dirty boot state](#dirty-boot-state) is set.
 
-If the boot sync process succeeds, arklone then assumes your local device contains the correct copy for the rest of the session, and will *send updates first, overwriting older copies on the remote, before receiving new content*.
+If the boot sync process succeeds, arklone will begin watching all your save directories, and *send updates any time a write is detected, overwriting older versions on the cloud remote*.
 
 
 ## Manual Syncing ###

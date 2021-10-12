@@ -4,48 +4,43 @@
 # Released under GNU GPLv3 license, see LICENSE.md.
 
 source "/opt/arklone/config.sh"
+source "${ARKLONE[installDir]}/rclone/scripts/functions/receiveDir.sh"
 
-###########
-# MOCK DATA
-###########
+# Mock local directory tree
 LOCAL_DIR="/dev/shm/localdir"
-REMOTE_DIR="/dev/shm/arklone/remotedir"
-
-# Create some test directories and files
 mkdir "${LOCAL_DIR}"
+
+# Mock remote directory tree
+REMOTE_DIR="/dev/shm/arklone/remotedir"
 mkdir "/dev/shm/arklone"
 mkdir "${REMOTE_DIR}"
-
 touch "${REMOTE_DIR}/test"
 touch "${REMOTE_DIR}/ignoreme"
 touch "${REMOTE_DIR}/ignoremetoo"
+touch "${REMOTE_DIR}/ignoremethree"
 
-# Mock getRootInstanceNames()
-function getRootInstanceNames() {
-	echo "${LOCAL_DIR}@${REMOTE_DIR##*arklone/}@test|test2"
-}
-
-# Mock filters
+# Mock rclone filters
 ARKLONE[filterDir]="/dev/shm/filters"
 mkdir "${ARKLONE[filterDir]}"
 
-touch "${ARKLONE[filterDir]}/global.filter"
-
-cat <<EOF > "${ARKLONE[filterDir]}/test.filter"
+cat <<EOF > "${ARKLONE[filterDir]}/global.filter"
 - ignoreme
 EOF
 
-cat <<EOF > "${ARKLONE[filterDir]}/test2.filter"
+cat <<EOF > "${ARKLONE[filterDir]}/test1.filter"
 - ignoremetoo
 EOF
 
-# Mock test rclone.conf
+cat <<EOF > "${ARKLONE[filterDir]}/test2.filter"
+- ignoremethree
+EOF
+
+# Mock rclone.conf
 ARKLONE[rcloneConf]="/dev/shm/rclone.conf"
 
 cat <<EOF > "${ARKLONE[rcloneConf]}"
 [test]
 type = local
-nounc = true
 EOF
 
 ARKLONE[remote]="test"
@@ -56,43 +51,34 @@ ARKLONE[remote]="test"
 # Run rclone in /dev/shm because remote is local filesystem
 cd "/dev/shm"
 
-# Source script, but run in subshell so it can exit without exiting the test
-(. "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh")
+receiveDir "${LOCAL_DIR}" "${REMOTE_DIR##*arklone/}" "test1|test2"
 
 [ $? = 0 ] || exit 70
 
 ########
 # TEST 1
 ########
-# Log file exists
-[ -f "${ARKLONE[log]}" ] || exit 72
+# Test file was received
+[ -f "${LOCAL_DIR}/test" ] || exit 72
 
 echo "TEST 1 passed."
 
 ########
 # TEST 2
 ########
-# Test file was synced
-[ -f "${LOCAL_DIR}/test" ] || exit 72
-
-echo "TEST 2 passed."
-
-########
-# TEST 3
-########
 # Ignored files were not synced
 [ ! -f "${LOCAL_DIR}/ignoreme" ] || exit 74
 [ ! -f "${LOCAL_DIR}/ignoremetoo" ] || exit 74
+[ ! -f "${LOCAL_DIR}/ignoremethree" ] || exit 74
 
-echo "TEST 3 passed."
+echo "TEST 2 passed."
 
 ##########
 # TEARDOWN
 ##########
 rm -rf "${LOCAL_DIR}"
-rm -rf "/dev/shm/arklone"
 rm -rf "${REMOTE_DIR}"
+rm -rf "/dev/shm/arklone"
 rm -rf "${ARKLONE[filterDir]}"
 rm "${ARKLONE[rcloneConf]}"
-rm "${ARKLONE[log]}"
 

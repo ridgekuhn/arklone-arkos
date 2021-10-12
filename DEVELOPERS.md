@@ -156,23 +156,16 @@ arkloned-ppsspp.path
 
 ## rclone Scripts ##
 
-### receive-saves.sh ###
+### sync-one-dir.sh ###
 
-[receive-saves.sh](/rclone/scripts/receive-saves.sh) *receives from the cloud only, overwriting older local data*. This script is called by [arkloned-receive-saves-boot.service](/systemd/units/arkloned-receive-saves-boot.service).
-
-Since `rclone` is capable of recursing an entire directory, this script scans the [systemd/units](/systemd/units) directory for "root" path units only (files ending in `.path` or `.auto.path`, but not `sub.auto.path`) and syncs the corresponding directories. (The `.sub.auto.path` units only exist because systemd is not capable of recursively watching a directory, so these units do not need to be utilized for this process.)
-
-See [Create Path Units from a Directory](#create-path-units-from-a-directory) and [newPathUnitsFromDir](/systemd/scripts/functions/newPathUnitsFromDir.sh) for how `.auto.path` and `.sub.auto.path` units are generated).
+[sync-one-dir.sh](/rclone/scripts/sync-one-dir.sh) syncs a single path unit's directory. Takes two arguments; send or receive, and the path unit's instance name.
 
 
-### send-and-receive-saves.sh ###
+### sync-all-dirs.sh ###
 
-[send-and-receive-saves.sh](/rclone/scripts/send-and-receive-saves.sh) *sends first, overwriting older cloud data*, then receives any missing or newer data from the cloud.
+[sync-all-dirs.sh](/rclone/scripts/sync-all-dirs.sh) syncs all path units' directories. Takes a single argument, send or receive.
 
-This script must be called with the unescaped instance name of a path unit, in the format `${LOCALDIR}@${REMOTEDIR}@${FILTERS}`, where:
-* `${LOCALDIR}` is an absolute path, no trailing slash
-* `${REMOTEDIR}` has no opening or trailing slashes
-* `${FILTERS}` is a pipe-delimited list of [rclone filters](#rclone-filters)
+Since `rclone` is capable of recursing an entire directory, this script scans the [systemd/units](/systemd/units) directory for "root" path units only (files ending in `.path` or `.auto.path`, but not `sub.auto.path`) and syncs each corresponding directory. (The `.sub.auto.path` units only exist because systemd is not capable of recursively watching a directory, so these units do not need to be utilized by this script. See [Create Path Units from a Directory](#create-path-units-from-a-directory) and [newPathUnitsFromDir](/systemd/scripts/functions/newPathUnitsFromDir.sh) for how `.auto.path` and `.sub.auto.path` units are generated.)
 
 
 ### send-arkos-backup.sh ###
@@ -242,10 +235,9 @@ if [ "${ARKLONE[remote]}" = "dropbox" ]; then
 	# Sourced (.) script has access to ${ARKLONE[food]}
 	. /path/to/say-good-morning.sh
 
-	# Sub-shell has access to ${ARKLONE[food]}
-	# Sourced script in sub-shell also has access to ${ARKLONE[food]}
-	# Sub-shell allows sourced script
-	# to use the `exit` command without exiting this script
+	# Sourced (.) sub-shell script  has access to ${ARKLONE[food]}
+	# Running in sub-shell allows sourced script to use
+	# the `exit` command without exiting this script
 	(. /path/to/make-breakfast.sh)
 fi
 ```
