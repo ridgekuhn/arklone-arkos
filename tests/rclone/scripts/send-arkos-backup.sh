@@ -22,6 +22,8 @@ type = local
 nounc = true
 EOF
 
+ARKLONE[remote]="test"
+
 ######
 ## RUN
 ######
@@ -29,7 +31,7 @@ EOF
 cd "/dev/shm"
 
 # Run script
-. "${ARKLONE[installDir]}/rclone/send-arkos-backup.sh"
+. "${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh"
 
 [ $? = 0 ] || exit 70
 
