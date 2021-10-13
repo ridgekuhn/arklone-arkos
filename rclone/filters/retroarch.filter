@@ -1,7 +1,5 @@
-+ *.state*
 + *.srm
 + *.[ABCD][12].bin
 + *.mcr
-- .fseventsd
-- .Spotlight*
++ *.state*
 - *

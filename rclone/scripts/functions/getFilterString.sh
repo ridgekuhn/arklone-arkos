@@ -19,12 +19,29 @@ function getFilterString() {
 	# Split pipe | delimited list of filters into array
 	local filters=($(tr '|' '\n' <<<"${1}"))
 
+	# Array of supported retroarch filters
+	local retroarchFilters=("retroarch-savefile" "retroarch-savestate")
+
+	# Check ${filters[@]} for retroarch filters
+	local duplicates=($(tr ' ' '\n' <<<"${filters[@]} ${retroarchFilters[@]}" | sort | uniq -d))
+
+	if [ ${#duplicates[@]} -gt 0 ]; then
+		# Remove retroarch filters
+		local unique=$(tr ' ' '\n' <<<"${filters[@]} ${retroarchFilters[@]}" | grep -v "retroarch")
+
+		# Replace retroarch filters with global retroarch filter
+		filters=("retroarch" ${unique})
+	fi
+
+	# Start building filter-from string
 	local filterString="--filter-from ${ARKLONE[filterDir]}/global.filter"
 
+	# Append passed filters
 	for filter in ${filters[@]}; do
 		filterString+=" --filter-from ${ARKLONE[filterDir]}/${filter}.filter"
 	done
 
 	echo "${filterString}"
 }
+
 
