@@ -19,7 +19,7 @@ TTYVHangup=yes
 # Run on tty2 to override display-manager in ExecStart script
 # Script calls `chvt 2` before executing, and resets with `chvt 1` before exit
 TTYPath=/dev/tty2
-ExecStart=/opt/arklone/dialogs/input-listener.sh "/opt/arklone/dialogs/boot-sync.sh"
+ExecStart=/opt/arklone/dialogs/scripts/input-listener.sh "/opt/arklone/dialogs/boot-sync.sh"
 # Keep process active so arkloned@ services are aware of it
 RemainAfterExit=yes
 

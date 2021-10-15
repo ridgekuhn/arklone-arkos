@@ -10,9 +10,9 @@ source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 # MOCK DATA
 ###########
 # Mock retroarch.cfg
-RETROARCH_CFG="/dev/shm/retroarch.cfg"
+ARKLONE[retroarchCfg]="/dev/shm/retroarch.cfg"
 
-cat <<EOF >"${RETROARCH_CFG}"
+cat <<EOF >"${ARKLONE[retroarchCfg]}"
 savefile_directory = "/dev/bar"
 savefiles_in_content_dir = "true"
 sort_savefiles_by_content_enable = "false"
@@ -36,13 +36,13 @@ mkdir "${ARKLONE[retroarchContentRoot]}/.Trashes"
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" "${RETROARCH_CFG}"
+. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh"
 
 [ $? = 0 ] || exit $?
 
 # Get modified settings
 declare -A r
-loadConfig "${RETROARCH_CFG}" r
+loadConfig "${ARKLONE[retroarchCfg]}" r
 
 [ $? = 0 ] || exit $?
 
@@ -108,7 +108,7 @@ echo "TEST 6 passed."
 ##########
 # TEARDOWN
 ##########
-rm "${RETROARCH_CFG}"
+rm "${ARKLONE[retroarchCfg]}"
 rm "/dev/shm/retroarch.cfg.arklone"*".bak"
 rm -rf "/dev/shm/saves"
 rm -rf "/dev/shm/states"

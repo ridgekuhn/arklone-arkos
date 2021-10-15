@@ -12,7 +12,9 @@
 # @returns Exit code of sync-all-saves.sh
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+
 [ "$(type -t killOnKeyPress)" = "function" ] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
+[ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
 
 #############
 # SUB SCREENS
@@ -25,14 +27,6 @@ function dirtyBootScreen() {
 		16 56 \
 		--yes-button "Continue" \
 		--no-button "Abort"
-}
-
-# Show the arklone log
-function logScreen() {
-	whiptail \
-		--textbox "${ARKLONE[log]}" \
-		16 56 \
-		--scrolltext
 }
 
 # Tell user to wait
