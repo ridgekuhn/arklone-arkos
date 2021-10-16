@@ -7,17 +7,17 @@
 #
 # Since systemd is incapable of watching subdirectories,
 # only enables units ending in .path, and .sub.auto.path, but not .auto.path
+#
+# To output progress percentage for passing to dialog gauge,
+# @see dialogs/gauges/systemd/enable-path-units.sh
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
 
-# Store list of enabled unit names in an array
-ENABLED_UNITS=(${ARKLONE[enabledUnits]})
-
 # Get all services
 SERVICES=($(find "${ARKLONE[unitsDir]}/"*".service"))
 # Get all path units
-UNITS=($(find "${ARKLONE[unitsDir]}/"*".path"))
+PATH_UNITS=($(find "${ARKLONE[unitsDir]}/"*".path"))
 
 # If path units ending in *.sub.auto.path are found,
 # we should not enable the ${ARKLONE[retroarchContentRoot]} unit,
@@ -47,7 +47,7 @@ done
 
 # Enable path units, but do not start
 # to protect the cloud copy from a bad sync
-for unit in ${UNITS[@]}; do
+for unit in ${PATH_UNITS[@]}; do
 	# Skip ignored units
 	if isIgnored "${unit}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
 		continue

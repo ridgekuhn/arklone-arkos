@@ -43,7 +43,6 @@ if [ $PARAM_DEVICE ]; then
 
 	# Run oga_controls in the background
 	sudo ./oga_controls "${RUNCOMMAND}" "${PARAM_DEVICE}" &
-	OGAC_PID=$!
 fi
 
 # Run/source the command in a subshell so it has access to ${ARKLONE[@]}
@@ -53,8 +52,8 @@ fi
 EXIT_CODE=$?
 
 # Teardown
-if [ $OGAC_PID ]; then
-	kill -s SIGKILL $OGAC_PID
+if [ $PARAM_DEVICE ]; then
+	sudo kill -s SIGKILL $(pidof oga_controls)
 fi
 
 exit $EXIT_CODE

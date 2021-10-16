@@ -29,15 +29,6 @@ function dirtyBootScreen() {
 		--no-button "Abort"
 }
 
-# Tell user to wait
-function waitScreen() {
-	whiptail \
-		--title "${ARKLONE[whiptailTitle]}" \
-		--infobox \
-			"Please wait..." \
-			16 56 8
-}
-
 # Check for network config
 #
 # @returns 1 if no routes available
@@ -104,11 +95,10 @@ function mainScreen() {
 			return 1
 		fi
 
-		waitScreen
-
 		rm "${ARKLONE[dirtyBoot]}"
 
-		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
+			| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/enable-path-units.sh"
 	fi
 
 	# Check for network connection
@@ -119,7 +109,14 @@ function mainScreen() {
 	if [ "${exitCode}" = 0 ]; then
 		receiveSavesScreen
 
-		killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "receive"
+		sleep 1
+
+		# Allow main script to pass non-zero exit code through pipe
+		set -o pipefail
+
+		killOnKeypress . "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "receive" \
+			| . "${ARKLONE[installDir]}/dialogs/gauges/rclone/sync-all-dirs.sh"
+
 		exitCode=$?
 	fi
 
@@ -148,9 +145,8 @@ function mainScreen() {
 			fi
 
 			# Disable all units except boot service
-			waitScreen
-
-			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" true
+			. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
+				| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/disable-path-units.sh"
 
 			# Set dirty boot lock
 			touch "${ARKLONE[dirtyBoot]}"

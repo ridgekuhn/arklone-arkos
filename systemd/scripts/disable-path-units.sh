@@ -5,6 +5,9 @@
 
 # Disable all arklone systemd units
 #
+# To output progress percentage for passing to dialog gauge,
+# @see dialogs/gauges/systemd/disable-path-units.sh
+#
 # @param [$1] Optionally keep arkloned-receive-saves-boot.service if true
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
@@ -16,7 +19,7 @@ ENABLED_UNITS=(${ARKLONE[enabledUnits]})
 
 # Disable path units
 for unit in ${ENABLED_UNITS[@]}; do
-	# Keep the boot service,
+	# Keep the boot service enabled if called from
 	# @see dialogs/boot-sync.sh
 	if
 		[ "${KEEP_BOOT_SERVICE}" = "true" ] \

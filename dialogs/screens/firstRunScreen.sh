@@ -5,8 +5,8 @@
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 
-[ "$(type -t rcloneRemoteCheckScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rcloneRemoteCheckScreen.sh"
-[ "$(type -t regenRAunitsScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/regenRAunitsScreen.sh"
+[ "$(type -t rcloneRemoteCheckScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/rcloneRemoteCheckScreen.sh"
+[ "$(type -t regenRAunitsScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/regenRAunitsScreen.sh"
 [ "$(type -t setCloudScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
 
 # First run dialog
@@ -25,13 +25,8 @@ function firstRunScreen() {
 			16 56 8
 
 	if [ $? = 0 ]; then
-		whiptail \
-			--title "${ARKLONE[whiptailTitle]}" \
-			--infobox \
-				"Please wait while we configure your settings..." \
-				16 56 8
-
-		"${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh"
+		. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" \
+			| . "${ARKLONE[installDir]}/dialogs/gauges/retroarch/set-recommended-settings.sh"
 	fi
 
 	# Generate RetroArch systemd path units

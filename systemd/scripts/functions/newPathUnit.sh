@@ -64,8 +64,7 @@ function newPathUnit() {
 	# set ${filter} to the filter string captured from unitExists()
 	elif [ "${filterString}" ]; then
 		echo "A path unit was found, but not using ${filter}.filter"
-		echo "Unit will be re-generated with filters:"
-	 	echo "$(tr '|' ' ' <<<"${filterString}")"
+		echo "Unit will be re-generated with filters: $(tr '|' ' ' <<<"${filterString}")"
 
 		filter="${filterString}"
 	fi
@@ -79,7 +78,7 @@ function newPathUnit() {
 	local instanceName=$(systemd-escape "${localDir}@${remoteDir}@${filter}")
 
 	# Generate the new unit
-	echo "Creating new path unit: ${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
+	echo "Creating instance: ${localDir}@${remoteDir}@${filter} at ${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 
 	cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 [Path]

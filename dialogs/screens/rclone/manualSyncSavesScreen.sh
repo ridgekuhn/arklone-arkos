@@ -85,11 +85,10 @@ function manualSyncSavesScreen() {
 	)
 
 	# Return if user canceled
-	if [ ! $syncMethod ]; then
-		return
+	[ $syncMethod ] || return
 
 	# Else, set the sync method
-	elif [ "${syncMethod}" = 0 ]; then
+	if [ "${syncMethod}" = 0 ]; then
 		syncMethod="send"
 	else
 		syncMethod="receive"
@@ -104,7 +103,13 @@ function manualSyncSavesScreen() {
 
 		if [ $? = 0 ]; then
 			# Source script, but run in subshell so it can exit without exiting this script
-			(. "${script}" "${syncMethod}")
+			(
+				# Allow main script to pass non-zero exit code through pipe
+				set -o pipefail
+
+				. "${script}" "${syncMethod}" \
+					| . "${ARKLONE[installDir]}/dialogs/gauges/rclone/sync-all-dirs.sh"
+			)
 
 			exitCode=$?
 		fi
@@ -120,8 +125,13 @@ function manualSyncSavesScreen() {
 			# Get the selected instance name
 			local instance=${instances[$dirSelection]}
 
+			whiptail \
+				--title "${ARKLONE[whiptailTitle]}" \
+				--infobox "Please wait while we sync your files..." \
+				16 56
+
 			# Source the script in a subshell so it can exit without exiting this script
-			(. "${script}" "${syncMethod}" "${instance}")
+			(. "${script}" "${syncMethod}" "${instance}" >/dev/null 2>&1)
 
 			exitCode=$?
 		fi

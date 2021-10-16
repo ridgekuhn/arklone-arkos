@@ -9,7 +9,7 @@
 [ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 [ "$(type -t printMenu)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/scripts/functions/printMenu.sh"
 
-[ "$(type -t rcloneRemoteCheckScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rcloneRemoteCheckScreen.sh"
+[ "$(type -t rcloneRemoteCheckScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/rcloneRemoteCheckScreen.sh"
 
 # Cloud service selection dialog
 function setCloudScreen() {

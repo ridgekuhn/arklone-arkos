@@ -7,11 +7,11 @@
 
 [ "$(type -t firstRunScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/firstRunScreen.sh"
 [ "$(type -t setCloudScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
-[ "$(type -t manualSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/manualSyncSavesScreen.sh"
-[ "$(type -t autoSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/autoSyncSavesScreen.sh"
-[ "$(type -t manualBackupArkOSScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/manualBackupArkOSScreen.sh"
-[ "$(type -t regenRAunitsScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/regenRAunitsScreen.sh"
 [ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
+[ "$(type -t manualBackupArkOSScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualBackupArkOSScreen.sh"
+[ "$(type -t manualSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualSyncSavesScreen.sh"
+[ "$(type -t autoSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/autoSyncSavesScreen.sh"
+[ "$(type -t regenRAunitsScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/regenRAunitsScreen.sh"
 
 #############
 # MAIN SCREEN
@@ -25,7 +25,7 @@ function homeScreen() {
 		--title "${ARKLONE[whiptailTitle]}" \
 		--menu "Choose an option:" \
 			16 60 8 \
-			"1" "Set cloud service (now: $([ "${ARKLONE[remote]}" ] && echo "${ARKLONE[remote]}" || echo "NONE"))" \
+			"1" "Set cloud remote (now: $([ "${ARKLONE[remote]}" ] && echo "${ARKLONE[remote]}" || echo "NONE"))" \
 			"2" "Manually sync saves" \
 			"3" "${ableString} automatic saves sync" \
 			"4" "Manual backup/sync ArkOS Settings" \

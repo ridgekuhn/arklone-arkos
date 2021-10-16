@@ -11,7 +11,6 @@
 
 [ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
 [ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-[ "$(type -t deletePathUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
 [ "$(type -t newPathUnit)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
 [ "$(type -t newPathUnitsFromDir)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
 
@@ -27,13 +26,13 @@
 #		@see dialogs/settings.sh
 #		@see https://github.com/christianhaitian/arkos/issues/289
 
+# Get array of all retroarch.cfg instances
+RETROARCHS=(${ARKLONE[retroarchCfg]})
+
 # Check if an exFAT partition named EASYROMS is present
 if [ "$(lsblk -f | grep "EASYROMS" | cut -d ' ' -f 2)" = "exfat" ]; then
-	# Get array of retroarch.cfg instances
-	RETROARCH_CFGS=(${ARKLONE[retroarchCfg]})
-
 	# Loop through all retroarch.cfg instances
-	for retroarchCfg in ${RETROARCH_CFGS[@]}; do
+	for retroarchCfg in ${RETROARCHS[@]}; do
 		# Store retroarch.cfg settings in an array
 		declare -A r
 		loadConfig "${retroarchCfg}" r "savefiles_in_content_dir|savestates_in_content_dir"
@@ -49,9 +48,6 @@ if [ "$(lsblk -f | grep "EASYROMS" | cut -d ' ' -f 2)" = "exfat" ]; then
 	done
 fi
 
-# Get array of all retroarch.cfg instances
-RETROARCHS=(${ARKLONE[retroarchCfg]})
-
 # Get list of subdirs to ignore
 # @todo ArkOS specific
 IGNORE_DIRS="${ARKLONE[installDir]}/systemd/scripts/includes/arkos-retroarch-content-root.ignore"
@@ -60,13 +56,12 @@ IGNORE_DIRS="${ARKLONE[installDir]}/systemd/scripts/includes/arkos-retroarch-con
 #		because they use the same naming scheme in retroarch.cfg
 FILETYPES=("savefile" "savestate")
 
-# Remove old retroarch units
-if [ $1 ]; then
-	deletePathUnits "$(find "${ARKLONE[unitsDir]}/arkloned-retroarch"*".auto.path" 2>/dev/null)"
-fi
-
 # Loop through retroarch instances
 for retroarchCfg in ${RETROARCHS[@]}; do
+	echo "====================================================================="
+	echo "Now processing: ${retroarchCfg}"
+	echo "---------------------------------------------------------------------"
+
 	# Get the retroarch instance's basename
 	# eg,
 	# retroarchCfg="/path/to/retroarch32/retroarch.cfg"
@@ -133,7 +128,7 @@ for retroarchCfg in ${RETROARCHS[@]}; do
 		newPathUnitsFromDir "${ARKLONE[retroarchContentRoot]}" "${retroarchBasename}/$(basename "${ARKLONE[retroarchContentRoot]}")" 1 true "${r[content_directory_filter]%%|}" "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore"
 	fi
 
-	# Unset r to prevent conflicts
+	# Unset r to prevent conflicts on next loop
 	unset r
 done
 

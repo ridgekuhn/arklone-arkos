@@ -111,10 +111,10 @@ eg,
 
 ### Settings Dialog ###
 
-* **Set cloud service**
+* **Set cloud remote**
 		Allows you to select from the remotes you set up in `rclone.conf`
 * **Manually sync saves**
-		Manually sync a single directory.
+		Manually send/receive from the cloud remote
 * **Enable/Disable automatic saves sync**
 		Watches directories for changes and syncs them to your selected remote.
 * **Manual backup/sync ArkOS settings**

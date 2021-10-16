@@ -20,7 +20,8 @@ function autoSyncSavesScreen() {
 	local enabledUnits=(${ARKLONE[enabledUnits]})
 
 	if [ "${#enabledUnits[@]}" = 0 ]; then
-		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
+			| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/enable-path-units.sh"
 
 		# Make sure user has a remote selected
 		if [ -z "${ARKLONE[remote]}" ]; then
@@ -31,7 +32,8 @@ function autoSyncSavesScreen() {
 		rebootScreen
 
 	else
-		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
+		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
+			| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/disable-path-units.sh"
 	fi
 
 	# Reset ${ARKLONE[enabledUnits]}
