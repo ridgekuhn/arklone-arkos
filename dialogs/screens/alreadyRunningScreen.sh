@@ -12,7 +12,7 @@
 # @param $1 {string} Path to script
 #
 # @returns 1 if $1 is an active process
-function alreadyRunning() {
+function alreadyRunningScreen() {
 	local script="${1}"
 
 	local running=$(pgrep "${script##*/}")

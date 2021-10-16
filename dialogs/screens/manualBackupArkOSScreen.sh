@@ -12,7 +12,7 @@
 function manualBackupArkOSScreen() {
 	local script="${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh"
 
-	alreadyRunning "${script}"
+	alreadyRunningScreen "${script}"
 
 	if [ $? = 0 ]; then
 		whiptail \
