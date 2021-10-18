@@ -28,18 +28,19 @@ arklone should be installed at `/opt/arklone`
     * [Dirty Boot State](#dirty-boot-state)
     * [Other](#other)
 
-
+&nbsp;
 
 ---
 
-## systemd Units ##
+# systemd Units #
 
 arklone uses systemd path units for watching directories and launching scripts. Path units are stored in [systemd/units/](/systemd/units). 
 
-### arkloned@.service Template ###
+## arkloned@.service Template ##
 
 [arkloned@.service](/systemd/units/arkloned@.service) launches [send-and-receive-saves.sh](/rclone/scripts/send-and-receive-saves.sh), passing the path unit's instance name as an argument.
 
+&nbsp;
 
 **arkloned@.service:**
 
@@ -48,7 +49,7 @@ ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/send-and-receive-saves.sh %I
 ```
 
 
-### Path Units ###
+## Path Units ##
 
 Path units can be created manually, and should be placed in [systemd/units](/systemd/units). Filenames should end in `.path`. Do not use `.auto.path`, or `.sub.auto.path`, as these are reserved by arklone (see [Create Path Units from a Directory](#create-path-units-from-a-directory) and [newPathUnitsFromDir](/systemd/scripts/functions/newPathUnitsFromDir.sh)).
 
@@ -66,6 +67,7 @@ The instance name format is:
 
 * Pass only the name of the filter, no extension. Default filter files are stored in [rclone/filters](rclone/filters).
 
+&nbsp;
 
 **example retroarch.path unit:**
 
@@ -80,14 +82,13 @@ Unit=arkloned@-home-user-.config-retroarch-saves\x40retroarch-saves\x40retroarch
 WantedBy=multi-user.target
 ```
 
-
 Path units can also be generated programmatically using [newPathUnit](systemd/scripts/functions/newPathUnit.sh) or [newPathUnitsFromDir](systemd/scripts/functions/newPathUnitsFromDir.sh) in a script. See below, or see [generate-retroarch-units.sh](systemd/scripts/generate-retroarch-units.sh) for an example.
 
-
-### rclone Filters ###
+## rclone Filters ##
 
 Filters in the path unit's instance name are a pipe-delimited list used for passing to `rclone`'s `--filter-from` option. They should be placed in [rclone/filters](rclone/filters).
 
+&nbsp;
 
 **cavestory.filter:**
 
@@ -97,13 +98,11 @@ Filters in the path unit's instance name are a pipe-delimited list used for pass
 - *
 ```
 
-
-### Ignoring Units when Automatic Syncing is Enabled ###
+## Ignoring Units when Automatic Syncing is Enabled ##
 
 To prevent a systemd path unit or service from being enabled when the user selects automatic syncing, add the name of the unit to [systemd/scripts/ignores/autosync.ignore](/systemd/scripts/ignores/autosync.ignore).
 
-
-### Watching Recursively with inotifywait ###
+## Watching Recursively with inotifywait ##
 
 Unforunately, systemd path units are not currently capable of recursively watching a directory. In this case, [watch-directory.sh](/systemd/scripts/inotify/watch-directory.sh) is provided as a workaround (to call the [arkloned@.service](/systemd/units/arkloned@.service) template, as would normally be done by the path unit), and should be called from a custom systemd service unit.
 
@@ -111,6 +110,7 @@ If the custom service unit is placed in [systemd/units](/systemd/units), it will
 
 [watch-directory.sh](/systemd/scripts/inotify/watch-directory.sh) takes two or more arguments. The first parameter is the path to the corresponding systemd path unit, and should be called in the `ExecStart=` line of the service unit file. The second argument and beyond are patterns to exclude from `inotifywait`, as regular expression strings.
 
+&nbsp;
 
 [arkloned-ppsspp.service](/systemd/units/arkloned-ppsspp.service):
 
@@ -128,6 +128,7 @@ ExecStart=/bin/bash -c '/opt/arklone/systemd/scripts/inotify/watch-directory.sh 
 WantedBy=multi-user.target
 ```
 
+&nbsp;
 
 [arkloned-ppsspp.path](/systemd/units/arkloned-ppsspp.path):
 
@@ -143,6 +144,7 @@ WantedBy=multi-user.target
 
 To prevent the path unit from being enabled in systemd when [enable-path-units.sh](/systemd/scripts/enable-path-units.sh) is run, add the name of the path unit to the `systemd/scripts/ignores/autosync.ignore` file.
 
+&nbsp;
 
 [autosync.ignore](/systemd/scripts/ignores/autosync.ignore)
 
@@ -150,40 +152,37 @@ To prevent the path unit from being enabled in systemd when [enable-path-units.s
 arkloned-ppsspp.path
 ```
 
-
+&nbsp;
 
 ---
 
-## rclone Scripts ##
+# rclone Scripts #
 
-### sync-one-dir.sh ###
+## sync-one-dir.sh ##
 
 [sync-one-dir.sh](/rclone/scripts/sync-one-dir.sh) syncs a single path unit's directory. Takes two arguments; send or receive, and the path unit's instance name.
 
-
-### sync-all-dirs.sh ###
+## sync-all-dirs.sh ##
 
 [sync-all-dirs.sh](/rclone/scripts/sync-all-dirs.sh) syncs all path units' directories. Takes a single argument, send or receive.
 
 Since `rclone` is capable of recursing an entire directory, this script scans the [systemd/units](/systemd/units) directory for "root" path units only (files ending in `.path` or `.auto.path`, but not `sub.auto.path`) and syncs each corresponding directory. (The `.sub.auto.path` units only exist because systemd is not capable of recursively watching a directory, so these units do not need to be utilized by this script. See [Create Path Units from a Directory](#create-path-units-from-a-directory) and [newPathUnitsFromDir](/systemd/scripts/functions/newPathUnitsFromDir.sh) for how `.auto.path` and `.sub.auto.path` units are generated.)
 
-
-### send-arkos-backup.sh ###
+## send-arkos-backup.sh ##
 
 [send-arkos-backup.sh](/rclone/scripts/send-arkos-backup.sh) runs the ArkOS backup script, and then sends it to the cloud remote, storing it in its own directory, `ArkOS/`.
 
-
+&nbsp;
 
 ---
 
-## API ##
+# API #
 
-### ${ARKLONE[@]} and arklone.cfg ###
+## ${ARKLONE[@]} and arklone.cfg ##
 
 The `${ARKLONE[@]}` array contains various information about the state of the application. This includes certain filepaths and whether arklone's systemd units are currently enabled. 
 
-
-#### ${ARKLONE[@]} ####
+### ${ARKLONE[@]} ###
 
 Defaults are defined in [config.sh](config.sh).
 
@@ -200,9 +199,9 @@ echo "${ARKLONE[log]}"
 tr ' ' '\n' <<<"${ARKLONE[enabledUnits]}"
 ```
 
-
 If your script can run directly from the command line, *or* `source`d in another script where ${ARKLONE[@]} is already defined:
 
+&nbsp;
 
 **say-good-morning.sh**
 
@@ -214,6 +213,7 @@ If your script can run directly from the command line, *or* `source`d in another
 echo "Good morning! Let's eat ${ARKLONE[food]} for breakfast."
 ```
 
+&nbsp;
 
 **wake-up.sh**
 
@@ -242,13 +242,13 @@ if [ "${ARKLONE[remote]}" = "dropbox" ]; then
 fi
 ```
 
-
-#### arklone.cfg ####
+### arklone.cfg ###
 
 `${ARKLONE[@]}` also has access to user preferences stored in `~/.config/arklone/arklone.cfg`. This includes information like the path to the user's `retroarch.cfg`, and the user's chosen rclone remote.
 
 A default copy of the file is stored in [arklone.cfg.orig](arklone.cfg.orig).
 
+&nbsp;
 
 **~/.config/arklone/arklone.cfg**
 
@@ -256,6 +256,7 @@ A default copy of the file is stored in [arklone.cfg.orig](arklone.cfg.orig).
 some_setting = "true"
 ```
 
+&nbsp;
 
 **your script**
 
@@ -266,13 +267,13 @@ some_setting = "true"
 echo "User set some_setting to "${ARKLONE[some_setting]}"
 ```
 
-
+&nbsp;
 
 ---
 
-### Handling User Configurations ###
+## Handling User Configurations ##
 
-#### Load ####
+### Load ###
 
 [loadConfig](functions/loadConfig.sh) reads a configuration file into an array.
 
@@ -289,8 +290,7 @@ loadConfig "/path/to/myconfig.cfg" MY_CONFIG
 echo "${MY_CONFIG[foo]}"
 ```
 
-
-#### Edit ####
+### Edit ###
 
 [editConfig](functions/editConfig.sh) sets a value into a configuration file.
 
@@ -307,13 +307,13 @@ loadConfig "/path/to/myconfig.cfg" MY_CONFIG "bar"
 echo "${MY_CONFIG[bar]}"
 ```
 
-
+&nbsp;
 
 ---
 
-### Generating Path Units ###
+## Generating Path Units ##
 
-#### Create a New Path Unit ####
+### Create a New Path Unit ###
 
 Path units can be generated with [newPathUnit](systemd/scripts/functions/newPathUnit.sh).
 
@@ -325,8 +325,7 @@ Path units can be generated with [newPathUnit](systemd/scripts/functions/newPath
 newPathUnit "retroarch-saves" "/home/user/.config/retroarch/saves" "retroarch/saves" "retroarch-savefile"
 ```
 
-
-#### Create Path Units from a Directory ####
+### Create Path Units from a Directory ###
 
 Multiple path units can be made from a directory and a specified depth of subdirectories with [newPathUnitsFromDir](systemd/scripts/functions/newPathUnitsFromDir.sh).
 
@@ -338,14 +337,13 @@ Multiple path units can be made from a directory and a specified depth of subdir
 newPathUnitsFromDir "/path/to/roms" "retroarch/roms" 1 true "retroarch-savefile|retroarch-savestate" "/path/to/list-of-dirs-to.ignore"
 ```
 
-
 `.ignore` files are simple line-delimited lists of patterns to check against the name of the subdirectory, and should be placed in [systemd/scripts/ignores](systemd/scripts/ignores). A [global ignore list](systemd/scripts/ignores/global.ignore) is also used to check subdirectories against, and contains unwanted items like `.DS_Store`, `.Trashes`, etc.
 
-
+&nbsp;
 
 ---
 
-### Wrapper to Kill a Script on Keypress ###
+## Wrapper to Kill a Script on Keypress ##
 
 [killOnKeyPress](functions/killOnKeyPress.sh) runs a command and allows the user to kill the process by pressing any key. Along with [oga_controls](#wrapper-to-accept-gamepad-input-for-interactive-programs), this is useful for letting the user quit a process when their only connected input device is a gamepad.
 
@@ -357,11 +355,11 @@ source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
 killOnKeyPress "/path/to/my/script.sh"
 ```
 
-
+&nbsp;
 
 ---
 
-### Wrapper to Accept Gamepad Input for Interactive Programs ###
+## Wrapper to Accept Gamepad Input for Interactive Programs ##
 
 [oga_controls](/vendor/oga_controls) ([source](https://github.com/christianhaitian/oga_controls)) converts gamepad input to key codes and mouse input data. [A wrapper script](/dialogs/input-listener.sh) is provided to automatically detect the input device and execute a command passed to it.
 
@@ -369,11 +367,11 @@ killOnKeyPress "/path/to/my/script.sh"
 /opt/arklone/dialogs/input-listener.sh "/path/to/my/script.sh"
 ```
 
-
+&nbsp;
 
 ---
 
-### Logging ###
+## Logging ##
 
 By default, arklone logs to the RAM filesystem at `/dev/shm/arklone.log`. This path can be set by the user and is available at `${ARKLONE[log]}`.
 
@@ -389,11 +387,11 @@ arkloneLogger "${ARKLONE[log]}"
 echo "Hello, world!"
 ```
 
-
+&nbsp;
 
 ---
 
-### Dialogs ###
+## Dialogs ##
 
 [Dialogs](/dialogs) use `whiptail` and should be limited to acting as "views" whenever possible. Any non-trivial operations should be contained to functions or standalone scripts when possible.
 
@@ -421,11 +419,11 @@ if [ $? = 0 ]; then
 fi
 ```
 
-
+&nbsp;
 
 ---
 
-### Dirty Boot State ###
+## Dirty Boot State ##
 
 After boot, but before EmulationStation starts, arklone checks for a network connection and attempts to receive any new updates from the configured remote. It does not send any data until a file has been written on the device. This ensures that the cloud copy is the canonical and "always correct" one. 
 
@@ -436,11 +434,11 @@ To manually reset the dirtyboot state, delete the lock file located at:
 
 For scripting, the path to `.dirtyboot` is available in `${ARKLONE[dirtyBoot]}`.
 
-
+&nbsp;
 
 ---
 
-### Other ###
+## Other ##
 
 Please refer to the inline documentation for other useful functions and scripts.
 
