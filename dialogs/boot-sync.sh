@@ -118,6 +118,10 @@ function mainScreen() {
 			| . "${ARKLONE[installDir]}/dialogs/gauges/rclone/sync-all-dirs.sh"
 
 		exitCode=$?
+
+		# Reset bad whiptail stty options
+		# @see https://unix.stackexchange.com/questions/673625/no-keyboard-output-on-terminal-after-running-a-script-using-read-and-whiptail/673719
+		stty sane
 	fi
 
 	# Try again if there were any errors
