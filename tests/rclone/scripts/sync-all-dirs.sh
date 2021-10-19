@@ -32,7 +32,7 @@ chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
 
 # Mock functions called by sync-all-dirs.sh
 function getRootInstanceNames() {
-	echo "localDir@remoteDir@filter1|filter2"
+    echo "localDir@remoteDir@filter1|filter2"
 }
 
 ########

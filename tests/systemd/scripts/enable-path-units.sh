@@ -10,11 +10,11 @@ source "/opt/arklone/config.sh"
 ###########
 # Unlink conflicting real units
 if systemctl list-unit-files "arkloned@.service" | grep "linked"; then
-	sudo systemctl disable "arkloned@.service"
+    sudo systemctl disable "arkloned@.service"
 fi
 
 if systemctl list-unit-files "arkloned-receive-saves-boot.service" | grep "enabled"; then
-	sudo systemctl disable "arkloned-receive-saves-boot.service"
+    sudo systemctl disable "arkloned-receive-saves-boot.service"
 fi
 
 # Mock enabled units
@@ -80,7 +80,7 @@ EOF
 ########
 # Service template unit is linked
 if ! systemctl list-unit-files "arkloned@.service" | grep "linked"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 1 passed."
@@ -90,7 +90,7 @@ echo "TEST 1 passed."
 ########
 # Path unit is enabled
 if ! systemctl list-unit-files "arkloned-test.path" | grep "enabled"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 2 passed."
@@ -100,7 +100,7 @@ echo "TEST 2 passed."
 ########
 # Boot service is enabled
 if ! systemctl list-unit-files "arkloned-receive-saves-boot.service" | grep "enabled"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 3 passed."
@@ -112,10 +112,10 @@ echo "TEST 3 passed."
 IGNORED_UNITS=($(cat "${ARKLONE[ignoreDir]}/autosync.ignore"))
 
 for unit in ${IGNORED_UNITS[@]}; do
-	systemctl list-unit-files | grep "${unit}"
-	if systemctl list-unit-files | grep "${unit}"; then
-		exit 78
-	fi
+    systemctl list-unit-files | grep "${unit}"
+    if systemctl list-unit-files | grep "${unit}"; then
+        exit 78
+    fi
 done
 
 echo "TEST 4 passed."

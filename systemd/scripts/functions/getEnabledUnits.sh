@@ -7,5 +7,5 @@
 #
 # @returns 1 if no enabled units
 function getEnabledUnits() {
-	systemctl list-unit-files arkloned* | grep -E "enabled|linked" | cut -d " " -f 1 || exit 1
+    systemctl list-unit-files arkloned* | grep -E "enabled|linked" | cut -d " " -f 1 || exit 1
 }

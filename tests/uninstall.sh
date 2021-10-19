@@ -20,7 +20,7 @@ KEEP_INSTALL_DIR=$1
 ########
 # Check units were removed from systemd
 if systemctl list-unit-files | grep -E '^arklone'; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 1 passed."
@@ -32,7 +32,7 @@ echo "TEST 1 passed."
 [ -f "${HOME}/.config/rclone/rclone.conf" ] || exit 72
 
 if file "${HOME}/.config/rclone/rclone.conf" | grep "symbolic link"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 2 passed."
@@ -63,9 +63,9 @@ echo "TEST 4 passed."
 ########
 # arklone install dir was removed
 if [ $KEEP_INSTALL_DIR ]; then
-	[ -d "${ARKLONE[installDir]}" ] || exit 78
+    [ -d "${ARKLONE[installDir]}" ] || exit 78
 else
-	[ ! -d "${ARKLONE[installDir]}" ] || exit 78
+    [ ! -d "${ARKLONE[installDir]}" ] || exit 78
 fi
 
 echo "TEST 5 passed."

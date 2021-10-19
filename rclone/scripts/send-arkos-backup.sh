@@ -12,14 +12,14 @@
 BACKUP_SCRIPT=""
 
 if [ -f "/opt/system/Advanced/Backup Settings.sh" ]; then
-	BACKUP_SCRIPT="/opt/system/Advanced/Backup Settings.sh"
+    BACKUP_SCRIPT="/opt/system/Advanced/Backup Settings.sh"
 
 elif [ -f "/opt/system/Advanced/Backup ArkOS Settings.sh" ]; then
-	BACKUP_SCRIPT="/opt/system/Advanced/Backup ArkOS Settings.sh"
+    BACKUP_SCRIPT="/opt/system/Advanced/Backup ArkOS Settings.sh"
 
 else
-	echo "ERROR: Could not find ArkOS backup script!"
-	exit 1
+    echo "ERROR: Could not find ArkOS backup script!"
+    exit 1
 fi
 
 # Run normal ArkOS settings backup script
@@ -27,14 +27,14 @@ echo "Backing up your ArkOS settings..."
 "${BACKUP_SCRIPT}"
 
 if [ $? != 0 ]; then
-	printf "\nCould not create backup file! Exiting...\n"
-	exit 1
+    printf "\nCould not create backup file! Exiting...\n"
+    exit 1
 fi
 
 # Exit if no network routes configured
 if [ -z "$(ip route)" ]; then
-	echo "ERROR: No internet connection. Exiting..."
-	exit 1
+    echo "ERROR: No internet connection. Exiting..."
+    exit 1
 fi
 
 # Use same log as ArkOS backup Script

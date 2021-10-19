@@ -2,6 +2,8 @@
 
 arklone should be installed at `/opt/arklone`
 
+Submissions must follow the [RetroPie Shell Style Guide](https://retropie.org.uk/docs/Shell-Style-Guide/).
+
 ---
 
 **Table of Contents**

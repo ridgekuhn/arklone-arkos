@@ -33,48 +33,48 @@
 # @returns 1 if an existing unit is NOT found
 #		and outputs pipe | delimited list of all filters to STDERR
 function unitExists() {
-	local localDir="${1}"
-	local filter="${2}"
-	local existingUnits=($(find "${ARKLONE[unitsDir]}/"*".path" 2>/dev/null))
+    local localDir="${1}"
+    local filter="${2}"
+    local existingUnits=($(find "${ARKLONE[unitsDir]}/"*".path" 2>/dev/null))
 
-	# Loop through existing units
-	for existingUnit in ${existingUnits[@]}; do
-		# Get the existing unit's watched directory path
-		local existingDir=$(grep "PathChanged" "${existingUnit}" | cut -d '=' -f 2)
+    # Loop through existing units
+    for existingUnit in ${existingUnits[@]}; do
+        # Get the existing unit's watched directory path
+        local existingDir=$(grep "PathChanged" "${existingUnit}" | cut -d '=' -f 2)
 
-		# If ${localDir} is already being watched,
-		# check if ${filter} is also being used
-		if [ "${existingDir}" = "${localDir}" ]; then
-			# Get the escaped instance name from the Unit= line
-			# eg, "-home-ark.config-retroarch-saves\x40retroarch-savefiles\x40retroarch\x2dsavefile\x7cretroarch\x2dsavestate"
-			local escInstanceName=$(grep "Unit" "${existingUnit}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//')
+        # If ${localDir} is already being watched,
+        # check if ${filter} is also being used
+        if [ "${existingDir}" = "${localDir}" ]; then
+            # Get the escaped instance name from the Unit= line
+            # eg, "-home-ark.config-retroarch-saves\x40retroarch-savefiles\x40retroarch\x2dsavefile\x7cretroarch\x2dsavestate"
+            local escInstanceName=$(grep "Unit" "${existingUnit}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//')
 
-			# Get the existing unit's unescaped, pipe | delimited list of filters,
-			# and store it in an array
-			# eg, "retroarch-savefile|retroarch-savestate" in above example
-			local existingFilters=($(systemd-escape -u -- "${escInstanceName}" | cut -d '@' -f 3- | tr '|' '\n'))
+            # Get the existing unit's unescaped, pipe | delimited list of filters,
+            # and store it in an array
+            # eg, "retroarch-savefile|retroarch-savestate" in above example
+            local existingFilters=($(systemd-escape -u -- "${escInstanceName}" | cut -d '@' -f 3- | tr '|' '\n'))
 
-			# Create a sorted array from ${filter} and ${existingFilters}
-			local allFilters=($(tr ' ' '\n' <<<"${filter} ${existingFilters[@]}" | sort))
+            # Create a sorted array from ${filter} and ${existingFilters}
+            local allFilters=($(tr ' ' '\n' <<<"${filter} ${existingFilters[@]}" | sort))
 
-			# If doubles are found, the unit DOES exist. Return with code 0
-			if [ "$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq -d)" ]; then
-				return 0
+            # If doubles are found, the unit DOES exist. Return with code 0
+            if [ "$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq -d)" ]; then
+                return 0
 
-			# If no doubles are found, unit does not exist, return error code 1
-			else
-				# Convert filter list to a pipe | delimited string
-				local filterString=$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq | tr '\n' '|')
+            # If no doubles are found, unit does not exist, return error code 1
+            else
+                # Convert filter list to a pipe | delimited string
+                local filterString=$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq | tr '\n' '|')
 
-				# Echo ${filterString} to stderr and remove any trailing pipe | characters
-				echo "${filterString%%|}" >&2
+                # Echo ${filterString} to stderr and remove any trailing pipe | characters
+                echo "${filterString%%|}" >&2
 
-				return 1
-			fi
-		fi
-	done
+                return 1
+            fi
+        fi
+    done
 
-	# If we made it this far, no units exist, so return error code 1
-	return 1
+    # If we made it this far, no units exist, so return error code 1
+    return 1
 }
 

@@ -7,16 +7,16 @@
 
 # Reboot screen
 function rebootScreen() {
-	whiptail \
-		--title "${ARKLONE[whiptailTitle]}" \
-		--yesno \
-			"You will need to reboot for the settings to take effect." \
-			16 56 \
-		--yes-button "Reboot Now" \
-		--no-button "Later"
+    whiptail \
+        --title "${ARKLONE[whiptailTitle]}" \
+        --yesno \
+            "You will need to reboot for the settings to take effect." \
+            16 56 \
+        --yes-button "Reboot Now" \
+        --no-button "Later"
 
-		if [ $? = 0 ]; then
-			sudo reboot
-		fi
+        if [ $? = 0 ]; then
+            sudo reboot
+        fi
 }
 

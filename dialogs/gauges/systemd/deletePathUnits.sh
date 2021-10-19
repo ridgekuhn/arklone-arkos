@@ -8,17 +8,17 @@
 OLD_UNITS=($(find "${ARKLONE[unitsDir]}/arkloned-retroarch"*".auto.path" 2>/dev/null))
 
 while read line; do
-	if grep -E "^removed '/opt/arklone/systemd/units/arkloned-retroarch-.*.auto.path" <<<"${line}" >/dev/null 2>&1; then
-		unit=$(sed -e "s|^removed '||" -e "s/'$//" <<<"${line}")
+    if grep -E "^removed '/opt/arklone/systemd/units/arkloned-retroarch-.*.auto.path" <<<"${line}" >/dev/null 2>&1; then
+        unit=$(sed -e "s|^removed '||" -e "s/'$//" <<<"${line}")
 
-		for i in "${!OLD_UNITS[@]}"; do
-			if [ "${OLD_UNITS[$i]}" = "${unit}" ]; then
-				echo $(( ( $i * 100 ) / ${#OLD_UNITS[@]} ))
-			fi
-		done
-	fi
+        for i in "${!OLD_UNITS[@]}"; do
+            if [ "${OLD_UNITS[$i]}" = "${unit}" ]; then
+                echo $(( ( $i * 100 ) / ${#OLD_UNITS[@]} ))
+            fi
+        done
+    fi
 done | whiptail \
-	--title "${ARKLONE[whiptailTitle]}" \
-	--gauge "Cleaning up old path units..." \
-	16 56 \
-	0
+    --title "${ARKLONE[whiptailTitle]}" \
+    --gauge "Cleaning up old path units..." \
+    16 56 \
+    0

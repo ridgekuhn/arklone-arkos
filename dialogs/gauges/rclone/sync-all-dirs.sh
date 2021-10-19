@@ -24,29 +24,29 @@ INSTANCES=($(getRootInstanceNames))
 LOCALDIRS=()
 
 for instance in ${INSTANCES[@]}; do
-	IFS="@" read -r localdir remotedir filters  <<<"${instance}"
+    IFS="@" read -r localdir remotedir filters  <<<"${instance}"
 
-	LOCALDIRS+=("${localdir}")
+    LOCALDIRS+=("${localdir}")
 
-	unset localdir remotedir filters
+    unset localdir remotedir filters
 done
 
 while read line; do
-	if grep -E "^Sending.*${ARKLONE[remote]}" <<<"${line}" >/dev/null 2>&1; then
-		localdir="$(sed -e 's/^Sending //' -e "s/ to ${ARKLONE[remote]}:.*$//" <<<"${line}")"
+    if grep -E "^Sending.*${ARKLONE[remote]}" <<<"${line}" >/dev/null 2>&1; then
+        localdir="$(sed -e 's/^Sending //' -e "s/ to ${ARKLONE[remote]}:.*$//" <<<"${line}")"
 
-	elif grep -E "^Receiving ${ARKLONE[remote]}" <<<"${line}" >/dev/null 2>&1; then
-		localdir="$(sed -e "s/^Receiving ${ARKLONE[remote]}.* to //" -e 's|/$||' <<<"${line}")"
-	fi
+    elif grep -E "^Receiving ${ARKLONE[remote]}" <<<"${line}" >/dev/null 2>&1; then
+        localdir="$(sed -e "s/^Receiving ${ARKLONE[remote]}.* to //" -e 's|/$||' <<<"${line}")"
+    fi
 
-	for i in "${!LOCALDIRS[@]}"; do
-		if [ "${LOCALDIRS[$i]}" = "${localdir}" ]; then
-			echo "$(( ( $i * 100 ) / ${#LOCALDIRS[@]} ))"
-		fi
-	done
+    for i in "${!LOCALDIRS[@]}"; do
+        if [ "${LOCALDIRS[$i]}" = "${localdir}" ]; then
+            echo "$(( ( $i * 100 ) / ${#LOCALDIRS[@]} ))"
+        fi
+    done
 done | whiptail \
-	--title "${ARKLONE[whiptailTitle]}" \
-	--gauge "Please wait while we sync your files..." \
-	16 56 \
-	0
+    --title "${ARKLONE[whiptailTitle]}" \
+    --gauge "Please wait while we sync your files..." \
+    16 56 \
+    0
 

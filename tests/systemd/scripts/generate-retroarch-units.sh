@@ -19,15 +19,15 @@ source "/opt/arklone/config.sh"
 
 # Mock called functions
 function deletePathUnits() {
-	local units=(${@})
+    local units=(${@})
 
-	for unit in ${units[@]}; do
-		# Check function was called with retroarch path units only
-		if ! grep -E "arkloned-retroarch.*\.auto\.path$" <<<"${unit}"; then
-			echo "deletePathUnits called with non-retroarch path"
-			exit 64
-		fi
-	done
+    for unit in ${units[@]}; do
+        # Check function was called with retroarch path units only
+        if ! grep -E "arkloned-retroarch.*\.auto\.path$" <<<"${unit}"; then
+            echo "deletePathUnits called with non-retroarch path"
+            exit 64
+        fi
+    done
 }
 
 # Mock retroarch.cfg
@@ -51,15 +51,15 @@ EOF
 
 # Mock functions
 function newPathUnit() {
-	[ "${1}" = "retroarch32-bar.auto" ] || exit 70
-	[ "${2}" = "/foo/bar" ] || exit 70
-	[ "${3}" = "retroarch32/bar" ] || exit 70
-	[ "${4}" = "retroarch-savefile" ] || [ "${4}" = "retroarch-savestate" ] || exit 70
+    [ "${1}" = "retroarch32-bar.auto" ] || exit 70
+    [ "${2}" = "/foo/bar" ] || exit 70
+    [ "${3}" = "retroarch32/bar" ] || exit 70
+    [ "${4}" = "retroarch-savefile" ] || [ "${4}" = "retroarch-savestate" ] || exit 70
 }
 
 function newPathUnitsFromDir() {
-	# Function should not have been called
-	exit 70
+    # Function should not have been called
+    exit 70
 }
 
 # Run script
@@ -85,23 +85,23 @@ sort_savestates_enable = "false"
 EOF
 
 function newPathUnitsFromDir() {
-	# Function was called with correct local directory
-	[ "${1}" = "/foo/bar" ] || exit 64
+    # Function was called with correct local directory
+    [ "${1}" = "/foo/bar" ] || exit 64
 
-	# Function was called with correct remote directory
-	[ "${2}" = "retroarch32/bar" ] || exit 64
+    # Function was called with correct remote directory
+    [ "${2}" = "retroarch32/bar" ] || exit 64
 
-	# Function was called with correct subdir depth
-	[ "${3}" = "1" ] || exit 64
+    # Function was called with correct subdir depth
+    [ "${3}" = "1" ] || exit 64
 
-	# Function was called with makeRootUnit = true
-	[ "${4}" = "true" ] || exit 64
+    # Function was called with makeRootUnit = true
+    [ "${4}" = "true" ] || exit 64
 
-	# Function was called with correct filters
-	[ "${5}" = "retroarch-savefile" ] || [ "${5}" = "retroarch-savestate" ] || exit 64
+    # Function was called with correct filters
+    [ "${5}" = "retroarch-savefile" ] || [ "${5}" = "retroarch-savestate" ] || exit 64
 
-	# Function was not called with ignore file
-	[ -z "${6}" ] || exit 64
+    # Function was not called with ignore file
+    [ -z "${6}" ] || exit 64
 }
 
 # Run script
@@ -126,23 +126,23 @@ sort_savestates_enable = "true"
 EOF
 
 function newPathUnitsFromDir() {
-	# Function was called with correct local directory
-	[ "${1}" = "/foo/bar" ] || exit 64
+    # Function was called with correct local directory
+    [ "${1}" = "/foo/bar" ] || exit 64
 
-	# Function was called with correct remote directory
-	[ "${2}" = "retroarch32/bar" ] || exit 64
+    # Function was called with correct remote directory
+    [ "${2}" = "retroarch32/bar" ] || exit 64
 
-	# Function was called with correct subdir depth
-	[ "${3}" = "2" ] || exit 64
+    # Function was called with correct subdir depth
+    [ "${3}" = "2" ] || exit 64
 
-	# Function was called with makeRootUnit = true
-	[ "${4}" = "true" ] || exit 64
+    # Function was called with makeRootUnit = true
+    [ "${4}" = "true" ] || exit 64
 
-	# Function was called with correct filters
-	[ "${5}" = "retroarch-savefile" ] || [ "${5}" = "retroarch-savestate" ] || exit 64
+    # Function was called with correct filters
+    [ "${5}" = "retroarch-savefile" ] || [ "${5}" = "retroarch-savestate" ] || exit 64
 
-	# Function was not called with ignore file
-	[ -z "${6}" ] || exit 64
+    # Function was not called with ignore file
+    [ -z "${6}" ] || exit 64
 }
 
 # Run script
@@ -161,9 +161,9 @@ if [ "$(lsblk -f | grep "EASYROMS" | cut -d ' ' -f 2)" = "exfat" ]; then
 
 # Run script
 else
-	ARKLONE[retroarchContentRoot]="/foo/baz"
+    ARKLONE[retroarchContentRoot]="/foo/baz"
 
-	cat <<EOF >"${ARKLONE[retroarchCfg]}"
+    cat <<EOF >"${ARKLONE[retroarchCfg]}"
 savefile_directory = "/foo/bar"
 savefiles_in_content_dir = "true"
 sort_savefiles_by_content_enable = "false"
@@ -174,28 +174,28 @@ sort_savestates_by_content_enable = "false"
 sort_savestates_enable = "false"
 EOF
 
-	function newPathUnitsFromDir() {
-		# Function was called with correct local directory
-		[ "${1}" = "/foo/baz" ] || exit 64
+    function newPathUnitsFromDir() {
+        # Function was called with correct local directory
+        [ "${1}" = "/foo/baz" ] || exit 64
 
-		# Function was called with correct remote directory
-		[ "${2}" = "retroarch32/baz" ] || exit 64
+        # Function was called with correct remote directory
+        [ "${2}" = "retroarch32/baz" ] || exit 64
 
-		# Function was called with correct subdir depth
-		[ "${3}" = "1" ] || exit 64
+        # Function was called with correct subdir depth
+        [ "${3}" = "1" ] || exit 64
 
-		# Function was called with makeRootUnit = true
-		[ "${4}" = "true" ] || exit 64
+        # Function was called with makeRootUnit = true
+        [ "${4}" = "true" ] || exit 64
 
-		# Function was called with correct filters
-		[ "${5}" = "retroarch-savefile|retroarch-savestate" ] || exit 64
+        # Function was called with correct filters
+        [ "${5}" = "retroarch-savefile|retroarch-savestate" ] || exit 64
 
-		# Function was called with correct ignore file
-		# @todo ArkOS-specific
-		[ "${6}" = "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore" ] || exit 64
-	}
+        # Function was called with correct ignore file
+        # @todo ArkOS-specific
+        [ "${6}" = "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore" ] || exit 64
+    }
 
-		echo "TEST 4 passed."
+        echo "TEST 4 passed."
 fi
 
 ########
@@ -208,11 +208,11 @@ touch "${ARKLONE[unitsDir]}/arkloned-retroarch-foo.auto.path"
 
 # Mock functions
 function deletePathUnits() {
-	[ "${1}" = "${ARKLONE[unitsDir]}/arkloned-retroarch-foo.auto.path" ] || exit 64
+    [ "${1}" = "${ARKLONE[unitsDir]}/arkloned-retroarch-foo.auto.path" ] || exit 64
 }
 
 function newPathUnitsFromDir() {
-	return
+    return
 }
 
 # Run script

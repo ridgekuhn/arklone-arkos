@@ -19,16 +19,16 @@ ENABLED_UNITS=(${ARKLONE[enabledUnits]})
 
 # Disable path units
 for unit in ${ENABLED_UNITS[@]}; do
-	# Keep the boot service enabled if called from
-	# @see dialogs/boot-sync.sh
-	if
-		[ "${KEEP_BOOT_SERVICE}" = "true" ] \
-		&& [ "${unit}" = "arkloned-receive-saves-boot.service" ]
-	then
-		continue
-	fi
+    # Keep the boot service enabled if called from
+    # @see dialogs/boot-sync.sh
+    if
+        [ "${KEEP_BOOT_SERVICE}" = "true" ] \
+        && [ "${unit}" = "arkloned-receive-saves-boot.service" ]
+    then
+        continue
+    fi
 
-	sudo systemctl stop "${unit}" 2>/dev/null
-	sudo systemctl disable "${unit}"
+    sudo systemctl stop "${unit}" 2>/dev/null
+    sudo systemctl disable "${unit}"
 done
 

@@ -12,12 +12,12 @@ source "/opt/arklone/config.sh"
 SYS_ARCH=$(uname -m)
 
 case $SYS_ARCH in
-	aarch64 | arm64)
-		SYS_ARCH="arm64"
-	;;
-	x86_64)
-		SYS_ARCH="amd64"
-	;;
+    aarch64 | arm64)
+        SYS_ARCH="arm64"
+    ;;
+    x86_64)
+        SYS_ARCH="amd64"
+    ;;
 esac
 
 #Get the rclone download URL
@@ -26,8 +26,8 @@ RCLONE_URL="https://downloads.rclone.org/${RCLONE_PKG}"
 
 # Check if user already has rclone installed
 if rclone --version >/dev/null 2>&1; then
-	# Set a lock file so we can know to restore user's settings on uninstall
-	touch "${ARKLONE[userCfgDir]}/.rclone.lock"
+    # Set a lock file so we can know to restore user's settings on uninstall
+    touch "${ARKLONE[userCfgDir]}/.rclone.lock"
 fi
 
 [ -d "${ARKLONE[backupDir]}" ] || mkdir "${ARKLONE[backupDir]}"
@@ -80,7 +80,7 @@ echo "TEST 4 passed."
 [ -f "${ARKLONE[backupDir]}/rclone/rclone.conf" ] || exit 72
 
 if ! file "${HOME}/.config/rclone/rclone.conf" | grep "symbolic link to ${ARKLONE[backupDir]}/rclone/rclone.conf"; then
-	exit 72
+    exit 72
 fi
 
 echo "TEST 5 passed."
@@ -90,7 +90,7 @@ echo "TEST 5 passed."
 ########
 # inotifywait exists
 if ! inotifywait --help >/dev/null 2>&1; then
-	exit 72
+    exit 72
 fi
 
 echo "TEST 6 passed."
@@ -102,9 +102,9 @@ echo "TEST 6 passed."
 SCRIPTS=($(find "${ARKLONE[installDir]}" -type f -name "*.sh"))
 
 for script in ${SCRIPTS[@]}; do
-	if ! ls -al "${script}" | grep -E '^-..x..x..x' >/dev/null; then
-		exit 77
-	fi
+    if ! ls -al "${script}" | grep -E '^-..x..x..x' >/dev/null; then
+        exit 77
+    fi
 done
 
 echo "TEST 7 passed."
@@ -114,7 +114,7 @@ echo "TEST 7 passed."
 ########
 # systemd units directory is owned by user
 if ! ls -al "${ARKLONE[installDir]}/systemd/units" | grep "${USER} ${USER}" >/dev/null; then
-	exit 77
+    exit 77
 fi
 
 echo "TEST 8 passed."

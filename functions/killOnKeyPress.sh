@@ -11,25 +11,25 @@
 #
 # @returns Exit/return code of script $1
 function killOnKeypress() {
-	local runcommand="${1}"
-	local args=(${@:2})
+    local runcommand="${1}"
+    local args=(${@:2})
 
-	# Run the command in the background
-	"${runcommand}" ${args[@]} &
+    # Run the command in the background
+    "${runcommand}" ${args[@]} &
 
-	# Get the process id of $runcommand
-	local pid=$!
+    # Get the process id of $runcommand
+    local pid=$!
 
-	# Monitor $runcommand and listen for keypress in foreground
-	while kill -0 "${pid}" >/dev/null 2>&1; do
-		# If key pressed, kill $runcommand and return with code 1
-		read -sr -n 1 -t 1 && kill "${pid}" && return 1
-	done
+    # Monitor $runcommand and listen for keypress in foreground
+    while kill -0 "${pid}" >/dev/null 2>&1; do
+        # If key pressed, kill $runcommand and return with code 1
+        read -sr -n 1 -t 1 && kill "${pid}" && return 1
+    done
 
-	# Set $? to return code of $runcommand
-	wait $pid
+    # Set $? to return code of $runcommand
+    wait $pid
 
-	# Return $runcommand's exit code
-	return $?
+    # Return $runcommand's exit code
+    return $?
 }
 

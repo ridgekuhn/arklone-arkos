@@ -38,7 +38,7 @@ deletePathUnits "${TEST_UNIT}"
 ########
 # Unit should not be listed in systemd
 if systemctl list-unit-files "${TEST_UNIT##*/}" | grep "${TEST_UNIT##*/}"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 1 passed."

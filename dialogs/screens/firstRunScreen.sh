@@ -11,32 +11,32 @@
 
 # First run dialog
 function firstRunScreen() {
-	# Check for rclone remotes
-	rcloneRemoteCheckScreen
+    # Check for rclone remotes
+    rcloneRemoteCheckScreen
 
-	if [ $? != 0 ]; then
-		return 1
-	fi
+    if [ $? != 0 ]; then
+        return 1
+    fi
 
-	# Set recommended RetroArch settings
-	whiptail \
-		--title "${ARKLONE[whiptailTitle]}" \
-		--yesno "Welcome to arklone!\nWould you like to automatically configure RetroArch to the recommended settings?" \
-			16 56 8
+    # Set recommended RetroArch settings
+    whiptail \
+        --title "${ARKLONE[whiptailTitle]}" \
+        --yesno "Welcome to arklone!\nWould you like to automatically configure RetroArch to the recommended settings?" \
+            16 56 8
 
-	if [ $? = 0 ]; then
-		. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" \
-			| . "${ARKLONE[installDir]}/dialogs/gauges/retroarch/set-recommended-settings.sh"
-	fi
+    if [ $? = 0 ]; then
+        . "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh" \
+            | . "${ARKLONE[installDir]}/dialogs/gauges/retroarch/set-recommended-settings.sh"
+    fi
 
-	# Generate RetroArch systemd path units
-	whiptail \
-		--title "${ARKLONE[whiptailTitle]}" \
-		--msgbox "We will now install several components for syncing RetroArch savefiles/savestates. This process may take several minutes, depending on your configuration." \
-			16 56 8
+    # Generate RetroArch systemd path units
+    whiptail \
+        --title "${ARKLONE[whiptailTitle]}" \
+        --msgbox "We will now install several components for syncing RetroArch savefiles/savestates. This process may take several minutes, depending on your configuration." \
+            16 56 8
 
-	regenRAunitsScreen
+    regenRAunitsScreen
 
-	setCloudScreen
+    setCloudScreen
 }
 

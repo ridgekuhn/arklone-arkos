@@ -30,39 +30,39 @@ NO_ROOT_UNITS=$(find "${ARKLONE[unitsDir]}/"*".sub.auto.path" >/dev/null 2>&1)
 # Enable services, but do not start
 # to protect the cloud copy from a bad sync
 for service in ${SERVICES[@]}; do
-	# Skip ignored units
-	if isIgnored "${service}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
-		continue
-	fi
+    # Skip ignored units
+    if isIgnored "${service}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
+        continue
+    fi
 
-	# Link service templates
-	if grep "@.service" <<<"${service}"; then
-		sudo systemctl link "${service}"
+    # Link service templates
+    if grep "@.service" <<<"${service}"; then
+        sudo systemctl link "${service}"
 
-		continue
-	fi
+        continue
+    fi
 
-	sudo systemctl enable "${service}"
+    sudo systemctl enable "${service}"
 done
 
 # Enable path units, but do not start
 # to protect the cloud copy from a bad sync
 for unit in ${PATH_UNITS[@]}; do
-	# Skip ignored units
-	if isIgnored "${unit}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
-		continue
-	fi
+    # Skip ignored units
+    if isIgnored "${unit}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
+        continue
+    fi
 
-	# Skip root path units
-	# @todo see above todo
-	if
-		[ $NO_ROOT_UNITS ] \
-		&& [ "${unit:(-10)}" = ".auto.path" ] \
-		&& [ "${unit:(-14)}" != ".sub.auto.path" ]
-	then
-		continue
-	fi
+    # Skip root path units
+    # @todo see above todo
+    if
+        [ $NO_ROOT_UNITS ] \
+        && [ "${unit:(-10)}" = ".auto.path" ] \
+        && [ "${unit:(-14)}" != ".sub.auto.path" ]
+    then
+        continue
+    fi
 
-	sudo systemctl enable "${unit}"
+    sudo systemctl enable "${unit}"
 done
 

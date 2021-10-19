@@ -21,20 +21,20 @@ ENABLED_UNITS=(${ARKLONE[enabledUnits]})
 TOTAL_UNITS=${#ENABLED_UNITS[@]}
 
 while read line; do
-	if grep "system/arkloned" <<<"${line}" >/dev/null 2>&1; then
-		unit="$(sed -e 's|Removed /etc/systemd/system/||' -e 's/\.$//' <<<"${line}")"
+    if grep "system/arkloned" <<<"${line}" >/dev/null 2>&1; then
+        unit="$(sed -e 's|Removed /etc/systemd/system/||' -e 's/\.$//' <<<"${line}")"
 
-		# Get the index of the path unit in ${PATH_UNITS[@]}
-		for i in "${!ENABLED_UNITS[@]}"; do
-			if [ "${ENABLED_UNITS[$i]}" = "${unit}" ]; then
-				# Convert index to a percentage of total units processed
-				echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
-			fi
-		done
-	fi
+        # Get the index of the path unit in ${PATH_UNITS[@]}
+        for i in "${!ENABLED_UNITS[@]}"; do
+            if [ "${ENABLED_UNITS[$i]}" = "${unit}" ]; then
+                # Convert index to a percentage of total units processed
+                echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
+            fi
+        done
+    fi
 done | whiptail \
-	--title "${ARKLONE[whiptailTitle]}" \
-	--gauge "Please wait while we disable automatic syncing..." \
-	16 56 \
-	0
+    --title "${ARKLONE[whiptailTitle]}" \
+    --gauge "Please wait while we disable automatic syncing..." \
+    16 56 \
+    0
 

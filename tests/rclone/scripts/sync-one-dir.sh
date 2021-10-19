@@ -9,19 +9,19 @@ source "/opt/arklone/config.sh"
 # MOCK DATA
 ###########
 function sendDir() {
-	[ "${1}" = "localDir" ] || return 64
-	[ "${2}" = "remoteDir" ] || return 64
-	[ "${3}" = "test1|test2" ] || return 64
+    [ "${1}" = "localDir" ] || return 64
+    [ "${2}" = "remoteDir" ] || return 64
+    [ "${3}" = "test1|test2" ] || return 64
 }
 
 function receiveDir() {
-	[ "${1}" = "localDir" ] || return 64
-	[ "${2}" = "remoteDir" ] || return 64
-	[ "${3}" = "test1|test2" ] || return 64
+    [ "${1}" = "localDir" ] || return 64
+    [ "${2}" = "remoteDir" ] || return 64
+    [ "${3}" = "test1|test2" ] || return 64
 }
 
 function arkloneLogger() {
-	touch "${ARKLONE[log]}"
+    touch "${ARKLONE[log]}"
 }
 
 ########

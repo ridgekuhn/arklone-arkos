@@ -15,18 +15,18 @@
 #
 # @returns 1 if $1 is NOT in ignore list
 function isIgnored() {
-	local checkedFile="${1}"
-	local ignoreList=($(cat "${2}" 2>/dev/null))
+    local checkedFile="${1}"
+    local ignoreList=($(cat "${2}" 2>/dev/null))
 
-	for ignoredFile in ${ignoreList[@]}; do
-		if [ -z ${checkedFile##*/$ignoredFile} ]; then
-			echo "${checkedFile} is in ignore list: ${2}. Skipping..."
-			echo ""
+    for ignoredFile in ${ignoreList[@]}; do
+        if [ -z ${checkedFile##*/$ignoredFile} ]; then
+            echo "${checkedFile} is in ignore list: ${2}. Skipping..."
+            echo ""
 
-			return
-		fi
-	done
+            return
+        fi
+    done
 
-	return 1
+    return 1
 }
 

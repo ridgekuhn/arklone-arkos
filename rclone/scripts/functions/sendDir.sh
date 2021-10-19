@@ -16,19 +16,19 @@
 #
 # @returns Exit code of rclone process
 function sendDir() {
-	[ $1 ] || return 64
-	[ $2 ] || return 64
+    [ $1 ] || return 64
+    [ $2 ] || return 64
 
-	local localDir="${1}"
-	local remoteDir="${2}"
-	local filters="${3}"
+    local localDir="${1}"
+    local remoteDir="${2}"
+    local filters="${3}"
 
-	local filterString="$(getFilterString "${filters}")"
+    local filterString="$(getFilterString "${filters}")"
 
-	printf "\nSending ${localDir} to ${ARKLONE[remote]}:arklone/${remoteDir}\n"
+    printf "\nSending ${localDir} to ${ARKLONE[remote]}:arklone/${remoteDir}\n"
 
-	rclone copy "${localDir}/" "${ARKLONE[remote]}:arklone/${remoteDir}/" ${filterString} -u -v --config "${ARKLONE[rcloneConf]}"
+    rclone copy "${localDir}/" "${ARKLONE[remote]}:arklone/${remoteDir}/" ${filterString} -u -v --config "${ARKLONE[rcloneConf]}"
 
-	return $?
+    return $?
 }
 

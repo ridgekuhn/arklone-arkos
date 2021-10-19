@@ -16,19 +16,19 @@
 #
 # @returns Exit code of rclone process
 function receiveDir() {
-	[ $1 ] || return 64
-	[ $2 ] || return 64
+    [ $1 ] || return 64
+    [ $2 ] || return 64
 
-	local localDir="${1}"
-	local remoteDir="${2}"
-	local filters="${3}"
+    local localDir="${1}"
+    local remoteDir="${2}"
+    local filters="${3}"
 
-	local filterString="$(getFilterString "${filters}")"
+    local filterString="$(getFilterString "${filters}")"
 
-	printf "\nReceiving ${ARKLONE[remote]}:arklone/${remoteDir}/ to ${localDir}/\n"
+    printf "\nReceiving ${ARKLONE[remote]}:arklone/${remoteDir}/ to ${localDir}/\n"
 
-	rclone copy "${ARKLONE[remote]}:arklone/${remoteDir}/" "${localDir}/" ${filterString} -u -v --config "${ARKLONE[rcloneConf]}"
+    rclone copy "${ARKLONE[remote]}:arklone/${remoteDir}/" "${localDir}/" ${filterString} -u -v --config "${ARKLONE[rcloneConf]}"
 
-	return $?
+    return $?
 }
 

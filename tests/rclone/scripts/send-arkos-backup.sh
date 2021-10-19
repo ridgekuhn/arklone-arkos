@@ -5,7 +5,7 @@
 
 # Only run if on ArkOS
 if ! grep "title=" "/usr/share/plymouth/themes/text.plymouth" | grep "ArkOS"; then
-	exit
+    exit
 fi
 
 source "/opt/arklone/config.sh"

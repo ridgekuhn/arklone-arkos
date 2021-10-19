@@ -73,7 +73,7 @@ ARKLONE[enabledUnits]="arkloned@.service arkloned-test.path arkloned-receive-sav
 ########
 # Service template unit is not linked
 if systemctl list-unit-files "arkloned@.service" | grep "linked"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 1 passed."
@@ -83,7 +83,7 @@ echo "TEST 1 passed."
 ########
 # Path unit is disabled
 if systemctl list-unit-files "arkloned-test.path" | grep "enabled"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 2 passed."
@@ -93,7 +93,7 @@ echo "TEST 2 passed."
 ########
 # Boot service is disabled
 if systemctl list-unit-files "arkloned-receive-saves-boot.service" | grep "enabled"; then
-	exit 78
+    exit 78
 fi
 
 echo "TEST 3 passed."

@@ -14,27 +14,27 @@
 #
 # @returns 1 if log file not found
 function arkloneLogger() {
-	local logFile="${1}"
-	local deleteOldLog="${2}"
+    local logFile="${1}"
+    local deleteOldLog="${2}"
 
-	# Delete log if last modification is older than system uptime
-	if
-		[ "${deleteOldLog}" = "true" ] \
-		&& [ -f "${logFile}" ] \
-		&& [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(cut -d '.' -f 1 "/proc/uptime") ]
-	then
-		rm -f "${logFile}"
-	fi
+    # Delete log if last modification is older than system uptime
+    if
+        [ "${deleteOldLog}" = "true" ] \
+        && [ -f "${logFile}" ] \
+        && [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(cut -d '.' -f 1 "/proc/uptime") ]
+    then
+        rm -f "${logFile}"
+    fi
 
-	# Begin logging
-	if touch "${logFile}"; then
-		# Start tee in background copy redirect stdout/stderr to it
-		exec &> >(tee -a "${logFile}")
+    # Begin logging
+    if touch "${logFile}"; then
+        # Start tee in background copy redirect stdout/stderr to it
+        exec &> >(tee -a "${logFile}")
 
-	else
-		echo "ERROR: Could not open log file..."
+    else
+        echo "ERROR: Could not open log file..."
 
-		return 1
-	fi
+        return 1
+    fi
 }
 

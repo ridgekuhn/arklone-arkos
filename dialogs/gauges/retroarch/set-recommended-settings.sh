@@ -18,20 +18,20 @@
 RETROARCHS=(${ARKLONE[retroarchCfg]})
 
 while read line; do
-	if grep -E "retroarch.cfg$" <<<"${line}" >/dev/null; then
-		retroarchCfg=$(sed -e 's|Now editing ||' <<<"${line}")
+    if grep -E "retroarch.cfg$" <<<"${line}" >/dev/null; then
+        retroarchCfg=$(sed -e 's|Now editing ||' <<<"${line}")
 
-		# Get the index of the retroarch.cfg in ${RETROARCHS[@]}
-		for i in "${!RETROARCHS[@]}"; do
-			if [ "${RETROARCHS[$i]}" = "${retroarchCfg}" ]; then
-				# Convert index to a percentage of total retroarch.cfgs processed
-				echo $(( ( $i * 100 ) / ${#RETROARCHS[@]} ))
-			fi
-		done
-	fi
+        # Get the index of the retroarch.cfg in ${RETROARCHS[@]}
+        for i in "${!RETROARCHS[@]}"; do
+            if [ "${RETROARCHS[$i]}" = "${retroarchCfg}" ]; then
+                # Convert index to a percentage of total retroarch.cfgs processed
+                echo $(( ( $i * 100 ) / ${#RETROARCHS[@]} ))
+            fi
+        done
+    fi
 done | whiptail \
-	--title "${ARKLONE[whiptailTitle]}" \
-	--gauge "Please wait while we configure your RetroArch settings..." \
-	16 56 \
-	0
+    --title "${ARKLONE[whiptailTitle]}" \
+    --gauge "Please wait while we configure your RetroArch settings..." \
+    16 56 \
+    0
 

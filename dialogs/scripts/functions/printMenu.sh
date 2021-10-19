@@ -9,10 +9,10 @@
 #
 # @returns {string} space-delimited list of menu indexes and options
 function printMenu() {
-	local items=($1)
+    local items=($1)
 
-	for (( i = 0; i < ${#items[@]}; i++ )); do
-		printf "$i ${items[i]} "
-	done
+    for (( i = 0; i < ${#items[@]}; i++ )); do
+        printf "$i ${items[i]} "
+    done
 }
 

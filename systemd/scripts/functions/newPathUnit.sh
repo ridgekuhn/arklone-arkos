@@ -43,44 +43,44 @@
 #		ie, the name of the file in ${ARKLONE[installDir]}/rclone/filters,
 #		without the .filter extension
 function newPathUnit() {
-	local unitName="${1}"
-	local localDir="${2}"
-	local remoteDir="${3}"
-	local filter="${4}"
+    local unitName="${1}"
+    local localDir="${2}"
+    local remoteDir="${3}"
+    local filter="${4}"
 
-	# Check if a path unit using this filter already exists,
-	# and capture stderr output from unitExists()
-	# in case it finds a unit using the path but not the filter
-	local filterString
-	filterString="$((unitExists "${localDir}" "${filter}") 2>&1)"
+    # Check if a path unit using this filter already exists,
+    # and capture stderr output from unitExists()
+    # in case it finds a unit using the path but not the filter
+    local filterString
+    filterString="$((unitExists "${localDir}" "${filter}") 2>&1)"
 
-	# If a unit using ${localDir} and ${filter} was found
-	if [ $? = 0 ]; then
-		echo "A path unit for ${localDir} using ${filter}.filter already exists. Skipping."
+    # If a unit using ${localDir} and ${filter} was found
+    if [ $? = 0 ]; then
+        echo "A path unit for ${localDir} using ${filter}.filter already exists. Skipping."
 
-		return 1
+        return 1
 
-	# If a path unit was found, but not using ${filter},
-	# set ${filter} to the filter string captured from unitExists()
-	elif [ "${filterString}" ]; then
-		echo "A path unit was found, but not using ${filter}.filter"
-		echo "Unit will be re-generated with filters: $(tr '|' ' ' <<<"${filterString}")"
+    # If a path unit was found, but not using ${filter},
+    # set ${filter} to the filter string captured from unitExists()
+    elif [ "${filterString}" ]; then
+        echo "A path unit was found, but not using ${filter}.filter"
+        echo "Unit will be re-generated with filters: $(tr '|' ' ' <<<"${filterString}")"
 
-		filter="${filterString}"
-	fi
+        filter="${filterString}"
+    fi
 
-	# Make an instance name, escaped for systemd
-	#
-	# Unescaped instance name:
-	# "/home/ark/.config/retroarch/saves@retroarch-savefiles@retroarch-savefile"
-	# Escaped instance name:
-	# "-home-ark.config-retroarch-saves\x40retroarch-savefiles\x40retroarch\x2dsavefile"
-	local instanceName=$(systemd-escape "${localDir}@${remoteDir}@${filter}")
+    # Make an instance name, escaped for systemd
+    #
+    # Unescaped instance name:
+    # "/home/ark/.config/retroarch/saves@retroarch-savefiles@retroarch-savefile"
+    # Escaped instance name:
+    # "-home-ark.config-retroarch-saves\x40retroarch-savefiles\x40retroarch\x2dsavefile"
+    local instanceName=$(systemd-escape "${localDir}@${remoteDir}@${filter}")
 
-	# Generate the new unit
-	echo "Creating instance: ${localDir}@${remoteDir}@${filter} at ${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
+    # Generate the new unit
+    echo "Creating instance: ${localDir}@${remoteDir}@${filter} at ${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 
-	cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
+    cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-${unitName}.path"
 [Path]
 PathChanged=${localDir}
 Unit=arkloned@${instanceName}.service
@@ -89,7 +89,7 @@ Unit=arkloned@${instanceName}.service
 WantedBy=multi-user.target
 EOF
 
-	# For stdout readability
-	echo ''
+    # For stdout readability
+    echo ''
 }
 

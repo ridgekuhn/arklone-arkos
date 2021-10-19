@@ -7,17 +7,17 @@
 
 # Show the arklone log
 function logScreen() {
-	if [ -f "${ARKLONE[log]}" ]; then
-		whiptail \
-			--textbox "${ARKLONE[log]}" \
-			16 56 \
-			--scrolltext
+    if [ -f "${ARKLONE[log]}" ]; then
+        whiptail \
+            --textbox "${ARKLONE[log]}" \
+            16 56 \
+            --scrolltext
 
-	else
-		whiptail \
-			--title "${ARKLONE[whiptailTitle]}" \
-			--msgbox "Could not find log file! (${ARKLONE[log]})" \
-			16 56 8
-	fi
+    else
+        whiptail \
+            --title "${ARKLONE[whiptailTitle]}" \
+            --msgbox "Could not find log file! (${ARKLONE[log]})" \
+            16 56 8
+    fi
 }
 

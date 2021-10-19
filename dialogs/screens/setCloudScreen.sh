@@ -13,31 +13,31 @@
 
 # Cloud service selection dialog
 function setCloudScreen() {
-	# Check for rclone remotes
-	rcloneRemoteCheckScreen
+    # Check for rclone remotes
+    rcloneRemoteCheckScreen
 
-	if [ $? != 0 ]; then
-		return
-	fi
+    if [ $? != 0 ]; then
+        return
+    fi
 
-	# Get list of rclone remotes
-	local remotes=$(rclone listremotes | cut -d ':' -f 1)
+    # Get list of rclone remotes
+    local remotes=$(rclone listremotes | cut -d ':' -f 1)
 
-	local selection=$(whiptail \
-		--title "${ARKLONE[whiptailTitle]}" \
-		--menu \
-			"Choose a cloud service:" \
-			16 60 8 \
-			$(printMenu "${remotes}") \
-		3>&1 1>&2 2>&3 \
-	)
+    local selection=$(whiptail \
+        --title "${ARKLONE[whiptailTitle]}" \
+        --menu \
+            "Choose a cloud service:" \
+            16 60 8 \
+            $(printMenu "${remotes}") \
+        3>&1 1>&2 2>&3 \
+    )
 
-	# Save user selection and reload config
-	if [ ! -z "${selection}" ]; then
-		remotes=(${remotes})
-		editConfig "remote" "${remotes[$selection]}" "${ARKLONE[userCfg]}"
+    # Save user selection and reload config
+    if [ ! -z "${selection}" ]; then
+        remotes=(${remotes})
+        editConfig "remote" "${remotes[$selection]}" "${ARKLONE[userCfg]}"
 
-		loadConfig "${ARKLONE[userCfg]}" ARKLONE
-	fi
+        loadConfig "${ARKLONE[userCfg]}" ARKLONE
+    fi
 }
 

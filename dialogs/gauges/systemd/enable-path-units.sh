@@ -23,32 +23,32 @@ TOTAL_UNITS=$(( ${#SERVICES[@]} + ${#PATH_UNITS[@]} ))
 
 # Read from stdin and calculate progress percentage
 while read line; do
-	# Get the unit name that was just enabled
-	unit="$(sed -e 's/Created symlink.*→ //' -e 's/\.$//' <<<"${line}")"
+    # Get the unit name that was just enabled
+    unit="$(sed -e 's/Created symlink.*→ //' -e 's/\.$//' <<<"${line}")"
 
-	# Process service units first like the corresponding script
-	if grep ".service" <<<"${line}" >/dev/null 2>&1; then
-		# Get the index of the services in ${SERVICES[@]}
-		for i in "${!SERVICES[@]}"; do
-			if [ "${SERVICES[$i]}" = "${unit}" ]; then
-				# Convert index to a percentage of total units processed
-				echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
-			fi
-		done
+    # Process service units first like the corresponding script
+    if grep ".service" <<<"${line}" >/dev/null 2>&1; then
+        # Get the index of the services in ${SERVICES[@]}
+        for i in "${!SERVICES[@]}"; do
+            if [ "${SERVICES[$i]}" = "${unit}" ]; then
+                # Convert index to a percentage of total units processed
+                echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
+            fi
+        done
 
-	# Process path units
-	elif grep ".path" <<<"${line}" >/dev/null 2>&1; then
-		# Get the index of the path unit in ${PATH_UNITS[@]}
-		for i in "${!PATH_UNITS[@]}"; do
-			if [ "${PATH_UNITS[$i]}" = "${unit}" ]; then
-				# Convert index to a percentage of total units processed
-				echo $(( ( ( $i + ${#SERVICES[@]} ) * 100 ) / $TOTAL_UNITS ))
-			fi
-		done
-	fi
+    # Process path units
+    elif grep ".path" <<<"${line}" >/dev/null 2>&1; then
+        # Get the index of the path unit in ${PATH_UNITS[@]}
+        for i in "${!PATH_UNITS[@]}"; do
+            if [ "${PATH_UNITS[$i]}" = "${unit}" ]; then
+                # Convert index to a percentage of total units processed
+                echo $(( ( ( $i + ${#SERVICES[@]} ) * 100 ) / $TOTAL_UNITS ))
+            fi
+        done
+    fi
 done | whiptail \
-	--title "${ARKLONE[whiptailTitle]}" \
-	--gauge "Please wait while we enable automatic syncing..." \
-	16 56 \
-	0
+    --title "${ARKLONE[whiptailTitle]}" \
+    --gauge "Please wait while we enable automatic syncing..." \
+    16 56 \
+    0
 

@@ -26,25 +26,25 @@
 #
 # @param [$3] {string} Optional pattern to match
 function loadConfig() {
-	local cfgFile="${1}"
-	local -n arr=$2
-	local pattern="${3}"
+    local cfgFile="${1}"
+    local -n arr=$2
+    local pattern="${3}"
 
-	# Error if no user config found
-	if [ ! -f "${cfgFile}" ]; then
-		echo "ERROR: ${cfgFile} not found!"
-		exit 72
-	fi
+    # Error if no user config found
+    if [ ! -f "${cfgFile}" ]; then
+        echo "ERROR: ${cfgFile} not found!"
+        exit 72
+    fi
 
-	# Parse user config file
-	while read line; do
-		if grep -F '=' <<<"${line}" >/dev/null 2>&1; then
-			# Get the option name
-			local option=$(sed -e 's/ *=.*$//' <<<"${line}")
+    # Parse user config file
+    while read line; do
+        if grep -F '=' <<<"${line}" >/dev/null 2>&1; then
+            # Get the option name
+            local option=$(sed -e 's/ *=.*$//' <<<"${line}")
 
-			# Add the option/value to ${arr[@]}
-			arr[$option]=$(sed -e 's/^.*= *"//' -e 's/" *$//' <<<"${line}")
-		fi
-	done < <(grep -E "${pattern}" "${cfgFile}")
+            # Add the option/value to ${arr[@]}
+            arr[$option]=$(sed -e 's/^.*= *"//' -e 's/" *$//' <<<"${line}")
+        fi
+    done < <(grep -E "${pattern}" "${cfgFile}")
 }
 

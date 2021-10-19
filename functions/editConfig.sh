@@ -15,10 +15,10 @@
 #
 # @param $3 {string} Path of the file to edit
 function editConfig() {
-	local option="${1}"
-	local newVal="${2}"
-	local cfg="${3}"
+    local option="${1}"
+    local newVal="${2}"
+    local cfg="${3}"
 
-	sed -i 's|^'${option}'.*=.*|'${option}' = "'${newVal}'"|' "${3}"
+    sed -i 's|^'${option}'.*=.*|'${option}' = "'${newVal}'"|' "${3}"
 }
 

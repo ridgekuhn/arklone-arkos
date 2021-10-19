@@ -51,7 +51,7 @@ loadConfig "${ARKLONE[retroarchCfg]}" r
 ########
 # retroarch.cfg.aklone(date).bak exists
 if ! find "/dev/shm/retroarch.cfg.arklone"*".bak"; then
-	exit 72
+    exit 72
 fi
 
 echo "TEST 1 passed."
