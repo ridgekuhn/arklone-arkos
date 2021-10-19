@@ -3,10 +3,10 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t rebootScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rebootScreen.sh"
-[ "$(type -t setCloudScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
+[[ "$(type -t rebootScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/rebootScreen.sh"
+[[ "$(type -t setCloudScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
 
 # Enable/Disable auto savefile/savestate syncing
 function autoSyncSavesScreen() {
@@ -19,12 +19,12 @@ function autoSyncSavesScreen() {
     # Enable or disable path units
     local enabledUnits=(${ARKLONE[enabledUnits]})
 
-    if [ "${#enabledUnits[@]}" = 0 ]; then
+    if [[ "${#enabledUnits[@]}" = 0 ]]; then
         . "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
             | . "${ARKLONE[installDir]}/dialogs/gauges/systemd/enable-path-units.sh"
 
         # Make sure user has a remote selected
-        if [ -z "${ARKLONE[remote]}" ]; then
+        if [[ -z "${ARKLONE[remote]}" ]]; then
             setCloudScreen
         fi
 

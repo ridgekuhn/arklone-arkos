@@ -3,20 +3,20 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
-[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-[ "$(type -t printMenu)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/scripts/functions/printMenu.sh"
+[[ "$(type -t editConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[[ "$(type -t loadConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[[ "$(type -t printMenu)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/scripts/functions/printMenu.sh"
 
-[ "$(type -t rcloneRemoteCheckScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/rcloneRemoteCheckScreen.sh"
+[[ "$(type -t rcloneRemoteCheckScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/rcloneRemoteCheckScreen.sh"
 
 # Cloud service selection dialog
 function setCloudScreen() {
     # Check for rclone remotes
     rcloneRemoteCheckScreen
 
-    if [ $? != 0 ]; then
+    if [[ $? != 0 ]]; then
         return
     fi
 
@@ -33,7 +33,7 @@ function setCloudScreen() {
     )
 
     # Save user selection and reload config
-    if [ ! -z "${selection}" ]; then
+    if [[ ! -z "${selection}" ]]; then
         remotes=(${remotes})
         editConfig "remote" "${remotes[$selection]}" "${ARKLONE[userCfg]}"
 

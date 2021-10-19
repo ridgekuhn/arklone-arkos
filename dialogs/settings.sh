@@ -3,15 +3,15 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t firstRunScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/firstRunScreen.sh"
-[ "$(type -t setCloudScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
-[ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
-[ "$(type -t manualBackupArkOSScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualBackupArkOSScreen.sh"
-[ "$(type -t manualSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualSyncSavesScreen.sh"
-[ "$(type -t autoSyncSavesScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/autoSyncSavesScreen.sh"
-[ "$(type -t regenRAunitsScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/regenRAunitsScreen.sh"
+[[ "$(type -t firstRunScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/firstRunScreen.sh"
+[[ "$(type -t setCloudScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/setCloudScreen.sh"
+[[ "$(type -t logScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
+[[ "$(type -t manualBackupArkOSScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualBackupArkOSScreen.sh"
+[[ "$(type -t manualSyncSavesScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/rclone/manualSyncSavesScreen.sh"
+[[ "$(type -t autoSyncSavesScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/autoSyncSavesScreen.sh"
+[[ "$(type -t regenRAunitsScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/systemd/regenRAunitsScreen.sh"
 
 #############
 # MAIN SCREEN
@@ -19,13 +19,13 @@
 # Point-of-entry dialog
 function homeScreen() {
     # Set automatic sync mode string
-    local ableString=$([ "${ARKLONE[enabledUnits]}" ] && echo "Disable" || echo "Enable")
+    local ableString=$([[ "${ARKLONE[enabledUnits]}" ]] && echo "Disable" || echo "Enable")
 
     local selection=$(whiptail \
         --title "${ARKLONE[whiptailTitle]}" \
         --menu "Choose an option:" \
             16 60 8 \
-            "1" "Set cloud remote (now: $([ "${ARKLONE[remote]}" ] && echo "${ARKLONE[remote]}" || echo "NONE"))" \
+            "1" "Set cloud remote (now: $([[ "${ARKLONE[remote]}" ]] && echo "${ARKLONE[remote]}" || echo "NONE"))" \
             "2" "Manually sync saves" \
             "3" "${ableString} automatic saves sync" \
             "4" "Manual backup/sync ArkOS Settings" \
@@ -54,7 +54,7 @@ function homeScreen() {
 # RUN
 #####
 # If ${ARKLONE[remote]} doesn't exist, assume this is the user's first run
-if [ -z "${ARKLONE[remote]}" ]; then
+if [[ -z "${ARKLONE[remote]}" ]]; then
     firstRunScreen
 fi
 

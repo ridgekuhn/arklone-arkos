@@ -19,6 +19,6 @@ TESTARR=("test")
 TESTSTR=$(printMenu "${TESTARR[@]}")
 
 # Menu item prepended by index
-[ "${TESTSTR}" = "0 test " ] || exit 70
+[[ "${TESTSTR}" = "0 test " ]] || exit 70
 
 echo "TEST 1 passed."

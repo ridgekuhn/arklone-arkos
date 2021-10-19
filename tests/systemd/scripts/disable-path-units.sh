@@ -66,7 +66,7 @@ ARKLONE[enabledUnits]="arkloned@.service arkloned-test.path arkloned-receive-sav
 #####
 . "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1

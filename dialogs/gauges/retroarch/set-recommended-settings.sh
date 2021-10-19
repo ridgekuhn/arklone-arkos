@@ -12,7 +12,7 @@
 #		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" \
 #			| . "${ARKLONE[installDir]}/dialogs/screens/gauges/disable-path-units.sh"
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Get array of all retroarch.cfg instances
 RETROARCHS=(${ARKLONE[retroarchCfg]})
@@ -23,7 +23,7 @@ while read line; do
 
         # Get the index of the retroarch.cfg in ${RETROARCHS[@]}
         for i in "${!RETROARCHS[@]}"; do
-            if [ "${RETROARCHS[$i]}" = "${retroarchCfg}" ]; then
+            if [[ "${RETROARCHS[$i]}" = "${retroarchCfg}" ]]; then
                 # Convert index to a percentage of total retroarch.cfgs processed
                 echo $(( ( $i * 100 ) / ${#RETROARCHS[@]} ))
             fi

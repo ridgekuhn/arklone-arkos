@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Reboot screen
 function rebootScreen() {
@@ -15,7 +15,7 @@ function rebootScreen() {
         --yes-button "Reboot Now" \
         --no-button "Later"
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             sudo reboot
         fi
 }

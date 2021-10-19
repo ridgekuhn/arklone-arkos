@@ -35,7 +35,7 @@ ENABLED_UNITS=$(getEnabledUnits)
 ########
 # TEST 1
 ########
-[ ! -z "${ENABLED_UNITS}" ] || exit 71
+[[ ! -z "${ENABLED_UNITS}" ]] || exit 71
 
 echo "TEST 1 passed."
 

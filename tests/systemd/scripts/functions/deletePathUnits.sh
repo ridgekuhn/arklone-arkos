@@ -31,7 +31,7 @@ sudo systemctl enable "${TEST_UNIT}"
 #####
 deletePathUnits "${TEST_UNIT}"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1
@@ -47,7 +47,7 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # Unit file should be deleted
-[ ! -f "${TEST_UNIT}" ] || exit 70
+[[ ! -f "${TEST_UNIT}" ]] || exit 70
 
 echo "TEST 2 passed."
 

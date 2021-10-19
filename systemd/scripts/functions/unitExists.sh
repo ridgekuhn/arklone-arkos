@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Check if a path unit using a local directory and rclone filter already exists
 #
@@ -19,7 +19,7 @@
 #		local newFilterList
 #		newFilterList=$((unitExists "/path/to/localDir" "some-filter") 2>&1)
 #
-#		if [ $? != 0 ] && [ "${newFilterList}" ]; then
+#		if [[ $? != 0 ]] && [[ "${newFilterList}" ]]; then
 #			echo "${newFilterList}"
 #			# some-filter|some-other-filter|yet-another-filter
 #		fi
@@ -44,7 +44,7 @@ function unitExists() {
 
         # If ${localDir} is already being watched,
         # check if ${filter} is also being used
-        if [ "${existingDir}" = "${localDir}" ]; then
+        if [[ "${existingDir}" = "${localDir}" ]]; then
             # Get the escaped instance name from the Unit= line
             # eg, "-home-ark.config-retroarch-saves\x40retroarch-savefiles\x40retroarch\x2dsavefile\x7cretroarch\x2dsavestate"
             local escInstanceName=$(grep "Unit" "${existingUnit}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//')
@@ -58,7 +58,7 @@ function unitExists() {
             local allFilters=($(tr ' ' '\n' <<<"${filter} ${existingFilters[@]}" | sort))
 
             # If doubles are found, the unit DOES exist. Return with code 0
-            if [ "$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq -d)" ]; then
+            if [[ "$(tr ' ' '\n' <<<"${allFilters[@]}" | uniq -d)" ]]; then
                 return 0
 
             # If no doubles are found, unit does not exist, return error code 1

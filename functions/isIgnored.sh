@@ -19,7 +19,7 @@ function isIgnored() {
     local ignoreList=($(cat "${2}" 2>/dev/null))
 
     for ignoredFile in ${ignoreList[@]}; do
-        if [ -z ${checkedFile##*/$ignoredFile} ]; then
+        if [[ -z ${checkedFile##*/$ignoredFile} ]]; then
             echo "${checkedFile} is in ignore list: ${2}. Skipping..."
             echo ""
 

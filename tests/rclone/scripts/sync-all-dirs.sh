@@ -24,8 +24,8 @@ ARKLONE[installDir]="/dev/shm"
 # Mock sync-one-dir.sh
 cat <<EOF >"${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
 #!/bin/bash
-[ "\${1}" = "send" ] || [ "\${1}" = "receive" ] || exit 64
-[ "\${2}" = "localDir@remoteDir@filter1|filter2" ] || exit 64
+[[ "\${1}" = "send" ]] || [[ "\${1}" = "receive" ]] || exit 64
+[[ "\${2}" = "localDir@remoteDir@filter1|filter2" ]] || exit 64
 EOF
 
 chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
@@ -43,7 +43,7 @@ function getRootInstanceNames() {
 # Source script, but run in subshell so it can exit with out exiting test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "foo")
 
-[ $? = 64 ] || exit 64
+[[ $? = 64 ]] || exit 64
 
 echo "TEST 1 passed."
 
@@ -56,7 +56,7 @@ echo "TEST 1 passed."
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
 echo $?
 
-[ $? = 0 ] || exit 1
+[[ $? = 0 ]] || exit 1
 
 echo "TEST 2 passed."
 
@@ -68,7 +68,7 @@ echo "TEST 2 passed."
 # Source script, but run in subshell so it can exit with out exiting test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "receive")
 
-[ $? = 0 ] || exit 1
+[[ $? = 0 ]] || exit 1
 
 echo "TEST 3 passed"
 
@@ -88,7 +88,7 @@ chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
 # Source script, but run in subshell so it can exit with out exiting test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
 
-[ $? = 255 ] || exit 70
+[[ $? = 255 ]] || exit 70
 
 echo "TEST 4 passed."
 
@@ -108,7 +108,7 @@ chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
 # Source script, but run in subshell so it can exit with out exiting test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
 
-[ $? = 0 ] || exit 70
+[[ $? = 0 ]] || exit 70
 
 echo "TEST 5 passed."
 

@@ -17,11 +17,11 @@
 #
 # @returns rclone exit code
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t getRootInstanceNames)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 # Exit if argument is invalid
-[ "${1}" = "send" ] || [ "${1}" = "receive" ] || exit 64
+[[ "${1}" = "send" ]] || [[ "${1}" = "receive" ]] || exit 64
 
 SYNC_TYPE="${1}"
 
@@ -40,8 +40,8 @@ for instance in ${INSTANCES[@]}; do
     # that doesn't exist on the remote
     # @see https://rclone.org/docs/#exit-code
     if
-        [ "${rcloneExitCode}" != 0 ] \
-        && [ "${rcloneExitCode}" != 3 ]; then
+        [[ "${rcloneExitCode}" != 0 ]] \
+        && [[ "${rcloneExitCode}" != 3 ]]; then
         EXIT_CODE="${rcloneExitCode}"
     fi
 done

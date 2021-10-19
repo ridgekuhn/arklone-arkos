@@ -3,10 +3,10 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t alreadyRunningScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/alreadyRunningScreen.sh"
-[ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
+[[ "$(type -t alreadyRunningScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/alreadyRunningScreen.sh"
+[[ "$(type -t logScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
 
 # Manual backup ArkOS settings screen
 function manualBackupArkOSScreen() {
@@ -14,7 +14,7 @@ function manualBackupArkOSScreen() {
 
     alreadyRunningScreen "${script}"
 
-    if [ $? = 0 ]; then
+    if [[ $? = 0 ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno \
@@ -33,7 +33,7 @@ function manualBackupArkOSScreen() {
         (. "${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh")
 
         # Backup was sent successfully
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             whiptail \
                 --title "${ARKLONE[whiptailTitle]}" \
                 --msgbox \
@@ -41,7 +41,7 @@ function manualBackupArkOSScreen() {
                     16 56 8
 
             # Delete ArkOS settings backup file
-            if [ $keep != 0 ]; then
+            if [[ $keep != 0 ]]; then
                 sudo rm -v "${ARKLONE[backupDir]}/arkosbackup.tar.gz"
             fi
 
@@ -53,7 +53,7 @@ function manualBackupArkOSScreen() {
                     "Update failed. Would you like to view the log?." \
                     16 56 8
 
-            if [ $? = 0 ]; then
+            if [[ $? = 0 ]]; then
                 logScreen
             fi
         fi

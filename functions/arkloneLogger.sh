@@ -19,9 +19,9 @@ function arkloneLogger() {
 
     # Delete log if last modification is older than system uptime
     if
-        [ "${deleteOldLog}" = "true" ] \
-        && [ -f "${logFile}" ] \
-        && [ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(cut -d '.' -f 1 "/proc/uptime") ]
+        [[ "${deleteOldLog}" = "true" ]] \
+        && [[ -f "${logFile}" ]] \
+        && [[ $(($(date +%s) - $(date +%s -r "${logFile}"))) -gt $(cut -d '.' -f 1 "/proc/uptime") ]]
     then
         rm -f "${logFile}"
     fi

@@ -3,13 +3,13 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t printMenu)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/scripts/functions/printMenu.sh"
-[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+[[ "$(type -t printMenu)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/scripts/functions/printMenu.sh"
+[[ "$(type -t getRootInstanceNames)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
-[ "$(type -t alreadyRunningScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/alreadyRunningScreen.sh"
-[ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
+[[ "$(type -t alreadyRunningScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/alreadyRunningScreen.sh"
+[[ "$(type -t logScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
 
 #########
 # HELPERS
@@ -31,7 +31,7 @@ function getDirList() {
             local filters=($(tr '|' '\n' <<<"${instance##*@}"))
 
             # Separate multiple filters with pipe | and remove "retroarch-" prefix
-            if [ "${#filters[@]}" -gt 1 ]; then
+            if [[ "${#filters[@]}" -gt 1 ]]; then
                 filterString="($(
                     for filter in ${filters[@]}; do
                         printf "${filter##retroarch-}|"
@@ -72,7 +72,7 @@ function manualSyncSavesScreen() {
     )
 
     # Return if user canceled
-    [ $dirSelection ] || return
+    [[ $dirSelection ]] || return
 
     # Get user's sync method selection
     local syncMethod=$(whiptail \
@@ -85,23 +85,23 @@ function manualSyncSavesScreen() {
     )
 
     # Return if user canceled
-    [ $syncMethod ] || return
+    [[ $syncMethod ]] || return
 
     # Else, set the sync method
-    if [ "${syncMethod}" = 0 ]; then
+    if [[ "${syncMethod}" = 0 ]]; then
         syncMethod="send"
     else
         syncMethod="receive"
     fi
 
     # Sync all path units
-    if [ "${dirSelection}" = "a" ]; then
+    if [[ "${dirSelection}" = "a" ]]; then
         local script="${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh"
 
         # Check if sync script is already running
         alreadyRunningScreen "${script}"
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             # Source script, but run in subshell so it can exit without exiting this script
             (
                 # Allow main script to pass non-zero exit code through pipe
@@ -121,7 +121,7 @@ function manualSyncSavesScreen() {
         # Check if sync script is already running
         alreadyRunningScreen "${script}"
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             # Get the selected instance name
             local instance=${instances[$dirSelection]}
 
@@ -138,14 +138,14 @@ function manualSyncSavesScreen() {
     fi
 
     # Show log to user if sync failed
-    if [ $exitCode != 0 ]; then
+    if [[ $exitCode != 0 ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno \
                 "Sync failed. Would you like to view the log?" \
                 16 56
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             logScreen
         fi
     fi

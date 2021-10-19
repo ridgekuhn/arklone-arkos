@@ -3,9 +3,9 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
-[ "$(type -t newPathUnit)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t isIgnored)" = "function" ]] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
+[[ "$(type -t newPathUnit)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
 
 # Make path unit for directory, and optionally for subdirectories
 #
@@ -33,7 +33,7 @@ function newPathUnitsFromDir() {
     # Get subdirectories of depth $3
     local subdirDepth=$3
     local subdirs=($(find "${localParentDir}" -mindepth $subdirDepth -maxdepth $subdirDepth -type d 2>/dev/null))
-    local createParentUnit=$([ -z $4 ] && echo true || echo "${4}")
+    local createParentUnit=$([[ -z $4 ]] && echo true || echo "${4}")
     local filter="${5}"
     local ignoreList="${6}"
 
@@ -46,7 +46,7 @@ function newPathUnitsFromDir() {
     # RUN
     #####
     # Make root unit
-    if [ "${createParentUnit}" = "true" ]; then
+    if [[ "${createParentUnit}" = "true" ]]; then
         # Convert forward slashes / in ${remoteParentDir} to hyphens -
         # eg,
         # remoteParentDir="retroarch32/savestates"
@@ -73,7 +73,7 @@ function newPathUnitsFromDir() {
         # eg,
         # subDir="/path/to/savestates/foo/bar"
         # subdirString="foo/bar"
-        if [ "${subdirDepth}" = 2 ]; then
+        if [[ "${subdirDepth}" = 2 ]]; then
             subdirString="$(basename $(dirname "${subdir}"))/${subdirString}"
         fi
 

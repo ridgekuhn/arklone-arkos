@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t deletePathUnits)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t deletePathUnits)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/deletePathUnits.sh"
 
 # Regenerate RetroArch savestates/savefiles units screen
 function regenRAunitsScreen() {
@@ -23,7 +23,7 @@ function regenRAunitsScreen() {
 
     # Fix incompatible settings
     # @todo ArkOS-specific
-    if [ $? = 65 ]; then
+    if [[ $? = 65 ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno \
@@ -32,7 +32,7 @@ function regenRAunitsScreen() {
                 savestates_in_content_dir" \
             16 56 8
 
-        if [ $? = 1 ]; then
+        if [[ $? = 1 ]]; then
             whiptail \
                 --title "${ARKLONE[whiptailTitle]}" \
                 --msgbox "No action has been taken. You may still use the manual sync feature for RetroArch savefiles/savestates, but you will not be able to automatically sync them until the incompatible settings in retroarch.cfg are resolved." \

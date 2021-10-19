@@ -31,7 +31,7 @@ function loadConfig() {
     local pattern="${3}"
 
     # Error if no user config found
-    if [ ! -f "${cfgFile}" ]; then
+    if [[ ! -f "${cfgFile}" ]]; then
         echo "ERROR: ${cfgFile} not found!"
         exit 72
     fi

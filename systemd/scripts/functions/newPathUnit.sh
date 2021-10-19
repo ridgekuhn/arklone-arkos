@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t unitExists)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/unitExists.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t unitExists)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/unitExists.sh"
 
 # Make new systemd path unit
 #
@@ -55,14 +55,14 @@ function newPathUnit() {
     filterString="$((unitExists "${localDir}" "${filter}") 2>&1)"
 
     # If a unit using ${localDir} and ${filter} was found
-    if [ $? = 0 ]; then
+    if [[ $? = 0 ]]; then
         echo "A path unit for ${localDir} using ${filter}.filter already exists. Skipping."
 
         return 1
 
     # If a path unit was found, but not using ${filter},
     # set ${filter} to the filter string captured from unitExists()
-    elif [ "${filterString}" ]; then
+    elif [[ "${filterString}" ]]; then
         echo "A path unit was found, but not using ${filter}.filter"
         echo "Unit will be re-generated with filters: $(tr '|' ' ' <<<"${filterString}")"
 

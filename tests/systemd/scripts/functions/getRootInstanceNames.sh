@@ -33,7 +33,7 @@ INSTANCE_NAME=$(getRootInstanceNames)
 # TEST 1
 ########
 # Check instance name
-[ "${INSTANCE_NAME}" = "test " ] || exit 71
+[[ "${INSTANCE_NAME}" = "test " ]] || exit 71
 
 echo "TEST 1 passed."
 

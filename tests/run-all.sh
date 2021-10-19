@@ -24,9 +24,9 @@ TESTS=($(find "${ARKLONE[installDir]}/tests" -type f -name "*.sh"))
 for test in ${TESTS[@]}; do
     # Avoid running undesirable tests
     if
-        [ "${test}" != "${ARKLONE[installDir]}/tests/run-all.sh" ] \
-        && [ "${test}" != "${ARKLONE[installDir]}/tests/install.sh" ] \
-        && [ "${test}" != "${ARKLONE[installDir]}/tests/uninstall.sh" ]
+        [[ "${test}" != "${ARKLONE[installDir]}/tests/run-all.sh" ]] \
+        && [[ "${test}" != "${ARKLONE[installDir]}/tests/install.sh" ]] \
+        && [[ "${test}" != "${ARKLONE[installDir]}/tests/uninstall.sh" ]]
     then
         echo "===================================================================="
         echo "Now running ${test}"
@@ -36,7 +36,7 @@ for test in ${TESTS[@]}; do
 
         exitCode=$?
 
-        if [ $exitCode != 0 ]; then
+        if [[ $exitCode != 0 ]]; then
             "${test} failed with exit code ${exitCode}"
             "Please manually clean /dev/shm/ before continuing"
             exit

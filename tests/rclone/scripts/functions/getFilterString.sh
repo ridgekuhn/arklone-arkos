@@ -14,5 +14,5 @@ FILTER_STRING="$(getFilterString "filter1|filter2")"
 ########
 # TEST 1
 ########
-[ "${FILTER_STRING}" = "--filter-from ${ARKLONE[filterDir]}/global.filter --filter-from ${ARKLONE[filterDir]}/filter1.filter --filter-from ${ARKLONE[filterDir]}/filter2.filter" ] || exit 65
+[[ "${FILTER_STRING}" = "--filter-from ${ARKLONE[filterDir]}/global.filter --filter-from ${ARKLONE[filterDir]}/filter1.filter --filter-from ${ARKLONE[filterDir]}/filter2.filter" ]] || exit 65
 

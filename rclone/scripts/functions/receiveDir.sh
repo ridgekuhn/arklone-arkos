@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t getFilterString)" = "function" ] || source "${ARKLONE[installDir]}/rclone/scripts/functions/getFilterString.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t getFilterString)" = "function" ]] || source "${ARKLONE[installDir]}/rclone/scripts/functions/getFilterString.sh"
 
 # Receive a directory from rclone remote
 #
@@ -16,8 +16,8 @@
 #
 # @returns Exit code of rclone process
 function receiveDir() {
-    [ $1 ] || return 64
-    [ $2 ] || return 64
+    [[ $1 ]] || return 64
+    [[ $2 ]] || return 64
 
     local localDir="${1}"
     local remoteDir="${2}"

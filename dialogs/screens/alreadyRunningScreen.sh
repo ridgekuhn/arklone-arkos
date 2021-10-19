@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Check if script is already running
 #
@@ -17,14 +17,14 @@ function alreadyRunningScreen() {
 
     local running=$(pgrep "${script##*/}")
 
-    if [ ! -z "${running}" ]; then
+    if [[ ! -z "${running}" ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno \
                 "${script##*/} is already running. Would you like to see the log file?" \
                 16 60
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             whiptail \
                 --title "${ARKLONE[log]}" \
                 --scrolltext \

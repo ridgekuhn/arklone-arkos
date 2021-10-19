@@ -11,10 +11,10 @@
 #
 # @returns Exit code of sync-all-saves.sh
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
-[ "$(type -t killOnKeyPress)" = "function" ] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
-[ "$(type -t logScreen)" = "function" ] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
+[[ "$(type -t killOnKeyPress)" = "function" ]] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
+[[ "$(type -t logScreen)" = "function" ]] || source "${ARKLONE[installDir]}/dialogs/screens/logScreen.sh"
 
 #############
 # SUB SCREENS
@@ -34,7 +34,7 @@ function dirtyBootScreen() {
 # @returns 1 if no routes available
 function networkCheckScreen() {
     # Check if ip reports configured router tables
-    if [ -z "$(ip route)" ]; then
+    if [[ -z "$(ip route)" ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno "No configured network devices detected. If you use a USB wifi dongle or ethernet cable, make sure it's plugged in and try again." \
@@ -42,7 +42,7 @@ function networkCheckScreen() {
             --no-button "Cancel" \
             16 56 8
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             networkCheckScreen
         else
             return 1
@@ -88,10 +88,10 @@ function mainScreen() {
     local exitCode=0
 
     # Notify user of dirty boot state and clean up
-    if [ -f "${ARKLONE[dirtyBoot]}" ]; then
+    if [[ -f "${ARKLONE[dirtyBoot]}" ]]; then
         dirtyBootScreen
 
-        if [ $? != 0 ]; then
+        if [[ $? != 0 ]]; then
             return 1
         fi
 
@@ -106,7 +106,7 @@ function mainScreen() {
     exitCode=$?
 
     # Receive cloud sync
-    if [ "${exitCode}" = 0 ]; then
+    if [[ "${exitCode}" = 0 ]]; then
         receiveSavesScreen
 
         sleep 1
@@ -125,7 +125,7 @@ function mainScreen() {
     fi
 
     # Try again if there were any errors
-    if [ "${exitCode}" != 0 ]; then
+    if [[ "${exitCode}" != 0 ]]; then
         # Wait for sync-all-saves.sh to die
         sleep 2
         clear
@@ -133,7 +133,7 @@ function mainScreen() {
         tryAgainScreen
 
         # Allow user to start over
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             mainScreen
             # Get recursion process return code
             # so it doesn't get overwritten by the current value
@@ -144,7 +144,7 @@ function mainScreen() {
             errorScreen
 
             # Show log
-            if [ $? = 0 ]; then
+            if [[ $? = 0 ]]; then
                 logScreen
             fi
 

@@ -12,13 +12,13 @@ source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 # Create test log
 arkloneLogger "/dev/shm/test.log"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1
 ########
 # Log file exists
-[ -f "/dev/shm/test.log" ] || exit 73
+[[ -f "/dev/shm/test.log" ]] || exit 73
 
 echo "TEST 1 passed."
 

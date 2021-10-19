@@ -25,16 +25,16 @@
 # 	Defaults to "$(dirname ${retroarchs[0]})/saves" as parent for savefiles and savestates
 # 	for all instances of retroarch.cfg
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
-[ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
-[ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t loadConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[[ "$(type -t editConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[[ "$(type -t isIgnored)" = "function" ]] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
 
 # Get array of all retroarch.cfg instances
 RETROARCHS=(${ARKLONE[retroarchCfg]})
 
 # Get path to saves directory
-SAVES_DIR=$([ ${1} ] && echo "${1}" || echo "$(dirname "${RETROARCHS[0]}")/saves")
+SAVES_DIR=$([[ ${1} ]] && echo "${1}" || echo "$(dirname "${RETROARCHS[0]}")/saves")
 
 for retroarchCfg in ${RETROARCHS[@]}; do
     echo "========================================================================="
@@ -42,7 +42,7 @@ for retroarchCfg in ${RETROARCHS[@]}; do
     echo "-------------------------------------------------------------------------"
 
     # Make the save directory if it doesn't exist
-    if [ ! -d "${SAVES_DIR}" ]; then
+    if [[ ! -d "${SAVES_DIR}" ]]; then
         mkdir "${SAVES_DIR}"
         chmod u+rw "${SAVES_DIR}"
     fi
@@ -58,14 +58,14 @@ for retroarchCfg in ${RETROARCHS[@]}; do
         # If ${contentDir} is not empty, and not in global or RetroArch ignore lists
         # @todo ArkOS-specific
         if \
-            [ ! -z "$(ls -A "${contentDir}")" ] \
+            [[ ! -z "$(ls -A "${contentDir}")" ]] \
             && ! isIgnored "${contentDir}" "${ARKLONE[ignoreDir]}/global.ignore" \
             && ! isIgnored "${contentDir}" "${ARKLONE[ignoreDir]}/arkos-retroarch-content-root.ignore"
         then
             # Make a corresponding directory in ${SAVES_DIR}
             saveDir="${SAVES_DIR}/$(basename "${contentDir}")"
 
-            if [ ! -d "${saveDir}" ]; then
+            if [[ ! -d "${saveDir}" ]]; then
                 mkdir "${saveDir}"
             fi
         fi

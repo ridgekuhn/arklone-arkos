@@ -210,7 +210,7 @@ If your script can run directly from the command line, *or* `source`d in another
 ```shell
 #!/bin/bash
 # Only source config.sh if "${ARKLONE[@]} is unpopulated"
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 echo "Good morning! Let's eat ${ARKLONE[food]} for breakfast."
 ```
@@ -225,7 +225,7 @@ echo "Good morning! Let's eat ${ARKLONE[food]} for breakfast."
 source "/opt/arklone/config.sh"
 
 # Do morning routine
-if [ "${ARKLONE[remote]}" = "dropbox" ]; then
+if [[ "${ARKLONE[remote]}" = "dropbox" ]]; then
 	sleep 1
 
 	# Set breakfast food
@@ -264,7 +264,7 @@ some_setting = "true"
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 echo "User set some_setting to "${ARKLONE[some_setting]}"
 ```
@@ -281,8 +281,8 @@ echo "User set some_setting to "${ARKLONE[some_setting]}"
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t loadConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t loadConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/loadConfig.sh"
 
 # Create an array to store some values
 declare -A MY_CONFIG
@@ -298,8 +298,8 @@ echo "${MY_CONFIG[foo]}"
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t editConfig)" = "function" ] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t editConfig)" = "function" ]] || source "${ARKLONE[installDir]}/functions/editConfig.sh"
 
 editConfig "bar" "false" "/path/to/myconfig.cfg"
 
@@ -321,8 +321,8 @@ Path units can be generated with [newPathUnit](systemd/scripts/functions/newPath
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t newPathUnit)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t newPathUnit)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnit.sh"
 
 newPathUnit "retroarch-saves" "/home/user/.config/retroarch/saves" "retroarch/saves" "retroarch-savefile"
 ```
@@ -333,8 +333,8 @@ Multiple path units can be made from a directory and a specified depth of subdir
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t newPathUnitsFromDir)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t newPathUnitsFromDir)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/newPathUnitsFromDir.sh"
 
 newPathUnitsFromDir "/path/to/roms" "retroarch/roms" 1 true "retroarch-savefile|retroarch-savestate" "/path/to/list-of-dirs-to.ignore"
 ```
@@ -381,8 +381,8 @@ To use arklone's logger, run [arkloneLogger](functions/arkloneLogger.sh). All st
 
 ```shell
 #!/bin/bash
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t arkloneLogger)" = "function" ]] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
 
 arkloneLogger "${ARKLONE[log]}"
 
@@ -416,7 +416,7 @@ function sayHello() {
 # Run the program
 sayHelloScreen()
 
-if [ $? = 0 ]; then
+if [[ $? = 0 ]]; then
 	sayHello
 fi
 ```

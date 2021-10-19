@@ -19,13 +19,13 @@
 #
 # @returns rclone exit code
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t arkloneLogger)" = "function" ] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
-[ "$(type -t sendDir)" = "function" ] || source "${ARKLONE[installDir]}/rclone/scripts/functions/sendDir.sh"
-[ "$(type -t receiveDir)" = "function" ] || source "${ARKLONE[installDir]}/rclone/scripts/functions/receiveDir.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t arkloneLogger)" = "function" ]] || source "${ARKLONE[installDir]}/functions/arkloneLogger.sh"
+[[ "$(type -t sendDir)" = "function" ]] || source "${ARKLONE[installDir]}/rclone/scripts/functions/sendDir.sh"
+[[ "$(type -t receiveDir)" = "function" ]] || source "${ARKLONE[installDir]}/rclone/scripts/functions/receiveDir.sh"
 
 # Exit if argument is invalid
-[ "${1}" = "send" ] || [ "${1}" = "receive" ] || exit 64
+[[ "${1}" = "send" ]] || [[ "${1}" = "receive" ]] || exit 64
 
 # Set the sync function
 # eg, sendDir or receiveDir
@@ -34,8 +34,8 @@ SYNC_FUNC="${1}Dir"
 IFS="@" read -r LOCALDIR REMOTEDIR FILTERS <<< "${2}"
 
 # Exit if instance name is malformed
-[ ! -z "${LOCALDIR}" ] || exit 64
-[ ! -z "${REMOTEDIR}" ] || exit 64
+[[ ! -z "${LOCALDIR}" ]] || exit 64
+[[ ! -z "${REMOTEDIR}" ]] || exit 64
 
 # Begin logging
 arkloneLogger "${ARKLONE[log]}"

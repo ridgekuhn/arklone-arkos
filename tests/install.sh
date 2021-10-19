@@ -30,7 +30,7 @@ if rclone --version >/dev/null 2>&1; then
     touch "${ARKLONE[userCfgDir]}/.rclone.lock"
 fi
 
-[ -d "${ARKLONE[backupDir]}" ] || mkdir "${ARKLONE[backupDir]}"
+[[ -d "${ARKLONE[backupDir]}" ]] || mkdir "${ARKLONE[backupDir]}"
 
 #####
 # RUN
@@ -42,7 +42,7 @@ fi
 ########
 # User config directory exists
 # eg, /home/user/.config/arklone
-[ -d "${ARKLONE[userCfgDir]}" ] || exit 72
+[[ -d "${ARKLONE[userCfgDir]}" ]] || exit 72
 
 echo "TEST 1 passed."
 
@@ -50,7 +50,7 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # User config file exists
-[ -f "${ARKLONE[userCfg]}" ] || exit 72
+[[ -f "${ARKLONE[userCfg]}" ]] || exit 72
 
 echo "TEST 2 passed."
 
@@ -58,10 +58,10 @@ echo "TEST 2 passed."
 # TEST 3
 ########
 # Backup dirs and lock exist
-[ -d "${ARKLONE[backupDir]}" ] || exit 72
-[ -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ] || exit 72
-[ -d "${ARKLONE[backupDir]}/arklone" ] || exit 72
-[ -d "${ARKLONE[backupDir]}/rclone" ] || exit 72
+[[ -d "${ARKLONE[backupDir]}" ]] || exit 72
+[[ -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]] || exit 72
+[[ -d "${ARKLONE[backupDir]}/arklone" ]] || exit 72
+[[ -d "${ARKLONE[backupDir]}/rclone" ]] || exit 72
 
 echo "TEST 3 passed."
 
@@ -69,7 +69,7 @@ echo "TEST 3 passed."
 # TEST 4
 ########
 # rclone lock exists
-[ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ] || exit 72
+[[ -f "${ARKLONE[userCfgDir]}/.rclone.lock" ]] || exit 72
 
 echo "TEST 4 passed."
 
@@ -77,7 +77,7 @@ echo "TEST 4 passed."
 # TEST 5
 ########
 # rclone.conf exists
-[ -f "${ARKLONE[backupDir]}/rclone/rclone.conf" ] || exit 72
+[[ -f "${ARKLONE[backupDir]}/rclone/rclone.conf" ]] || exit 72
 
 if ! file "${HOME}/.config/rclone/rclone.conf" | grep "symbolic link to ${ARKLONE[backupDir]}/rclone/rclone.conf"; then
     exit 72

@@ -9,15 +9,15 @@ source "/opt/arklone/config.sh"
 # MOCK DATA
 ###########
 function sendDir() {
-    [ "${1}" = "localDir" ] || return 64
-    [ "${2}" = "remoteDir" ] || return 64
-    [ "${3}" = "test1|test2" ] || return 64
+    [[ "${1}" = "localDir" ]] || return 64
+    [[ "${2}" = "remoteDir" ]] || return 64
+    [[ "${3}" = "test1|test2" ]] || return 64
 }
 
 function receiveDir() {
-    [ "${1}" = "localDir" ] || return 64
-    [ "${2}" = "remoteDir" ] || return 64
-    [ "${3}" = "test1|test2" ] || return 64
+    [[ "${1}" = "localDir" ]] || return 64
+    [[ "${2}" = "remoteDir" ]] || return 64
+    [[ "${3}" = "test1|test2" ]] || return 64
 }
 
 function arkloneLogger() {
@@ -32,7 +32,7 @@ function arkloneLogger() {
 # Source script, but run in subshell so it can exit without exiting the test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh" "foo" "localDir@remoteDir@test1|test2")
 
-[ $? = 64 ] || exit 64
+[[ $? = 64 ]] || exit 64
 
 echo "TEST 1 passed."
 
@@ -44,7 +44,7 @@ echo "TEST 1 passed."
 # Source script, but run in subshell so it can exit without exiting the test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh" "receive" "localDir40remoteDir40test1|test2")
 
-[ $? = 64 ] || exit 64
+[[ $? = 64 ]] || exit 64
 
 echo "TEST 2 passed."
 
@@ -56,7 +56,7 @@ echo "TEST 2 passed."
 # Source script, but run in subshell so it can exit without exiting the test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh" "send" "localDir@remoteDir@test1|test2" 1>/dev/null)
 
-[ $? = 0 ] || exit 64
+[[ $? = 0 ]] || exit 64
 
 echo "TEST 3 passed."
 
@@ -68,7 +68,7 @@ echo "TEST 3 passed."
 # Source script, but run in subshell so it can exit without exiting the test
 (. "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh" "receive" "localDir@remoteDir@test1|test2" 1>/dev/null)
 
-[ $? = 0 ] || exit 64
+[[ $? = 0 ]] || exit 64
 
 echo "TEST 4 passed."
 
@@ -76,7 +76,7 @@ echo "TEST 4 passed."
 # TEST 5
 ########
 # Log file exists
-[ -f "${ARKLONE[log]}" ] || exit 72
+[[ -f "${ARKLONE[log]}" ]] || exit 72
 
 echo "TEST 5 passed."
 

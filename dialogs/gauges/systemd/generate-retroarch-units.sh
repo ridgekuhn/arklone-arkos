@@ -18,7 +18,7 @@
 #		. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true \
 #			| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/generate-retroarch-units.sh"
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Array of supported retroarch.cfg settings
 FILETYPES=("savefile" "savestate")
@@ -42,16 +42,16 @@ for i in "${!RETROARCHS[@]}"; do
     # Loop through supported retroarch.cfg settings
     for j in "${!FILETYPES[@]}"; do
         # Get array of path unit directories
-        if [ "${r[${FILETYPES[$j]}s_in_content_dir]}" = "true" ]; then
+        if [[ "${r[${FILETYPES[$j]}s_in_content_dir]}" = "true" ]]; then
             directories=($(find "${ARKLONE[retroarchContentRoot]}" -mindepth 1 -maxdepth 1 -type d))
 
         elif
-            [ "${r[sort_${FILETYPES[$j]}s_by_content_enable]}" = "false" ] \
-            && [ "${r[sort_${FILETYPES[$j]}s_enable]}" = "false" ]
+            [[ "${r[sort_${FILETYPES[$j]}s_by_content_enable]}" = "false" ]] \
+            && [[ "${r[sort_${FILETYPES[$j]}s_enable]}" = "false" ]]
         then
             directories=("${r[${FILETYPES[$j]}_directory]}")
 
-        elif [ "${r[sort_${FILETYPES[$j]}s_by_content_enable]}" != "${r[sort_${FILETYPES[$j]}s_enable]}" ]; then
+        elif [[ "${r[sort_${FILETYPES[$j]}s_by_content_enable]}" != "${r[sort_${FILETYPES[$j]}s_enable]}" ]]; then
             directories=($(find "${r[${FILETYPES[$j]}_directory]}" -mindepth 1 -maxdepth 1 -type d))
 
         else
@@ -69,7 +69,7 @@ for i in "${!RETROARCHS[@]}"; do
 
             # Main script is now processing ${FILETYPES[(($j + 1))]}
             elif
-                [ ${FILETYPES[(( $j + 1 ))]} ] \
+                [[ ${FILETYPES[(( $j + 1 ))]} ]] \
                 && grep "${FILETYPES[(( $j + 1 ))]}" <<<"${line}" >/dev/null 2>&1
             then
                 break
@@ -84,7 +84,7 @@ for i in "${!RETROARCHS[@]}"; do
                 # Get directory's index from ${directories}
                 # and calculate progress percentage
                 for k in "${!directories[@]}"; do
-                    if [ "${directories[$k]}" = "${localdir}" ]; then
+                    if [[ "${directories[$k]}" = "${localdir}" ]]; then
                         curUnit=$(( $k + ( $j * ${#directories[@]} ) + ( $i * ${#directories[@]} * ${#RETROARCHS[@]} )))
                         echo $(( ( $curUnit * 100 ) / $totalUnits ))
                     fi
@@ -98,7 +98,7 @@ for i in "${!RETROARCHS[@]}"; do
                 # Get directory's index from ${directories}
                 # and calculate progress percentage
                 for k in "${!directories[@]}"; do
-                    if [ "${directories[$k]}" = "${localdir}" ]; then
+                    if [[ "${directories[$k]}" = "${localdir}" ]]; then
                         curUnit=$(( $k + ( $j * ${#directories[@]} ) + ( $i * ${#directories[@]} * ${#RETROARCHS[@]} )))
                         echo $(( ( $curUnit * 100 ) / $totalUnits ))
                     fi

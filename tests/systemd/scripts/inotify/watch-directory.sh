@@ -56,7 +56,7 @@ sudo systemctl disable "arkloned-test.service"
 ########
 # TEST 1
 ########
-[ -f "${TEST_FILE}" ] || exit 72
+[[ -f "${TEST_FILE}" ]] || exit 72
 
 echo "TEST 1 passed."
 

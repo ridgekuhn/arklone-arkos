@@ -33,13 +33,13 @@ cd "/dev/shm"
 # Run script
 . "${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh"
 
-[ $? = 0 ] || exit 70
+[[ $? = 0 ]] || exit 70
 
 #########
 ## TEST 1
 #########
 # Log file exists
-[ -f "/roms/backup/arkosbackup.log" ] || exit 72
+[[ -f "/roms/backup/arkosbackup.log" ]] || exit 72
 
  echo "TEST 1 passed."
 
@@ -47,7 +47,7 @@ cd "/dev/shm"
 ## TEST 2
 #########
 # Backup file was synced
-[ -f "/dev/shm/arklone/ArkOS/arkosbackup.tar.gz" ] || exit 72
+[[ -f "/dev/shm/arklone/ArkOS/arkosbackup.tar.gz" ]] || exit 72
 
  echo "TEST 2 passed."
 

@@ -13,7 +13,7 @@ echo "Now installing arklone cloud sync utility..."
 # Create arklone user config dir
 # eg,
 # /home/user/.config/arklone
-if [ ! -d "${ARKLONE[userCfgDir]}" ]; then
+if [[ ! -d "${ARKLONE[userCfgDir]}" ]]; then
     mkdir "${ARKLONE[userCfgDir]}"
 fi
 
@@ -22,7 +22,7 @@ fi
 # like a FAT partition or samba share
 # ArkOS default is /roms/backup
 # @todo ArkOS specific
-if [ ! -d "${ARKLONE[backupDir]}" ]; then
+if [[ ! -d "${ARKLONE[backupDir]}" ]]; then
     mkdir "${ARKLONE[backupDir]}"
     chown "${USER}":"${USER}" "${ARKLONE[backupDir]}"
 
@@ -31,11 +31,11 @@ else
     touch "${ARKLONE[userCfgDir]}/.backupDir.lock"
 fi
 
-if [ ! -d "${ARKLONE[backupDir]}/arklone" ]; then
+if [[ ! -d "${ARKLONE[backupDir]}/arklone" ]]; then
     mkdir "${ARKLONE[backupDir]}/arklone"
 fi
 
-if [ ! -d "${ARKLONE[backupDir]}/rclone" ]; then
+if [[ ! -d "${ARKLONE[backupDir]}/rclone" ]]; then
     mkdir "${ARKLONE[backupDir]}/rclone"
 fi
 
@@ -71,13 +71,13 @@ wget "${RCLONE_URL}" -O "${RCLONE_PKG}" \
 rm "${RCLONE_PKG}"
 
 # Make rclone config directory if it doesn't exit
-if [ ! -d "${HOME}/.config/rclone" ]; then
+if [[ ! -d "${HOME}/.config/rclone" ]]; then
     mkdir "${HOME}/.config/rclone"
 fi
 
 # Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
 # @todo ArkOS-specific
-if [ -f "${HOME}/.config/rclone/rclone.conf" ]; then
+if [[ -f "${HOME}/.config/rclone/rclone.conf" ]]; then
     echo "Backing up and moving your rclone.conf to EASYROMS"
 
     cp "${HOME}/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf.arklone$(date +%s).bak"

@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Build a filter string to pass to rclone
 #
@@ -25,7 +25,7 @@ function getFilterString() {
     # Check ${filters[@]} for retroarch filters
     local duplicates=($(tr ' ' '\n' <<<"${filters[@]} ${retroarchFilters[@]}" | sort | uniq -d))
 
-    if [ ${#duplicates[@]} -gt 0 ]; then
+    if [[ ${#duplicates[@]} -gt 0 ]]; then
         # Remove retroarch filters
         local unique=$(tr ' ' '\n' <<<"${filters[@]} ${retroarchFilters[@]}" | grep -v "retroarch")
 

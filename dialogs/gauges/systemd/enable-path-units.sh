@@ -15,7 +15,7 @@
 #		. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
 #			| . "${ARKLONE[installDir]}/dialogs/screens/gauges/enable-path-units.sh"
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 SERVICES=($(find "${ARKLONE[unitsDir]}/"*".service"))
 PATH_UNITS=($(find "${ARKLONE[unitsDir]}/"*".path"))
@@ -30,7 +30,7 @@ while read line; do
     if grep ".service" <<<"${line}" >/dev/null 2>&1; then
         # Get the index of the services in ${SERVICES[@]}
         for i in "${!SERVICES[@]}"; do
-            if [ "${SERVICES[$i]}" = "${unit}" ]; then
+            if [[ "${SERVICES[$i]}" = "${unit}" ]]; then
                 # Convert index to a percentage of total units processed
                 echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
             fi
@@ -40,7 +40,7 @@ while read line; do
     elif grep ".path" <<<"${line}" >/dev/null 2>&1; then
         # Get the index of the path unit in ${PATH_UNITS[@]}
         for i in "${!PATH_UNITS[@]}"; do
-            if [ "${PATH_UNITS[$i]}" = "${unit}" ]; then
+            if [[ "${PATH_UNITS[$i]}" = "${unit}" ]]; then
                 # Convert index to a percentage of total units processed
                 echo $(( ( ( $i + ${#SERVICES[@]} ) * 100 ) / $TOTAL_UNITS ))
             fi

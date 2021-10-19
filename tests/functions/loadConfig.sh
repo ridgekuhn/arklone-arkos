@@ -21,13 +21,13 @@ declare -A TESTARR
 #####
 loadConfig "/dev/shm/test.cfg" TESTARR
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1
 ########
 # Check settings were loaded into array
-[ "${TESTARR[foo]}" = "bar" ] || 70
+[[ "${TESTARR[foo]}" = "bar" ]] || 70
 
 echo "TEST 1 passed."
 

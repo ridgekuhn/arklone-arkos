@@ -29,7 +29,7 @@ EOF
 #####
 unitExists "/path/to/foo" "filter3"
 
-[ $? = 0 ] || exit 70
+[[ $? = 0 ]] || exit 70
 
 ########
 # TEST 1
@@ -37,7 +37,7 @@ unitExists "/path/to/foo" "filter3"
 # Unit exists, but with different filters
 FILTER_LIST=$((unitExists "/path/to/foo" "filter4") 2>&1)
 
-[ $? != 0 ] || exit 70
+[[ $? != 0 ]] || exit 70
 
 echo "TEST 1 passed."
 
@@ -45,7 +45,7 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # unitExists returns expected string
-[ "${FILTER_LIST}" = "filter1|filter2|filter3|filter4" ] || exit 70
+[[ "${FILTER_LIST}" = "filter1|filter2|filter3|filter4" ]] || exit 70
 
 echo "TEST 2 passed."
 
@@ -55,7 +55,7 @@ echo "TEST 2 passed."
 # Unit does not exist
 unitExists "/path/to/bar" "foo"
 
-[ $? != 0 ] || exit 70
+[[ $? != 0 ]] || exit 70
 
 echo "TEST 3 passed."
 

@@ -10,7 +10,7 @@
 #
 # @param [$1] Optionally keep arkloned-receive-saves-boot.service if true
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 KEEP_BOOT_SERVICE="${1}"
 
@@ -22,8 +22,8 @@ for unit in ${ENABLED_UNITS[@]}; do
     # Keep the boot service enabled if called from
     # @see dialogs/boot-sync.sh
     if
-        [ "${KEEP_BOOT_SERVICE}" = "true" ] \
-        && [ "${unit}" = "arkloned-receive-saves-boot.service" ]
+        [[ "${KEEP_BOOT_SERVICE}" = "true" ]] \
+        && [[ "${unit}" = "arkloned-receive-saves-boot.service" ]]
     then
         continue
     fi

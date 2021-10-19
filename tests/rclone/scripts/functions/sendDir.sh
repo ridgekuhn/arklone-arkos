@@ -53,13 +53,13 @@ cd "/dev/shm"
 
 sendDir "${LOCAL_DIR}" "${REMOTE_DIR##*arklone/}" "test1|test2"
 
-[ $? = 0 ] || exit 70
+[[ $? = 0 ]] || exit 70
 
 ########
 # TEST 1
 ########
 # Test file was sent
-[ -f "${REMOTE_DIR}/test" ] || exit 72
+[[ -f "${REMOTE_DIR}/test" ]] || exit 72
 
 echo "TEST 1 passed."
 
@@ -67,9 +67,9 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # Ignored files were not synced
-[ ! -f "${REMOTE_DIR}/ignoreme" ] || exit 74
-[ ! -f "${REMOTE_DIR}/ignoremetoo" ] || exit 74
-[ ! -f "${REMOTE_DIR}/ignoremethree" ] || exit 74
+[[ ! -f "${REMOTE_DIR}/ignoreme" ]] || exit 74
+[[ ! -f "${REMOTE_DIR}/ignoremetoo" ]] || exit 74
+[[ ! -f "${REMOTE_DIR}/ignoremethree" ]] || exit 74
 
 echo "TEST 2 passed."
 

@@ -22,7 +22,7 @@ EOF
 # Dir is in ignore list
 isIgnored "/path/to/ignoreme" "${ARKLONE[ignoreDir]}/test.ignore"
 
-[ $? = 0 ] || exit 70
+[[ $? = 0 ]] || exit 70
 
 echo "TEST 1 passed."
 
@@ -32,7 +32,7 @@ echo "TEST 1 passed."
 # Dir is not in ignore list
 isIgnored "/path/to/foo" "${ARKLONE[ignoreDir]}/test.ignore"
 
-[ $? != 0 ] || exit 70
+[[ $? != 0 ]] || exit 70
 
 echo "TEST 2 passed."
 

@@ -3,11 +3,11 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 # Show the arklone log
 function logScreen() {
-    if [ -f "${ARKLONE[log]}" ]; then
+    if [[ -f "${ARKLONE[log]}" ]]; then
         whiptail \
             --textbox "${ARKLONE[log]}" \
             16 56 \

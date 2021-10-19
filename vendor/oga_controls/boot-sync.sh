@@ -26,8 +26,8 @@ exit
 # @see rclone/scripts/receive-saves.sh
 #
 # @returns Exit code of receive-saves.sh
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t killOnKeyPress)" = "function" ] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t killOnKeyPress)" = "function" ]] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
 
 #############
 # SUB SCREENS
@@ -45,7 +45,7 @@ function dirtyBootScreen() {
 # @returns 1 if no routes available
 function networkCheckScreen() {
     # Check if ip reports configured router tables
-    if [ -z "$(ip route)" ]; then
+    if [[ -z "$(ip route)" ]]; then
         whiptail \
             --title "${ARKLONE[whiptailTitle]}" \
             --yesno "No configured network devices detected. If you use a USB wifi dongle or ethernet cable, make sure it's plugged in and try again." \
@@ -53,7 +53,7 @@ function networkCheckScreen() {
             --no-button "Cancel" \
             16 56 8
 
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             networkCheckScreen
         else
             return 1
@@ -99,7 +99,7 @@ function mainScreen() {
     local exitCode=0
 
     # Check for dirty boot
-    if [ -f "${arklone[dirtyBoot]}" ]; then
+    if [[ -f "${arklone[dirtyBoot]}" ]]; then
         # Clean up dirty boot state before showing the whiptail to the user
         rm "${arklone[dirtyBoot]}"
         . "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
@@ -112,17 +112,17 @@ function mainScreen() {
     exitCode=$?
 
     # Receive cloud sync
-    if [ "${exitCode}" = 0 ]; then
+    if [[ "${exitCode}" = 0 ]]; then
         receiveSavesScreen
         exitCode=$?
     fi
 
     # Try again if there were any errors
-    if [ "${exitCode}" != 0 ]; then
+    if [[ "${exitCode}" != 0 ]]; then
         tryAgainScreen
 
         # Allow user to start over
-        if [ $? = 0 ]; then
+        if [[ $? = 0 ]]; then
             mainScreen
             # Get recursion process return code
             # so it doesn't get overwritten by the current value

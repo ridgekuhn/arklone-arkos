@@ -11,8 +11,8 @@
 # To output progress percentage for passing to dialog gauge,
 # @see dialogs/gauges/systemd/enable-path-units.sh
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t isIgnored)" = "function" ] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t isIgnored)" = "function" ]] || source "${ARKLONE[installDir]}/functions/isIgnored.sh"
 
 # Get all services
 SERVICES=($(find "${ARKLONE[unitsDir]}/"*".service"))
@@ -56,9 +56,9 @@ for unit in ${PATH_UNITS[@]}; do
     # Skip root path units
     # @todo see above todo
     if
-        [ $NO_ROOT_UNITS ] \
-        && [ "${unit:(-10)}" = ".auto.path" ] \
-        && [ "${unit:(-14)}" != ".sub.auto.path" ]
+        [[ $NO_ROOT_UNITS ]] \
+        && [[ "${unit:(-10)}" = ".auto.path" ]] \
+        && [[ "${unit:(-14)}" != ".sub.auto.path" ]]
     then
         continue
     fi

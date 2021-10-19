@@ -20,14 +20,14 @@ EOF
 # Edit test config
 editConfig "foo" "notBar" "/dev/shm/test.cfg"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1
 ########
 # Config was changed successfully
 TEST_SETTING=$(sed -e 's/^foo *= *"//' -e 's/" *$//' "/dev/shm/test.cfg")
-[ "${TEST_SETTING}" = "notBar" ] || exit 78
+[[ "${TEST_SETTING}" = "notBar" ]] || exit 78
 
 echo "TEST 1 passed."
 

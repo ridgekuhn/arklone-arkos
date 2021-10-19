@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 OLD_UNITS=($(find "${ARKLONE[unitsDir]}/arkloned-retroarch"*".auto.path" 2>/dev/null))
 
@@ -12,7 +12,7 @@ while read line; do
         unit=$(sed -e "s|^removed '||" -e "s/'$//" <<<"${line}")
 
         for i in "${!OLD_UNITS[@]}"; do
-            if [ "${OLD_UNITS[$i]}" = "${unit}" ]; then
+            if [[ "${OLD_UNITS[$i]}" = "${unit}" ]]; then
                 echo $(( ( $i * 100 ) / ${#OLD_UNITS[@]} ))
             fi
         done

@@ -4,11 +4,11 @@
 # Released under GNU GPLv3 license, see LICENSE.md.
 
 # Set defaults built-ins if run as root
-[ $USER ] || USER="ark"
-[ $HOME ] || HOME="/home/ark"
+[[ $USER ]] || USER="ark"
+[[ $HOME ]] || HOME="/home/ark"
 
-[ "$(type -t loadConfig)" = "function" ] || source "/opt/arklone/functions/loadConfig.sh"
-[ "$(type -t getEnabledUnits)" = "function" ] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
+[[ "$(type -t loadConfig)" = "function" ]] || source "/opt/arklone/functions/loadConfig.sh"
+[[ "$(type -t getEnabledUnits)" = "function" ]] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
 
 # Set default settings
 declare -A ARKLONE
@@ -48,9 +48,9 @@ ARKLONE=(
 )
 
 # Recreate userCfg if missing
-if [ ! -f "${ARKLONE[userCfg]}" ]; then
+if [[ ! -f "${ARKLONE[userCfg]}" ]]; then
     # Create userCfgDir if missing
-    [ -d "${ARKLONE[userCfgDir]}" ] || mkdir "${ARKLONE[userCfgDir]}"
+    [[ -d "${ARKLONE[userCfgDir]}" ]] || mkdir "${ARKLONE[userCfgDir]}"
 
     # Copy userCfg back to default path
     # @todo Should we symlink this to ${ARKLONE[backupDir]} for ArkOS users?

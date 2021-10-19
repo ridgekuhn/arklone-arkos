@@ -17,8 +17,8 @@
 #		. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true \
 #			| . "${ARKLONE[installDir]}/dialogs/gauges/systemd/generate-retroarch-units.sh"
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
-[ "$(type -t getRootInstanceNames)" = "function" ] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
+[[ "$(type -t getRootInstanceNames)" = "function" ]] || source "${ARKLONE[installDir]}/systemd/scripts/functions/getRootInstanceNames.sh"
 
 INSTANCES=($(getRootInstanceNames))
 LOCALDIRS=()
@@ -40,7 +40,7 @@ while read line; do
     fi
 
     for i in "${!LOCALDIRS[@]}"; do
-        if [ "${LOCALDIRS[$i]}" = "${localdir}" ]; then
+        if [[ "${LOCALDIRS[$i]}" = "${localdir}" ]]; then
             echo "$(( ( $i * 100 ) / ${#LOCALDIRS[@]} ))"
         fi
     done

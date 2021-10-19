@@ -38,13 +38,13 @@ mkdir "${ARKLONE[retroarchContentRoot]}/.Trashes"
 #####
 . "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 # Get modified settings
 declare -A r
 loadConfig "${ARKLONE[retroarchCfg]}" r
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 ########
 # TEST 1
@@ -60,8 +60,8 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # Savefile settings modified and directory exists
-[ "${r[savefile_directory]}" = "/dev/shm/saves" ] || exit 72
-[ -d "${r[savefile_directory]}" ] || exit 72
+[[ "${r[savefile_directory]}" = "/dev/shm/saves" ]] || exit 72
+[[ -d "${r[savefile_directory]}" ]] || exit 72
 
 echo "TEST 2 passed."
 
@@ -69,9 +69,9 @@ echo "TEST 2 passed."
 # TEST 3
 ########
 # Savefile settings were modified
-[ "${r[savefiles_in_content_dir]}" = "false" ] || exit 78
-[ "${r[sort_savefiles_by_content_enable]}" = "true" ] || exit 78
-[ "${r[sort_savefiles_enable]}" = "false" ] || exit 78
+[[ "${r[savefiles_in_content_dir]}" = "false" ]] || exit 78
+[[ "${r[sort_savefiles_by_content_enable]}" = "true" ]] || exit 78
+[[ "${r[sort_savefiles_enable]}" = "false" ]] || exit 78
 
 echo "TEST 3 passed."
 
@@ -79,8 +79,8 @@ echo "TEST 3 passed."
 # TEST 4
 ########
 # Savestate settings modified and directory exists
-[ "${r[savestate_directory]}" = "/dev/shm/saves" ]
-[ -d "${r[savefile_directory]}" ] || exit 72
+[[ "${r[savestate_directory]}" = "/dev/shm/saves" ]]
+[[ -d "${r[savefile_directory]}" ]] || exit 72
 
 echo "TEST 4 passed."
 
@@ -88,9 +88,9 @@ echo "TEST 4 passed."
 # TEST 5
 ########
 # Savefile settings were modified
-[ "${r[savestates_in_content_dir]}" = "false" ] || exit 78
-[ "${r[sort_savestates_by_content_enable]}" = "true" ] || exit 78
-[ "${r[sort_savestates_enable]}" = "false" ] || exit 78
+[[ "${r[savestates_in_content_dir]}" = "false" ]] || exit 78
+[[ "${r[sort_savestates_by_content_enable]}" = "true" ]] || exit 78
+[[ "${r[sort_savestates_enable]}" = "false" ]] || exit 78
 
 echo "TEST 5 passed."
 
@@ -98,10 +98,10 @@ echo "TEST 5 passed."
 # TEST 6
 ########
 # RetroArch content dir hierarchy was created
-[ -d "${r[savefile_directory]}/nes" ] || exit 72
-[ -d "${r[savefile_directory]}/snes" ] || exit 72
-[ ! -d "${r[savefile_directory]}/ports" ] || exit 70
-[ ! -d "${r[savefile_directory]}/.Trashes" ] || exit 70
+[[ -d "${r[savefile_directory]}/nes" ]] || exit 72
+[[ -d "${r[savefile_directory]}/snes" ]] || exit 72
+[[ ! -d "${r[savefile_directory]}/ports" ]] || exit 70
+[[ ! -d "${r[savefile_directory]}/.Trashes" ]] || exit 70
 
 echo "TEST 6 passed."
 

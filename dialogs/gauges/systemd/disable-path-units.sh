@@ -15,7 +15,7 @@
 #		. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh" 3>&1 1>/dev/null 2>&3 \
 #			| . "${ARKLONE[installDir]}/dialogs/screens/gauges/disable-path-units.sh"
 
-[ ${#ARKLONE[@]} -gt 0 ] || source "/opt/arklone/config.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
 
 ENABLED_UNITS=(${ARKLONE[enabledUnits]})
 TOTAL_UNITS=${#ENABLED_UNITS[@]}
@@ -26,7 +26,7 @@ while read line; do
 
         # Get the index of the path unit in ${PATH_UNITS[@]}
         for i in "${!ENABLED_UNITS[@]}"; do
-            if [ "${ENABLED_UNITS[$i]}" = "${unit}" ]; then
+            if [[ "${ENABLED_UNITS[$i]}" = "${unit}" ]]; then
                 # Convert index to a percentage of total units processed
                 echo $(( ( $i * 100 ) / $TOTAL_UNITS ))
             fi

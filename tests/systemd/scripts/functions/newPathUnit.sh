@@ -22,7 +22,7 @@ FILTER="filter1"
 #####
 newPathUnit "test" "${LOCAL_DIR}" "${REMOTE_DIR}" "${FILTER}"
 
-[ $? = 0 ] || exit $?
+[[ $? = 0 ]] || exit $?
 
 TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
 
@@ -30,7 +30,7 @@ TEST_UNIT="${ARKLONE[unitsDir]}/arkloned-test.path"
 # TEST 1
 ########
 # Unit exists
-[ -f "${TEST_UNIT}" ] || exit 72
+[[ -f "${TEST_UNIT}" ]] || exit 72
 
 echo "TEST 1 passed."
 
@@ -38,7 +38,7 @@ echo "TEST 1 passed."
 # TEST 2
 ########
 # Unit has correct PathChanged
-[ $(grep "PathChanged=" "${TEST_UNIT}" | sed -e 's/^PathChanged=//') = "${LOCAL_DIR}" ] || exit 78
+[[ $(grep "PathChanged=" "${TEST_UNIT}" | sed -e 's/^PathChanged=//') = "${LOCAL_DIR}" ]] || exit 78
 
 echo "TEST 2 passed."
 
@@ -48,7 +48,7 @@ echo "TEST 2 passed."
 # Unit has correct instance name
 INSTANCE_NAME=$(systemd-escape "${LOCAL_DIR}@${REMOTE_DIR}@${FILTER}")
 
-[ $(grep "Unit=" "${TEST_UNIT}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//') = "${INSTANCE_NAME}" ] || exit 78
+[[ $(grep "Unit=" "${TEST_UNIT}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//') = "${INSTANCE_NAME}" ]] || exit 78
 
 echo "TEST 3 passed."
 
@@ -60,7 +60,7 @@ newPathUnit "test" "${LOCAL_DIR}" "${REMOTE_DIR}" "filter2"
 
 INSTANCE_NAME=$(systemd-escape "${LOCAL_DIR}@${REMOTE_DIR}@filter1|filter2")
 
-[ $(grep "Unit=" "${TEST_UNIT}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//') = "${INSTANCE_NAME}" ] || exit 78
+[[ $(grep "Unit=" "${TEST_UNIT}" | sed -e 's/^Unit=arkloned@//' -e 's/.service$//') = "${INSTANCE_NAME}" ]] || exit 78
 
 echo "TEST 4 passed."
 
