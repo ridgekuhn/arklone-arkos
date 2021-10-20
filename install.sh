@@ -46,8 +46,17 @@ fi
 SYS_ARCH=$(uname -m)
 
 case $SYS_ARCH in
+    armv6*)
+        SYS_ARCH="arm"
+    ;;
+    armv7*)
+        SYS_ARCH="arm-v7"
+    ;;
     aarch64 | arm64)
         SYS_ARCH="arm64"
+    ;;
+    i386 | i686)
+        SYS_ARCH="386"
     ;;
     x86_64)
         SYS_ARCH="amd64"
