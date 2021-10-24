@@ -5,8 +5,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-User=ark
-Group=ark
+UMask=000
 StandardOutput=journal+console
 ExecStart=/opt/arklone/rclone/scripts/sync-one-dir.sh "send" "%I"
 

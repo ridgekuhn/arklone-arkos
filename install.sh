@@ -13,8 +13,11 @@ echo "Now installing arklone cloud sync utility..."
 # Create arklone user config dir
 # eg,
 # /home/user/.config/arklone
+# This step is actually redundant since it's already handled by config.sh
+# but should stay since it is required for install
 if [[ ! -d "${ARKLONE[userCfgDir]}" ]]; then
     mkdir "${ARKLONE[userCfgDir]}"
+    chown "${USER}":"${USER}" "${ARKLONE[userCfgDir]}"
 fi
 
 # Create backup dir from user setting in ${ARKLONE[userCfg]}
@@ -33,10 +36,12 @@ fi
 
 if [[ ! -d "${ARKLONE[backupDir]}/arklone" ]]; then
     mkdir "${ARKLONE[backupDir]}/arklone"
+    chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/arklone"
 fi
 
 if [[ ! -d "${ARKLONE[backupDir]}/rclone" ]]; then
     mkdir "${ARKLONE[backupDir]}/rclone"
+    chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/rclone"
 fi
 
 ########
@@ -74,14 +79,15 @@ if rclone --version >/dev/null 2>&1; then
 fi
 
 # Upgrade the user to the latest rclone
-wget "${RCLONE_URL}" -O "${RCLONE_PKG}" \
-    && sudo dpkg --force-overwrite -i "${RCLONE_PKG}"
+wget "${RCLONE_URL}" -O "${HOME}/${RCLONE_PKG}" \
+    && sudo dpkg --force-overwrite -i "${HOME}/${RCLONE_PKG}"
 
-rm "${RCLONE_PKG}"
+rm "${HOME}/${RCLONE_PKG}"
 
 # Make rclone config directory if it doesn't exit
 if [[ ! -d "${HOME}/.config/rclone" ]]; then
     mkdir "${HOME}/.config/rclone"
+    chown "${USER}":"${USER}" "${HOME}/.config/rclone"
 fi
 
 # Backup user's rclone.conf and move it to ${ARKLONE[backupDir]}/rclone/
@@ -99,6 +105,8 @@ fi
 # and symlink it to the default rclone location
 touch "${ARKLONE[backupDir]}/rclone/rclone.conf"
 ln -v -s "${ARKLONE[backupDir]}/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"
+chown "${USER}":"${USER}" "${HOME}/.config/rclone/rclone.conf"
+chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/rclone/rclone.conf"
 
 ###############
 # INOTIFY-TOOLS
@@ -122,5 +130,5 @@ for script in ${SCRIPTS[@]}; do
 done
 
 # Make systemd units directory writeable for user
-sudo chown ${USER}:${USER} "${ARKLONE[installDir]/systemd/units}"
+sudo chown "${USER}":"${USER}" "${ARKLONE[installDir]}/systemd/units"
 

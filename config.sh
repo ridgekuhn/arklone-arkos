@@ -4,8 +4,8 @@
 # Released under GNU GPLv3 license, see LICENSE.md.
 
 # Set defaults built-ins if run as root
-[[ $USER ]] || USER="ark"
-[[ $HOME ]] || HOME="/home/ark"
+[[ $SUDO_USER ]] && USER="${SUDO_USER}" || [[ $USER ]] || USER="ark"
+HOME="/home/${USER}"
 
 [[ "$(type -t loadConfig)" = "function" ]] || source "/opt/arklone/functions/loadConfig.sh"
 [[ "$(type -t getEnabledUnits)" = "function" ]] || source "/opt/arklone/systemd/scripts/functions/getEnabledUnits.sh"
@@ -49,12 +49,18 @@ ARKLONE=(
 
 # Recreate userCfg if missing
 if [[ ! -f "${ARKLONE[userCfg]}" ]]; then
-    # Create userCfgDir if missing
-    [[ -d "${ARKLONE[userCfgDir]}" ]] || mkdir "${ARKLONE[userCfgDir]}"
+    # Create arklone user config dir if missing
+    # eg,
+    # /home/user/.config/arklone
+    if [[ ! -d "${ARKLONE[userCfgDir]}" ]]; then
+        mkdir "${ARKLONE[userCfgDir]}"
+        chown "${USER}":"${USER}" "${ARKLONE[userCfgDir]}"
+    fi
 
     # Copy userCfg back to default path
     # @todo Should we symlink this to ${ARKLONE[backupDir]} for ArkOS users?
     cp "${ARKLONE[installDir]}/arklone.cfg.orig" "${ARKLONE[userCfg]}"
+    chown "${USER}":"${USER}" "${ARKLONE[userCfg]}"
 fi
 
 # Load the user's config file

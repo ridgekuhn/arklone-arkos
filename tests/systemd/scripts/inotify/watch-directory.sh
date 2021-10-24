@@ -24,8 +24,7 @@ EOF
 cat <<EOF >"${ARKLONE[unitsDir]}/arkloned-test.service"
 [Service]
 Type=oneshot
-User=ark
-Group=ark
+UMask=000
 ExecStart=/bin/bash -c 'touch "${TEST_FILE}"'
 
 [Install]
