@@ -56,6 +56,10 @@ function homeScreen() {
 # If ${ARKLONE[remote]} doesn't exist, assume this is the user's first run
 if [[ -z "${ARKLONE[remote]}" ]]; then
     firstRunScreen
+
+    if [[ $? != 0 ]]; then
+        exit 1
+    fi
 fi
 
 homeScreen
