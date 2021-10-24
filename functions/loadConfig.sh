@@ -43,7 +43,8 @@ function loadConfig() {
             local option=$(sed -e 's/ *=.*$//' <<<"${line}")
 
             # Add the option/value to ${arr[@]}
-            arr[$option]=$(sed -e 's/^.*= *"//' -e 's/" *$//' <<<"${line}")
+            # Expand ~ to ${HOME} in all values
+            arr[$option]=$(sed -e 's|^.*= *"||' -e "s|~|${HOME}|g" -e 's|" *$||' <<<"${line}")
         fi
     done < <(grep -E "${pattern}" "${cfgFile}")
 }

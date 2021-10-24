@@ -65,3 +65,4 @@ fi
 
 # Load the user's config file
 loadConfig "${ARKLONE[userCfg]}" ARKLONE
+
