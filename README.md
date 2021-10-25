@@ -144,7 +144,7 @@ If the boot sync process succeeds, arklone will begin watching all your save dir
 
 ## Manual Syncing ##
 
-If you do not enable automatic syncing, arklone assumes the data on your device is the "always correct" version. Manually syncing a directory from the settings dialog will always *send updates first, overwriting older copies on the remote, before receiving new content*. Be careful, as this can lead to data loss when doing this with multiple devices.
+The manual sync dialog allows you to send or receive any directory which has a path module registered with arklone.
 
 &nbsp;
 

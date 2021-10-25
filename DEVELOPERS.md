@@ -277,7 +277,7 @@ echo "User set some_setting to "${ARKLONE[some_setting]}"
 
 ### Load ###
 
-[loadConfig](functions/loadConfig.sh) reads a configuration file into an array.
+[loadConfig](functions/loadConfig.sh) reads a configuration file into an array. Depending on who runs the script, tildes `~` are expanded to `/home/${SUDO_USER}`, `/home/${USER}`, or `/home/(name of user with uid 1000)`, in that order. **The config.sh script also sets `$USER` to the respective user.**
 
 ```shell
 #!/bin/bash
