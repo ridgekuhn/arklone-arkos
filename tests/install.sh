@@ -60,7 +60,6 @@ echo "TEST 2 passed."
 # Backup dirs and lock exist
 [[ -d "${ARKLONE[backupDir]}" ]] || exit 72
 [[ -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]] || exit 72
-[[ -d "${ARKLONE[backupDir]}/arklone" ]] || exit 72
 [[ -d "${ARKLONE[backupDir]}/rclone" ]] || exit 72
 
 echo "TEST 3 passed."

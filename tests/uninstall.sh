@@ -46,7 +46,6 @@ echo "TEST 2 passed."
 
 # Backup dir does not contain arklone subdirs
 [[ ! -d "${ARKLONE[backupDir]}/rclone" ]] || exit 78
-[[ ! -d "${ARKLONE[backupDir]}/arklone" ]] || exit 78
 
 echo "TEST 3 passed."
 

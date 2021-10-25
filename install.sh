@@ -34,11 +34,6 @@ else
     touch "${ARKLONE[userCfgDir]}/.backupDir.lock"
 fi
 
-if [[ ! -d "${ARKLONE[backupDir]}/arklone" ]]; then
-    mkdir "${ARKLONE[backupDir]}/arklone"
-    chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/arklone"
-fi
-
 if [[ ! -d "${ARKLONE[backupDir]}/rclone" ]]; then
     mkdir "${ARKLONE[backupDir]}/rclone"
     chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/rclone"

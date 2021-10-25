@@ -57,7 +57,6 @@ if [[ ! -f "${ARKLONE[userCfgDir]}/.backupDir.lock" ]]; then
 # Else, only remove the directories created by arklone
 else
     rm -rf "${ARKLONE[backupDir]}/rclone"
-    rm -rf "${ARKLONE[backupDir]}/arklone"
 fi
 
 #########
