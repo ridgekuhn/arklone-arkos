@@ -63,6 +63,6 @@ echo "TEST 1 passed."
 # TEARDOWN
 ##########
 rm -rf "${ARKLONE[unitsDir]}"
-rm "${TEST_FILE}"
+sudo rm "${TEST_FILE}"
 rm -rf "${TEST_DIR}"
 
