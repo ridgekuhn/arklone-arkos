@@ -48,10 +48,6 @@ if [[ "$(lsblk -f | grep "EASYROMS" | cut -d ' ' -f 2)" = "exfat" ]]; then
     done
 fi
 
-# Get list of subdirs to ignore
-# @todo ArkOS specific
-IGNORE_DIRS="${ARKLONE[installDir]}/src/systemd/scripts/includes/arkos-retroarch-content-root.ignore"
-
 # @todo We should also be able to support screenshots and systemfiles
 #		because they use the same naming scheme in retroarch.cfg
 FILETYPES=("savefile" "savestate")
