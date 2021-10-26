@@ -1,0 +1,12 @@
+[Unit]
+Description=arklone - ppsspp sync service
+Requires=network-online.target arkloned-receive-saves-boot.service
+After=network-online.target arkloned-receive-saves-boot.service
+
+[Service]
+Type=simple
+UMask=000
+ExecStart=/opt/arklone/src/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/src/systemd/units/arkloned-ppsspp.path" "/SYSTEM/" "/CACHE/"
+
+[Install]
+WantedBy=multi-user.target

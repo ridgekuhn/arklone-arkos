@@ -8,7 +8,7 @@ if ! grep "title=" "/usr/share/plymouth/themes/text.plymouth" | grep "ArkOS"; th
     exit
 fi
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
@@ -31,7 +31,7 @@ ARKLONE[remote]="test"
 cd "/dev/shm"
 
 # Run script
-. "${ARKLONE[installDir]}/rclone/scripts/send-arkos-backup.sh"
+. "${ARKLONE[installDir]}/src/rclone/scripts/send-arkos-backup.sh"
 
 [[ $? = 0 ]] || exit 70
 

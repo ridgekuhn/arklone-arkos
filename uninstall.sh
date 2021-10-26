@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 # Uninstall arklone
 # @param $1 {boolean} Keep install dir if true

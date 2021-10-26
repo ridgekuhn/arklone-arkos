@@ -26,8 +26,8 @@ exit
 # @see rclone/scripts/receive-saves.sh
 #
 # @returns Exit code of receive-saves.sh
-[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/config.sh"
-[[ "$(type -t killOnKeyPress)" = "function" ]] || source "${ARKLONE[installDir]}/functions/killOnKeyPress.sh"
+[[ ${#ARKLONE[@]} -gt 0 ]] || source "/opt/arklone/src/config.sh"
+[[ "$(type -t killOnKeyPress)" = "function" ]] || source "${ARKLONE[installDir]}/src/functions/killOnKeyPress.sh"
 
 #############
 # SUB SCREENS
@@ -68,7 +68,7 @@ function receiveSavesScreen() {
         --infobox "Attempting to receive new save data from the cloud.\nPress any key to abort at any time." \
         16 56 8
 
-    killOnKeypress "${ARKLONE[installDir]}/rclone/scripts/receive-saves.sh"
+    killOnKeypress "${ARKLONE[installDir]}/src/rclone/scripts/receive-saves.sh"
 }
 
 # Allow user to try to sync again on error
@@ -102,7 +102,7 @@ function mainScreen() {
     if [[ -f "${arklone[dirtyBoot]}" ]]; then
         # Clean up dirty boot state before showing the whiptail to the user
         rm "${arklone[dirtyBoot]}"
-        . "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+        . "${ARKLONE[installDir]}/src/systemd/scripts/enable-path-units.sh"
 
         dirtyBootScreen
     fi
@@ -133,7 +133,7 @@ function mainScreen() {
             errorScreen
 
             # Set dirty boot state
-            . "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
+            . "${ARKLONE[installDir]}/src/systemd/scripts/disable-path-units.sh"
             touch "${arklone[dirtyBoot]}"
         fi
     fi

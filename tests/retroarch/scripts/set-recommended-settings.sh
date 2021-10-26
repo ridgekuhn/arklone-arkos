@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/loadConfig.sh"
+source "/opt/arklone/src/config.sh"
+source "${ARKLONE[installDir]}/src/functions/loadConfig.sh"
 
 ###########
 # MOCK DATA
@@ -36,7 +36,7 @@ mkdir "${ARKLONE[retroarchContentRoot]}/.Trashes"
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/retroarch/scripts/set-recommended-settings.sh"
+. "${ARKLONE[installDir]}/src/retroarch/scripts/set-recommended-settings.sh"
 
 [[ $? = 0 ]] || exit $?
 

@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 echo "Now installing arklone cloud sync utility..."
 
@@ -125,5 +125,5 @@ for script in ${SCRIPTS[@]}; do
 done
 
 # Make systemd units directory writeable for user
-sudo chown "${USER}":"${USER}" "${ARKLONE[installDir]}/systemd/units"
+sudo chown "${USER}":"${USER}" "${ARKLONE[installDir]}/src/systemd/units"
 

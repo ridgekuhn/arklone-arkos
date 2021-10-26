@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/functions/editConfig.sh"
+source "/opt/arklone/src/config.sh"
+source "${ARKLONE[installDir]}/src/functions/editConfig.sh"
 
 ###########
 # MOCK DATA

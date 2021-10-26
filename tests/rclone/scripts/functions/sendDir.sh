@@ -3,8 +3,8 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
-source "${ARKLONE[installDir]}/rclone/scripts/functions/sendDir.sh"
+source "/opt/arklone/src/config.sh"
+source "${ARKLONE[installDir]}/src/rclone/scripts/functions/sendDir.sh"
 
 # Mock local directory tree
 LOCAL_DIR="/dev/shm/localdir"

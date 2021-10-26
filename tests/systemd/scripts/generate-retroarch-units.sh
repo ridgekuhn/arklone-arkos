@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
@@ -63,7 +63,7 @@ function newPathUnitsFromDir() {
 }
 
 # Run script
-. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+. "${ARKLONE[installDir]}/src/systemd/scripts/generate-retroarch-units.sh"
 
 [[ $? = 0 ]] || exit $?
 
@@ -105,7 +105,7 @@ function newPathUnitsFromDir() {
 }
 
 # Run script
-. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+. "${ARKLONE[installDir]}/src/systemd/scripts/generate-retroarch-units.sh"
 
 [[ $? = 0 ]] || exit $?
 
@@ -146,7 +146,7 @@ function newPathUnitsFromDir() {
 }
 
 # Run script
-. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh"
+. "${ARKLONE[installDir]}/src/systemd/scripts/generate-retroarch-units.sh"
 
 [[ $? = 0 ]] || exit $?
 
@@ -216,7 +216,7 @@ function newPathUnitsFromDir() {
 }
 
 # Run script
-. "${ARKLONE[installDir]}/systemd/scripts/generate-retroarch-units.sh" true
+. "${ARKLONE[installDir]}/src/systemd/scripts/generate-retroarch-units.sh" true
 
 echo "TEST 5 passed."
 

@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
@@ -64,7 +64,7 @@ ARKLONE[enabledUnits]="arkloned@.service arkloned-test.path arkloned-receive-sav
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
+. "${ARKLONE[installDir]}/src/systemd/scripts/disable-path-units.sh"
 
 [[ $? = 0 ]] || exit $?
 

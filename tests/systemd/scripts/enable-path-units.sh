@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
@@ -60,7 +60,7 @@ ExecStart=/bin/bash -c "echo instance is %I"
 WantedBy=multi-user.target
 EOF
 
-# Mock unit in "${ARKLONE[installDir]}/systemd/scripts/ignores/autosync.ignore" list
+# Mock unit in "${ARKLONE[installDir]}/src/systemd/scripts/ignores/autosync.ignore" list
 cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-ppsspp.path"
 [Path]
 PathChanged=/dev/shm/ppsspp
@@ -73,7 +73,7 @@ EOF
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/systemd/scripts/enable-path-units.sh"
+. "${ARKLONE[installDir]}/src/systemd/scripts/enable-path-units.sh"
 
 ########
 # TEST 1
@@ -123,7 +123,7 @@ echo "TEST 4 passed."
 ##########
 # TEARDOWN
 ##########
-"${ARKLONE[installDir]}/systemd/scripts/disable-path-units.sh"
+"${ARKLONE[installDir]}/src/systemd/scripts/disable-path-units.sh"
 
 rm -rf "/dev/shm/foo"
 rm -rf "/dev/shm/ppsspp"

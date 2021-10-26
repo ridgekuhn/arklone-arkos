@@ -3,32 +3,33 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
 ###########
 # Mock rclone/scritps dir
-mkdir "/dev/shm/rclone"
-mkdir "/dev/shm/rclone/scripts"
+mkdir "/dev/shm/src"
+mkdir "/dev/shm/src/rclone"
+mkdir "/dev/shm/src/rclone/scripts"
 
 # Copy sync-all-dirs.sh
 # because it uses "${ARKLONE[installDir]} to call other scripts"
-cp "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "/dev/shm/rclone/scripts/sync-all-dirs.sh"
-chmod u+x "/dev/shm/rclone/scripts/sync-all-dirs.sh"
+cp "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "/dev/shm/src/rclone/scripts/sync-all-dirs.sh"
+chmod u+x "/dev/shm/src/rclone/scripts/sync-all-dirs.sh"
 
 # Change "${ARKLONE[installDir]}"
 # so we can mock other scripts called by sync-all-dirs.sh
 ARKLONE[installDir]="/dev/shm"
 
 # Mock sync-one-dir.sh
-cat <<EOF >"${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+cat <<EOF >"${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 #!/bin/bash
 [[ "\${1}" = "send" ]] || [[ "\${1}" = "receive" ]] || exit 64
 [[ "\${2}" = "localDir@remoteDir@filter1|filter2" ]] || exit 64
 EOF
 
-chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+chmod u+x "${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 
 # Mock functions called by sync-all-dirs.sh
 function getRootInstanceNames() {
@@ -41,7 +42,7 @@ function getRootInstanceNames() {
 # Exit with error if invalid argument
 
 # Source script, but run in subshell so it can exit with out exiting test
-(. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "foo")
+(. "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "foo")
 
 [[ $? = 64 ]] || exit 64
 
@@ -53,7 +54,7 @@ echo "TEST 1 passed."
 # sync-one-dir.sh is called with "send"
 
 # Source script, but run in subshell so it can exit with out exiting test
-(. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
+(. "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "send")
 echo $?
 
 [[ $? = 0 ]] || exit 1
@@ -66,7 +67,7 @@ echo "TEST 2 passed."
 # sync-one-dir.sh is called with "receive"
 
 # Source script, but run in subshell so it can exit with out exiting test
-(. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "receive")
+(. "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "receive")
 
 [[ $? = 0 ]] || exit 1
 
@@ -78,15 +79,15 @@ echo "TEST 3 passed"
 # Script exits with rclone exit code
 
 # Mock sync-one-dir.sh
-cat <<EOF >"${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+cat <<EOF >"${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 #!/bin/bash
 exit 255
 EOF
 
-chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+chmod u+x "${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 
 # Source script, but run in subshell so it can exit with out exiting test
-(. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
+(. "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "send")
 
 [[ $? = 255 ]] || exit 70
 
@@ -98,15 +99,15 @@ echo "TEST 4 passed."
 # Script still exits with code 0
 # if rclone exits with code 3 (directory not found)
 # Mock sync-one-dir.sh
-cat <<EOF >"${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+cat <<EOF >"${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 #!/bin/bash
 exit 3
 EOF
 
-chmod u+x "${ARKLONE[installDir]}/rclone/scripts/sync-one-dir.sh"
+chmod u+x "${ARKLONE[installDir]}/src/rclone/scripts/sync-one-dir.sh"
 
 # Source script, but run in subshell so it can exit with out exiting test
-(. "${ARKLONE[installDir]}/rclone/scripts/sync-all-dirs.sh" "send")
+(. "${ARKLONE[installDir]}/src/rclone/scripts/sync-all-dirs.sh" "send")
 
 [[ $? = 0 ]] || exit 70
 
@@ -115,5 +116,5 @@ echo "TEST 5 passed."
 ##########
 # TEARDOWN
 ##########
-rm -rf "${ARKLONE[installDir]}/rclone"
+rm -rf "${ARKLONE[installDir]}/src"
 

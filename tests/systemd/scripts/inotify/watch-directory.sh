@@ -3,7 +3,7 @@
 # by ridgek
 # Released under GNU GPLv3 license, see LICENSE.md.
 
-source "/opt/arklone/config.sh"
+source "/opt/arklone/src/config.sh"
 
 ###########
 # MOCK DATA
@@ -13,7 +13,8 @@ TEST_FILE="/dev/shm/helloworld"
 TEST_DIR="/dev/shm/testdir"
 mkdir "${TEST_DIR}"
 
-ARKLONE[unitsDir]="/dev/shm/units"
+mkdir "/dev/shm/src"
+ARKLONE[unitsDir]="/dev/shm/src/units"
 mkdir "${ARKLONE[unitsDir]}"
 
 cat <<EOF >"${ARKLONE[unitsDir]}/arkloned-test.path"
@@ -36,7 +37,7 @@ sudo systemctl link "${ARKLONE[unitsDir]}/arkloned-test.service"
 #####
 # RUN
 #####
-. "${ARKLONE[installDir]}/systemd/scripts/inotify/watch-directory.sh" "${ARKLONE[unitsDir]}/arkloned-test.path" &
+. "${ARKLONE[installDir]}/src/systemd/scripts/inotify/watch-directory.sh" "${ARKLONE[unitsDir]}/arkloned-test.path" &
 
 PID=$!
 
@@ -63,6 +64,7 @@ echo "TEST 1 passed."
 # TEARDOWN
 ##########
 rm -rf "${ARKLONE[unitsDir]}"
+rm -rf "/dev/shm/src"
 sudo rm "${TEST_FILE}"
 rm -rf "${TEST_DIR}"
 
