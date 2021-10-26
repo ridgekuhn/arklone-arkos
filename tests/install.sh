@@ -9,27 +9,17 @@ source "/opt/arklone/src/config.sh"
 # MOCK DATA
 ###########
 # Configure lock file pre-requisites
-SYS_ARCH=$(uname -m)
-
-case $SYS_ARCH in
-    aarch64 | arm64)
-        SYS_ARCH="arm64"
-    ;;
-    x86_64)
-        SYS_ARCH="amd64"
-    ;;
-esac
-
-#Get the rclone download URL
-RCLONE_PKG="rclone-current-linux-${SYS_ARCH}.deb"
-RCLONE_URL="https://downloads.rclone.org/${RCLONE_PKG}"
-
-# Check if user already has rclone installed
-if rclone --version >/dev/null 2>&1; then
-    # Set a lock file so we can know to restore user's settings on uninstall
-    touch "${ARKLONE[userCfgDir]}/.rclone.lock"
+# Install rclone so install script sets lock file
+if ! rclone --version >/dev/null 2>&1; then
+    sudo apt update && sudo apt install rclone -y
 fi
 
+# Install inotifywait so install script sets lock file
+if ! which inotifywait >/dev/null 2>&1; then
+    sudo apt install inotify-tools -y
+fi
+
+# Make backup dir so install script sets lock file
 [[ -d "${ARKLONE[backupDir]}" ]] || mkdir "${ARKLONE[backupDir]}"
 
 #####
@@ -87,10 +77,8 @@ echo "TEST 5 passed."
 ########
 # TEST 6
 ########
-# inotifywait exists
-if ! inotifywait --help >/dev/null 2>&1; then
-    exit 72
-fi
+# inotifywait lock exists
+[[ -f "${ARKLONE[userCfgDir]}/.inotify-tools.lock" ]] || exit 72
 
 echo "TEST 6 passed."
 
@@ -112,9 +100,10 @@ echo "TEST 7 passed."
 # TEST 8
 ########
 # systemd units directory is owned by user
-if ! ls -al "${ARKLONE[installDir]}/systemd/units" | grep "${USER} ${USER}" >/dev/null; then
+if ! ls -al "${ARKLONE[installDir]}/src/systemd/units" | grep -E "${USER}\s*${USER}" >/dev/null; then
     exit 77
 fi
 
 echo "TEST 8 passed."
 
+echo "SUCCESS"

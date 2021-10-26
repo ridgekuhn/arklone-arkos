@@ -9,13 +9,13 @@ source "/opt/arklone/src/config.sh"
 # MOCK DATA
 ###########
 # Uninstall first, to reset to defaults
-"${ARKLONE[installDir]}/uninstall.sh" true
+"${ARKLONE[installDir]}/uninstall.sh" true || exit $?
 
 #####
 # RUN
 #####
 # Run install test
-"${ARKLONE[installDir]}/tests/install.sh"
+"${ARKLONE[installDir]}/tests/install.sh" || exit $?
 
 # Get all tests
 TESTS=($(find "${ARKLONE[installDir]}/tests" -type f -name "*.sh"))
@@ -59,7 +59,7 @@ done
 # TEARDOWN
 ##########
 # Run uninstall test
-"${ARKLONE[installDir]}/tests/uninstall.sh" true
+"${ARKLONE[installDir]}/tests/uninstall.sh" true || echo $?
 
 echo "All tests ran successfully"
 

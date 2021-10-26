@@ -107,7 +107,7 @@ chown "${USER}":"${USER}" "${ARKLONE[backupDir]}/rclone/rclone.conf"
 # INOTIFY-TOOLS
 ###############
 # Check if user already has inotify-tools installed
-if inotifywait --help >/dev/null 2>&1; then
+if which inotifywait >/dev/null 2>&1; then
     # Set a lock file so we can know to not remove on uninstall
     touch "${ARKLONE[userCfgDir]}/.inotify-tools.lock"
 else
