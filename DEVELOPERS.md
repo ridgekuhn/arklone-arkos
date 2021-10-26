@@ -40,14 +40,14 @@ arklone uses systemd path units for watching directories and launching scripts. 
 
 ## arkloned@.service Template ##
 
-[arkloned@.service](/systemd/units/arkloned@.service) launches [send-and-receive-saves.sh](/rclone/scripts/send-and-receive-saves.sh), passing the path unit's instance name as an argument.
+[arkloned@.service](/systemd/units/arkloned@.service) launches [send-and-receive-saves.sh](/rclone/scripts/send-and-receive-saves.sh), passing the path unit's instance name as an argument. **The service template sends data only.**
 
 &nbsp;
 
 **arkloned@.service:**
 
 ```
-ExecStart=/bin/bash -c "/opt/arklone/rclone/scripts/send-and-receive-saves.sh %I"
+ExecStart=/opt/arklone/rclone/scripts/send-and-receive-saves.sh "send" %I
 ```
 
 
@@ -124,7 +124,7 @@ After=network-online.target arkloned-receive-saves-boot.service
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c '/opt/arklone/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/systemd/units/arkloned-ppsspp.path" "/SYSTEM/"'
+ExecStart=/opt/arklone/systemd/scripts/inotify/watch-directory.sh "/opt/arklone/systemd/units/arkloned-ppsspp.path" "/SYSTEM/"
 
 [Install]
 WantedBy=multi-user.target
