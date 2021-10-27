@@ -70,6 +70,30 @@ Unit=arkloned@-dev-shm-ppsspp\x40remotedir\x40filter.service
 WantedBy=multi-user.target
 EOF
 
+cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-receive-saves.service"
+[Unit]
+Wants=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "echo hello"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat <<EOF > "${ARKLONE[unitsDir]}/arkloned-receive-saves.timer"
+[Unit]
+Description=test
+
+[Timer]
+OnUnitActiveSec=10s
+OnBootSec=10s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 #####
 # RUN
 #####
@@ -80,6 +104,11 @@ EOF
 ########
 # Service template unit is linked
 if ! systemctl list-unit-files "arkloned@.service" | grep "linked"; then
+    exit 78
+fi
+
+# Timer service is linked
+if ! systemctl list-unit-files "arkloned-receive-saves.service" | grep "linked"; then
     exit 78
 fi
 
@@ -108,6 +137,16 @@ echo "TEST 3 passed."
 ########
 # TEST 4
 ########
+# Timer unit is enabled
+if ! systemctl list-unit-files "arkloned-receive-saves.timer" | grep "enabled"; then
+    exit 78
+fi
+
+echo "TEST 4 passed."
+
+########
+# TEST 5
+########
 # Ignored units were not enabled
 IGNORED_UNITS=($(cat "${ARKLONE[ignoreDir]}/autosync.ignore"))
 
@@ -118,7 +157,7 @@ for unit in ${IGNORED_UNITS[@]}; do
     fi
 done
 
-echo "TEST 4 passed."
+echo "TEST 5 passed."
 
 ##########
 # TEARDOWN

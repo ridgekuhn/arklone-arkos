@@ -18,6 +18,8 @@
 SERVICES=($(find "${ARKLONE[unitsDir]}/"*".service"))
 # Get all path units
 PATH_UNITS=($(find "${ARKLONE[unitsDir]}/"*".path"))
+#Get all timers
+TIMERS=($(find "${ARKLONE[unitsDir]}/"*".timer"))
 
 # If path units ending in *.sub.auto.path are found,
 # we should not enable the ${ARKLONE[retroarchContentRoot]} unit,
@@ -35,8 +37,13 @@ for service in ${SERVICES[@]}; do
         continue
     fi
 
-    # Link service templates
-    if grep "@.service" <<<"${service}"; then
+    # Only link service templates
+    # and service units with corresponding timers,
+    # do not enable them.
+    if \
+        grep "@.service" <<<"${service}" \
+        || [[ -f "$(sed -e 's/.service$/.timer/' <<<"${service}")" ]]
+    then
         sudo systemctl link "${service}"
 
         continue
@@ -64,5 +71,16 @@ for unit in ${PATH_UNITS[@]}; do
     fi
 
     sudo systemctl enable "${unit}"
+done
+
+# Enable timer units, but do not start
+# to protect the cloud copy from a bad sync
+for timer in ${TIMERS[@]}; do
+    # Skip ignored units
+    if isIgnored "${unit}" "${ARKLONE[ignoreDir]}/autosync.ignore"; then
+        continue
+    fi
+
+    sudo systemctl enable "${timer}"
 done
 
