@@ -21,7 +21,16 @@ function editConfig() {
     local comment="$([[ "${3}" = "true" ]] && echo "# ")"
     local cfg="${@: -1}"
 
-    # @todo why don't non-capturing groups work? eg, (?: *#)
-    sed -i -E "s|^( *#)? *${option}.*=.*|${comment}${option} = \"${newVal}\"|" "${cfg}"
+    local newSettingString="${comment}${option} = \"${newVal}\""
+
+    # If option exists in file
+    if grep -E "^( *#)? *${option} *=" "${cfg}" >/dev/null 2>&1; then
+        # @todo why don't non-capturing groups work? eg, (?: *#)
+        sed -i -E "s|^( *#)? *${option} *=.*|${newSettingString}|" "${cfg}"
+
+    # Create non-existent option
+    else
+        echo "${newSettingString}" >> "${cfg}"
+    fi
 }
 
