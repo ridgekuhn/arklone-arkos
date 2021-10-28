@@ -44,6 +44,7 @@ for retroarchCfg in ${RETROARCHS[@]}; do
     # Make the save directory if it doesn't exist
     if [[ ! -d "${SAVES_DIR}" ]]; then
         mkdir "${SAVES_DIR}"
+        chown "${USER}":"${USER}" "${SAVES_DIR}"
         chmod u+rw "${SAVES_DIR}"
     fi
 
@@ -67,6 +68,8 @@ for retroarchCfg in ${RETROARCHS[@]}; do
 
             if [[ ! -d "${saveDir}" ]]; then
                 mkdir "${saveDir}"
+                chown "${USER}":"${USER}" "${saveDir}"
+                chmod u+rw "${saveDir}"
             fi
         fi
     done
