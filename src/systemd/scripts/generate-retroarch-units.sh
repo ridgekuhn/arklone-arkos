@@ -64,6 +64,12 @@ for retroarchCfg in ${RETROARCHS[@]}; do
     # retroarchBasename="retroarch32"
     retroarchBasename="$(basename "$(dirname "${retroarchCfg}")")"
 
+    # If ${retroarchCfg}'s parent directory name doesn't contain "retroarch",
+    # just default to "retroarch"
+    if ! grep "retroarch" <<<"${retroarchBasename}"; then
+        retroarchBasename="retroarch"
+    fi
+
     # Create an array to hold retroarch.cfg settings plus a few of our own
     declare -A r
 
