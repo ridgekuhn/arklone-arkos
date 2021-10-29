@@ -5,8 +5,8 @@ Requires=network-online.target
 # Use plymouth-quit.service because
 # plymouth-quit-wait.service Wants display-manager.service
 After=network-online.target plymouth-quit.service
-# Run before emulationstation or display-manager starts
-Before=emulationstation.service display-manager.service
+# Run before emulationstation, auto-login on tty1, or display-manager starts
+Before=emulationstation.service display-manager.service getty@tty1.service
 
 [Service]
 Type=oneshot
