@@ -59,7 +59,7 @@ rm ./uninstallArklone.sh
 
 # rclone Configuration #
 
-To begin using arklone, you must create an rclone config file. For [most cloud providers](https://rclone.org/remote_setup/), this will involve installing `rclone` to a computer with a web browser, like your desktop or laptop. See the [rclone docs](https://rclone.org/docs/#configure) for more information on how to do this for your specific provider. Make sure you [install the latest version of rclone](https://rclone.org/downloads/), (1.56.2 when this was written). *If you use a package manager like `apt`, the repository version will be outdated.*
+To begin using arklone, you must create an rclone config file. For [most cloud providers](https://rclone.org/remote_setup/), this will involve installing `rclone` to a computer with a web browser, like your desktop or laptop. See the [rclone docs](https://rclone.org/docs/#configure) for more information on how to do this for your specific provider. Make sure you [install the latest version of rclone](https://rclone.org/downloads/), (1.56.2 as of this writing) to your desktop or laptop. *If you use a package manager like `apt`, the repository version will be outdated.*
 
 Once you have completed this process, copy the `rclone.conf` file from your computer to your ArkOS device. Your `rclone.conf` can be located by running:
 
@@ -137,10 +137,11 @@ Keeping multiple devices synced can be difficult. arklone tries to do its best, 
 
 ## Automatic Syncing ##
 
-If you enable automatic syncing in the settings dialog, arklone assumes the copy of your data stored in the cloud is the canonical and "always correct" version. On system boot, arklone will run before EmulationStation and attempt to receive updates from the cloud remote. *If the remote contains a newer version of a file, it will overwrite the local copy.* On this initial sync, *arklone only receives updates and does not send anything back*. If this process fails for any reason, the user is notified, and the [dirty boot state](#dirty-boot-state) is set.
+If you enable automatic syncing in the settings dialog, arklone assumes the copy of your data stored in the cloud is the canonical and "always correct" version. On system boot, arklone will run before EmulationStation and attempt to receive updates from the cloud remote. *If the remote contains a newer version of a file, it will overwrite the local copy.* On this initial sync, *arklone only receives updates and does not send anything back*.
 
-If the boot sync process succeeds, arklone will begin watching all your save directories, and *send updates any time a write is detected, overwriting older versions on the cloud remote*.
+If the boot sync process succeeds, arklone will begin watching all your save directories, and *send updates any time a write is detected, overwriting older versions on the cloud remote*. It will also receive updates at the interval set when you enabled automatic syncing.
 
+If the boot process fails or is cancelled by the user, the user is given the chance to try again, or the [dirty boot state](#dirty-boot-state) is set.
 
 ## Manual Syncing ##
 
@@ -152,9 +153,7 @@ The manual sync dialog allows you to send or receive any directory which has a p
 
 # Dirty Boot State #
 
-After boot, but before EmulationStation starts, arklone checks for a network connection and attempts to receive any new updates from the configured remote. It does not send any data back until a file has been written on the device. This ensures that the cloud copy is the canonical and "always correct" one. 
-
-If this process fails at any point, the dirtyboot state is set. Automatic syncing is disabled for the rest of the session, and the user will be warned about potential data loss on the following boot.
+If automatic syncing is enabled and the boot sync process fails, the dirty boot state is set. Automatic syncing is disabled for the rest of the session, and will resume after the next boot. On the next boot, the user is shown a warning message about potential data loss before the boot sync proceeds.
 
 To manually reset the dirtyboot state, delete the lock file located at:
 `~/.config/arklone/.dirtyboot`
