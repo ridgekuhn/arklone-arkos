@@ -21,14 +21,15 @@ touch "${REMOTE_DIR}/ignoremethree"
 
 # Mock rclone filters
 ARKLONE[filterDir]="/dev/shm/filters"
+
 mkdir "${ARKLONE[filterDir]}"
 
-cat <<EOF > "${ARKLONE[filterDir]}/global.filter"
-- ignoreme
+cat <<EOF > "${ARKLONE[filterDir]}/global.exclude"
+ignoreme
 EOF
 
-cat <<EOF > "${ARKLONE[filterDir]}/test1.filter"
-- ignoremetoo
+cat <<EOF > "${ARKLONE[filterDir]}/test1.exclude"
+ignoremetoo
 EOF
 
 cat <<EOF > "${ARKLONE[filterDir]}/test2.filter"
