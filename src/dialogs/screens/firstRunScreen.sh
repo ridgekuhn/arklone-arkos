@@ -25,7 +25,7 @@ function firstRunScreen() {
             16 56 8
 
     if [[ $? = 0 ]]; then
-        . "${ARKLONE[installDir]}/src/retroarch/scripts/set-recommended-settings.sh" \
+        . "${ARKLONE[installDir]}/src/retroarch/scripts/set-recommended-settings.sh" "$([[ -d "${HOME}/.config/retroarch" ]] && echo "${HOME}/.config/retroarch/saves")"\
             | . "${ARKLONE[installDir]}/src/dialogs/gauges/retroarch/set-recommended-settings.sh"
     fi
 
